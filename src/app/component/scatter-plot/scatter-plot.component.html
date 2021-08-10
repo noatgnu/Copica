@@ -1,0 +1,15 @@
+<div class="container mt-2" *ngIf="data">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">
+        Copy number VS Rank
+      </h5>
+      <div style="display:block;align-content: center">
+        <canvas baseChart [datasets]="scatterChartData" [options]="options" [chartType]="scatterPlotType" [labels]="label" height="400px" width="1000px"></canvas>
+      </div>
+      <p class="card-text">Detected proteins within the LRRK2 pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of lrrk2" id="{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+    </div>
+  </div>
+
+</div>
+

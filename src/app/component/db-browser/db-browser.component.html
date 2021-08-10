@@ -1,0 +1,45 @@
+<div class="container mt-4" *ngIf="oDataframe.length >0">
+  <div class="card">
+    <div class="card-body">
+      <form></form>
+      <div class="form-group">
+        <form [formGroup]="form">
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-4">
+                <label for="organismSelection">Select Organism</label>
+                <select class="form-control" id="organismSelection" formControlName="organisms" (change)="updateExperimentType()">
+                  <option *ngFor="let o of organisms">
+                    {{o}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-4">
+                <label for="experimentSelection">Select Experiment</label>
+                <select class="form-control" id="experimentSelection" formControlName="experimentType" (change)="updateCellType()">
+                  <option *ngFor="let o of experiment">
+                    {{o}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-4">
+                <label for="cellSelection">Select Cell Type</label>
+                <select class="form-control" id="cellSelection" formControlName="cellType" (change)="selectCellType()">
+                  <option *ngFor="let o of cellType">
+                    {{o}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row mt-2">
+              <div class="text-right">
+                <button class="btn btn-primary" (click)="loadVisual()" >Submit</button>
+              </div>
+
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
