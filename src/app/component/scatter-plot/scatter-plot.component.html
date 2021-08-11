@@ -1,9 +1,23 @@
 <div class="container mt-2" *ngIf="data">
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">
-        Copy number VS Rank
-      </h5>
+      <div class="row">
+        <div class="col-3">
+          <h5 class="card-title">
+            Copy number versus Rank
+          </h5>
+        </div>
+        <div class="col-9">
+          <div class="d-flex justify-content-end">
+            <div class="col-3">
+              <input id="search-data" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" placeholder="Search gene name" (ngModelChange)="searchSelectedProtein()">
+            </div>
+            <div class="col-2"><button class="btn btn-danger" (click)="resetSelection()">Reset</button></div>
+
+          </div>
+        </div>
+      </div>
+
       <div style="display:block;align-content: center">
         <canvas baseChart [datasets]="scatterChartData" [options]="options" [chartType]="scatterPlotType" [labels]="label" height="400px" width="1000px"></canvas>
       </div>

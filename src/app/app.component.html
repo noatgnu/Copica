@@ -1,21 +1,26 @@
-<div class="container-fluid">
-  <nav class="navbar navbar-dark bg-dark">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
     <a class="navbar-brand" href="#">
       Copica
     </a>
+    <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed">
+      &#9776;
+    </button>
+
+    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" [routerLink]="" routerLinkActive="active">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="'copybrowse'" routerLinkActive="active">Browse Individual Cell Type Data</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="'cellbrowse'" routerLinkActive="active">Browse Experiment Wide Data</a>
+        </li>
+      </ul>
+    </div>
   </nav>
-</div>
-
-<app-db-browser (selectedDataframe)="scatterDataHandler($event)"></app-db-browser>
-<div *ngIf="observeScatter|async">
-  <app-scatter-plot [data]="scatterData"></app-scatter-plot>
-</div>
-
-<app-file-uploader (dataframe)="dataframeHandle($event)"></app-file-uploader>
-<div *ngIf="observeLoad|async">
-  <app-file-summary [dataframe]="data" (selectedData)="selectedDataHandler($event)"></app-file-summary>
-</div>
 
 
-<ng-template #loading>
-</ng-template>
+<router-outlet></router-outlet>

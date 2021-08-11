@@ -10,6 +10,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 })
 export class DbBrowserComponent implements OnInit {
   dataframe: IDataFrame = new DataFrame();
+
   form: FormGroup = this.fb.group({
     cellType: "",
     experimentType: "",
@@ -23,6 +24,7 @@ export class DbBrowserComponent implements OnInit {
   temp: any[] = [];
   selectedFile = "";
   @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
+
   constructor(private http: WebService, private fb: FormBuilder) {
     this.http.getIndex().subscribe(data => {
       this.dataframe = new DataFrame(<Object>data.body)
@@ -117,8 +119,12 @@ export class DbBrowserComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
+  downloadSelected() {
 
   }
+
+  ngOnInit(): void {
+  }
+
 
 }

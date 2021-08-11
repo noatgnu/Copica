@@ -1,0 +1,12 @@
+<app-db-browser (selectedDataframe)="scatterDataHandler($event)"></app-db-browser>
+<div *ngIf="observeScatter|async">
+  <app-scatter-plot [data]="scatterData"></app-scatter-plot>
+  <div class="container mt-4">
+    <button class="btn btn-primary" (click)="downloadSelectedData()">Download Data</button>
+  </div>
+</div>
+
+<app-file-uploader (dataframe)="dataframeHandle($event)"></app-file-uploader>
+<div *ngIf="observeLoad|async">
+  <app-file-summary [dataframe]="data" (selectedData)="selectedDataHandler($event)"></app-file-summary>
+</div>

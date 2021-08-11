@@ -1,6 +1,8 @@
 import {Component, Input, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges} from '@angular/core';
 import {ChartDataSets, ChartType, ChartOptions} from "chart.js"
 import {BaseChartDirective, Label} from "ng2-charts";
+import {Observable, OperatorFunction} from "rxjs";
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-scatter-plot',
@@ -8,6 +10,7 @@ import {BaseChartDirective, Label} from "ng2-charts";
   styleUrls: ['./scatter-plot.component.css'],
 })
 export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
+  model: any = "";
   toggleClass: boolean = true;
   defaultClass = "badge badge-pill badge-success ml-1";
   clickedClass = "badge badge-pill badge-danger ml-1"
@@ -22,6 +25,24 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   colors: string[] = [];
   pointRadius: number[] = []
   options: ChartOptions = {
+    scales: {
+      yAxes: [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: "log10 Copy Number"
+          }
+        }
+      ],
+      xAxes: [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: "Rank"
+          }
+        }
+      ]
+    },
     plugins: {
       title: {
         display: true,
@@ -67,7 +88,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     return this._data;
   }
   private _data: any[] = [];
-  label: Label[] = []
+  label: string[] = []
   @Input() set data(value: any[]) {
     this.original = value
     this.assignData(value);
@@ -75,7 +96,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
 
   private assignData(value: any[], selectedProteins: string[] = []) {
     const a: any[] = []
-    const b: Label[] = []
+    const b: string[] = []
     this.pointRadius = []
     if (selectedProteins.length === 0) {
       this.lrrk2 = []
@@ -172,8 +193,6 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       this.selectedProtein.splice(ind, 1)
       this.selectedElement.splice(ind, 1)
     }
-    console.log(this.selectedElement)
-    console.log(this.selectedProtein)
     this.assignData(this.original, this.selectedProtein)
   }
 
@@ -184,6 +203,23 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       e.classList.add("badge-success")
     }
     this.selectedElement = []
+    this.assignData(this.original)
+  }
+
+  search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? []
+        : this.label.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0,10))
+    )
+
+  searchSelectedProtein() {
+    if (this.model.length > 2) {
+      if (this.label.includes(this.model)) {
+        this.assignData(this.original, [this.model])
+      }
+    }
   }
 
   ngAfterViewInit() {
