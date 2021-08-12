@@ -15,6 +15,7 @@ import { ChartsModule} from 'ng2-charts';
 import { DbCellBrowseComponent } from './component/db-cell-browse/db-cell-browse.component';
 import { DbScatterComponent } from './component/db-scatter/db-scatter.component';
 import { HomeComponent } from './component/home/home.component';
+import { BarChartComponent } from './component/bar-chart/bar-chart.component';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { HomeComponent } from './component/home/home.component';
     DbCellBrowseComponent,
     DbScatterComponent,
     HomeComponent,
+    BarChartComponent,
 
   ],
   imports: [

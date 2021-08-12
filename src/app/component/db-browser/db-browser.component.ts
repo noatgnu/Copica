@@ -28,6 +28,7 @@ export class DbBrowserComponent implements OnInit {
   constructor(private http: WebService, private fb: FormBuilder) {
     this.http.getIndex().subscribe(data => {
       this.dataframe = new DataFrame(<Object>data.body)
+
       this.oDataframe = this.dataframe.toArray();
       for (const a of this.oDataframe) {
         if (!this.organisms.includes(a["Organisms"])) {
@@ -64,7 +65,6 @@ export class DbBrowserComponent implements OnInit {
     this.selectedFile = ""
     for (const a of this.oDataframe) {
       if (a["Organisms"] == this.form.value["organisms"] && a["Experiment Type"] == this.form.value["experimentType"]) {
-        console.log(a)
         if (!this.cellType.includes(a["cellType"])) {
           if (this.selectedFile == "") {
             this.selectedFile = a["File"]
@@ -104,7 +104,6 @@ export class DbBrowserComponent implements OnInit {
       if (a["Organisms"] == this.form.value["organisms"] &&
         a["Experiment Type"] == this.form.value["experimentType"] &&
         a["Cell type"] == this.form.value["cellType"]) {
-        console.log(this.selectedFile)
         this.selectedFile = a["File"]
         break
       }

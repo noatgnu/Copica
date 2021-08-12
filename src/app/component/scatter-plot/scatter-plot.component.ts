@@ -43,12 +43,6 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
         }
       ]
     },
-    plugins: {
-      title: {
-        display: true,
-        text: "Copy number versus rank"
-      }
-    },
     responsive: false,
     maintainAspectRatio: true,
     animation: {

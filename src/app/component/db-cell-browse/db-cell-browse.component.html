@@ -1,1 +1,30 @@
-<p>db-cell-browse works!</p>
+<div class="container" *ngIf="fileLoadedObserver|async">
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="form">
+        <div class="form-group">
+          <div class="form-row">
+            <div class="col-6">
+              <label for="organismSelection">Select Organism</label>
+              <select class="form-control" id="organismSelection" formControlName="organisms" (change)="updateExperimentType()">
+                <option *ngFor="let o of organism">
+                  {{o}}
+                </option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label for="experimentSelection">Select Experiment</label>
+              <select class="form-control" id="experimentSelection" formControlName="experiment" (change)="updateCellType()">
+                <option *ngFor="let o of experiment">
+                  {{o}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-bar-chart *ngIf="fileLoadedObserver|async" [data]="selectedData"></app-bar-chart>
