@@ -24,7 +24,7 @@
               </div>
               <div class="col-4">
                 <label for="cellSelection">Select Cell Type</label>
-                <select class="form-control" id="cellSelection" formControlName="cellType" (change)="selectCellType()">
+                <select class="form-control" id="cellSelection" formControlName="cellType" multiple>
                   <option *ngFor="let o of cellType">
                     {{o}}
                   </option>
@@ -33,7 +33,7 @@
             </div>
             <div class="form-row mt-2">
               <div class="text-right">
-                <button class="btn btn-primary" (click)="loadVisual()" >Submit</button>
+                <button class="btn btn-primary" (click)="loadVisual()" >Load data</button>
               </div>
 
             </div>

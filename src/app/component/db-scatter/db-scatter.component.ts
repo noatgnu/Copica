@@ -19,7 +19,7 @@ export class DbScatterComponent implements OnInit {
   loadScatterSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   observeScatter: Observable<boolean> = new Observable<boolean>()
   scatterDF: IDataFrame = new DataFrame();
-  scatterData: any[] = [];
+  scatterData: IDataFrame = new DataFrame();
 
   constructor(private http: WebService) {
     this.histoneDB.getHistones()
@@ -39,7 +39,7 @@ export class DbScatterComponent implements OnInit {
   }
 
   scatterDataHandler(e: IDataFrame) {
-    this.scatterData = e.toArray();
+    this.scatterData = e;
     this.scatterDF = e;
     this.loadScatterSubject.next(true);
   }

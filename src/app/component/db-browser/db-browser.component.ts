@@ -12,7 +12,7 @@ export class DbBrowserComponent implements OnInit {
   dataframe: IDataFrame = new DataFrame();
 
   form: FormGroup = this.fb.group({
-    cellType: "",
+    cellType: [],
     experimentType: "",
     organisms: ""
   });
@@ -22,7 +22,7 @@ export class DbBrowserComponent implements OnInit {
   oDataframe: any[] = [];
   experiment: any[] = []
   temp: any[] = [];
-  selectedFile = "";
+  selectedFile: any[] = [];
   @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
 
   constructor(private http: WebService, private fb: FormBuilder) {
@@ -38,7 +38,7 @@ export class DbBrowserComponent implements OnInit {
 
       this.temp = this.oDataframe
       const firstEntry = this.dataframe.first()
-      this.form.setValue({cellType: firstEntry["Cell type"], experimentType: firstEntry["Experiment Type"], organisms: firstEntry["Organisms"]})
+      this.form.setValue({cellType: [firstEntry["Cell type"]], experimentType: firstEntry["Experiment Type"], organisms: firstEntry["Organisms"]})
       //this.selectedFile = firstEntry["File"]
       this.updateExperimentType()
       this.updateCellType()
@@ -62,12 +62,12 @@ export class DbBrowserComponent implements OnInit {
 
   updateCellType() {
     this.cellType = []
-    this.selectedFile = ""
+    this.selectedFile = []
     for (const a of this.oDataframe) {
       if (a["Organisms"] == this.form.value["organisms"] && a["Experiment Type"] == this.form.value["experimentType"]) {
         if (!this.cellType.includes(a["cellType"])) {
-          if (this.selectedFile == "") {
-            this.selectedFile = a["File"]
+          if (this.selectedFile.length === 0) {
+            this.selectedFile = [a["File"]]
           }
           this.cellType.push(a["Cell type"])
         }
@@ -100,21 +100,34 @@ export class DbBrowserComponent implements OnInit {
 
 
   selectCellType() {
+    this.selectedFile = []
     for (const a of this.oDataframe) {
       if (a["Organisms"] == this.form.value["organisms"] &&
-        a["Experiment Type"] == this.form.value["experimentType"] &&
-        a["Cell type"] == this.form.value["cellType"]) {
-        this.selectedFile = a["File"]
-        break
+        a["Experiment Type"] == this.form.value["experimentType"]) {
+        if (this.form.value["cellType"].includes(a["Cell type"])) {
+          this.selectedFile.push(a["File"])
+        }
       }
     }
     //this.http.getDBjson(this.form.value[""])
   }
 
   loadVisual() {
-    this.http.getDBjson(this.selectedFile).subscribe(data => {
-      this.selectedDataframe.emit(new DataFrame(<Object>data.body));
-    })
+    this.selectCellType()
+    const dataDF: IDataFrame[] = []
+    for (const s of this.selectedFile) {
+      this.http.getDBjson(s).subscribe(data => {
+        if (this.selectedFile.length > 1) {
+          dataDF.push(new DataFrame(<Object>data.body))
+          if (this.selectedFile.length === dataDF.length) {
+            this.selectedDataframe.emit(DataFrame.concat(dataDF).bake());
+          }
+        } else {
+          this.selectedDataframe.emit(new DataFrame(<Object>data.body))
+        }
+      })
+    }
+
 
   }
 

@@ -87,7 +87,7 @@ export class BarChartComponent implements OnInit {
         {
           scaleLabel: {
             display: true,
-            labelString: "Cell Type"
+            labelString: "Cell Type",
           }
         }
       ]
@@ -134,7 +134,7 @@ export class BarChartComponent implements OnInit {
   removeSelected(p:string) {
     for (let i = 0; i < this.selectedProteins.length; i ++) {
       if (this.selectedProteins[i] === p) {
-        this.selectedProteins = this.selectedProteins.splice(i, 1)
+        this.selectedProteins.splice(i, 1)
         console.log(this.selectedProteins)
         this.assignData(this.selectedProteins)
         break

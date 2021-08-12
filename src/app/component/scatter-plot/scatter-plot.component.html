@@ -10,7 +10,10 @@
         <div class="col-9">
           <div class="d-flex justify-content-end">
             <div class="col-3">
-              <input id="search-data" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" placeholder="Search gene name" (ngModelChange)="searchSelectedProtein()">
+              <input id="search-data" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" placeholder="Search gene name">
+            </div>
+            <div class="col-3">
+              <button class="btn btn-primary" (click)="searchSelectedProtein()">Add</button>
             </div>
             <div class="col-2"><button class="btn btn-danger" (click)="resetSelection()">Reset</button></div>
 
@@ -19,9 +22,15 @@
       </div>
 
       <div style="display:block;align-content: center">
-        <canvas baseChart [datasets]="scatterChartData" [options]="options" [chartType]="scatterPlotType" [labels]="label" height="400px" width="1000px"></canvas>
+        <canvas baseChart
+                [datasets]="scatterChartData"
+                [options]="options"
+                [chartType]="scatterPlotType"
+                [labels]="label"
+        ></canvas>
       </div>
-      <p class="card-text">Detected proteins within the LRRK2 pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of lrrk2" id="{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+      <p class="card-text">Manually selected: <span class="badge badge-pill badge-info ml-1" *ngFor="let l of selectedProtein" id="m-{{l}}" (click)="selectProtein($event, l, true)">{{l}}</span></p>
+      <p class="card-text">Detected proteins within the LRRK2 pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of lrrk2" id="l{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
     </div>
   </div>
 
