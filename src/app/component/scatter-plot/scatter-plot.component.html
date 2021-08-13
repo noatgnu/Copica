@@ -8,29 +8,69 @@
           </h5>
         </div>
         <div class="col-9">
+
           <div class="d-flex justify-content-end">
             <div class="col-3">
               <input id="search-data" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" placeholder="Search gene name">
+
             </div>
-            <div class="col-3">
-              <button class="btn btn-primary" (click)="searchSelectedProtein()">Add</button>
+            <div class="col-8">
+              <button class="btn btn-primary mr-1" (click)="searchSelectedProtein()">Add</button>
+              <button class="btn btn-danger mr-1" (click)="resetSelection()">Reset</button>
+              <button class="btn btn-info" (click)="downloadSelectedData(data)">Download Selected Proteins</button>
             </div>
-            <div class="col-2"><button class="btn btn-danger" (click)="resetSelection()">Reset</button></div>
 
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-7">
+          <div class="card mt-2 mb-2">
+            <div class="card-body">
+              <div style="display:block;align-content: center">
+                <canvas baseChart
+                        [datasets]="scatterChartData"
+                        [options]="options"
+                        [chartType]="scatterPlotType"
+                        [labels]="label"
+                ></canvas>
+            </div>
+          </div>
 
-      <div style="display:block;align-content: center">
-        <canvas baseChart
-                [datasets]="scatterChartData"
-                [options]="options"
-                [chartType]="scatterPlotType"
-                [labels]="label"
-        ></canvas>
+          </div>
+        </div>
+        <div class="col-5" *ngIf="rows">
+          <ngx-datatable
+            class="bootstrap"
+            [rows]="rows"
+            [columns]="columns"
+            [limit]="5"
+            [rowHeight]="40"
+            [columnMode]="'force'"
+            [headerHeight]="30"
+            [footerHeight]="70"
+          ></ngx-datatable>
+        </div>
       </div>
-      <p class="card-text">Manually selected: <span class="badge badge-pill badge-info ml-1" *ngFor="let l of selectedProtein" id="m-{{l}}" (click)="selectProtein($event, l, true)">{{l}}</span></p>
-      <p class="card-text">Detected proteins within the LRRK2 pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of lrrk2" id="l{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+      <p class="card-text" *ngFor="let c of cellTypes">
+        Selected in {{c}} sample:
+        <span class="badge badge-pill badge-info ml-1"
+              *ngFor="let s of selectedProtein[c]" id="m-{{c + s}}" (click)="selectProtein($event, s, c, true)">{{s}}</span>
+      </p>
+      <div class="row">
+        <div class="col-auto">
+          <button class="btn btn-sm btn btn-primary ml-2" (click)="highlight('Lrrk2')">All proteins from LRRK2 pathway</button>
+          <button class="btn btn-sm btn-primary ml-2" (click)="highlight('Kinases')">All kinases</button>
+          <button class="btn btn-sm btn-primary ml-2" (click)="highlight('Phosphatases')">All phosphatases</button>
+        </div>
+
+      </div>
+
+
+      <!--<p class="card-text">LRRK2 pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of annotation['Lrrk2']" id="l{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+      <p class="card-text">Kinases pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of annotation['Kinases']" id="k{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+      <p class="card-text">Phosphatases pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of annotation['Phosphatases']" id="p{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+-->
     </div>
   </div>
 

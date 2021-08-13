@@ -36,7 +36,10 @@ export class BarChartComponent implements OnInit {
     this._data = a;
   }
 
-  private assignData(selected: string[] = ["Lrrk2"]) {
+  currentDf: IDataFrame = new DataFrame()
+
+  private assignData(selected: string[] = ["LRRK2"]) {
+
     this.selectedProteins = selected
     this.chartData = []
     const filtered: any[] = []
@@ -64,8 +67,9 @@ export class BarChartComponent implements OnInit {
       }
       this.chartData.push(a)
     }
-    console.log(this.chartData)
-    return new DataFrame(filtered);
+    console.log(filtered)
+    this.currentDf = new DataFrame(filtered)
+    return this.currentDf;
   }
 
   chartData: ChartDataSets[] = []
@@ -79,7 +83,11 @@ export class BarChartComponent implements OnInit {
         {
           scaleLabel: {
             display: true,
-            labelString: "Copy Number"
+            labelString: "Copy Number",
+            fontStyle: "bold"
+          },
+          ticks: {
+            fontStyle: "bold"
           }
         }
       ],
@@ -88,6 +96,10 @@ export class BarChartComponent implements OnInit {
           scaleLabel: {
             display: true,
             labelString: "Cell Type",
+            fontStyle: "bold"
+          },
+          ticks: {
+            fontStyle: "bold"
           }
         }
       ]
@@ -140,5 +152,22 @@ export class BarChartComponent implements OnInit {
         break
       }
     }
+  }
+
+  downloadSelectedData(data: IDataFrame) {
+    const blob = new Blob([data.toCSV()], {type: 'text/csv'})
+    const url = window.URL.createObjectURL(blob);
+
+    if (typeof(navigator.msSaveOrOpenBlob)==="function") {
+      navigator.msSaveBlob(blob, "data.csv")
+    } else {
+      const a = document.createElement("a")
+      a.href = url
+      a.download = "data.csv"
+      document.body.appendChild(a)
+      a.click();
+      document.body.removeChild(a);
+    }
+    window.URL.revokeObjectURL(url)
   }
 }

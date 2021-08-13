@@ -16,6 +16,7 @@ import { DbCellBrowseComponent } from './component/db-cell-browse/db-cell-browse
 import { DbScatterComponent } from './component/db-scatter/db-scatter.component';
 import { HomeComponent } from './component/home/home.component';
 import { BarChartComponent } from './component/bar-chart/bar-chart.component';
+import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { BarChartComponent } from './component/bar-chart/bar-chart.component';
     ReactiveFormsModule,
     ChartsModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    NgxDatatableModule
   ],
   providers: [WebService],
   bootstrap: [AppComponent]

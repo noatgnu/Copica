@@ -44,8 +44,8 @@ export class DbScatterComponent implements OnInit {
     this.loadScatterSubject.next(true);
   }
 
-  downloadSelectedData() {
-    const blob = new Blob([this.scatterDF.toCSV()], {type: 'text/csv'})
+  downloadSelectedData(data: IDataFrame) {
+    const blob = new Blob([data.toCSV()], {type: 'text/csv'})
     const url = window.URL.createObjectURL(blob);
 
     if (typeof(navigator.msSaveOrOpenBlob)==="function") {
