@@ -342,6 +342,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
 
       }
     }
+    this.assignData(this.selectedProtein, "")
   }
 
   ngAfterViewInit() {
