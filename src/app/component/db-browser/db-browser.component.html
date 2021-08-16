@@ -1,4 +1,4 @@
-<div class="container-fluid mt-4" *ngIf="oDataframe.length >0">
+<div class="container mt-4" *ngIf="this.dataframe.count() >0">
   <div class="card">
     <div class="card-body">
       <form></form>
@@ -7,14 +7,6 @@
           <div class="form-group">
             <div class="form-row">
               <div class="col-4">
-                <label for="organismSelection">Select Organism</label>
-                <select class="form-control" id="organismSelection" formControlName="organisms" (change)="updateExperimentType()">
-                  <option *ngFor="let o of organisms">
-                    {{o}}
-                  </option>
-                </select>
-              </div>
-              <div class="col-4">
                 <label for="experimentSelection">Select Experiment</label>
                 <select class="form-control" id="experimentSelection" formControlName="experimentType" (change)="updateCellType()">
                   <option *ngFor="let o of experiment">
@@ -22,11 +14,11 @@
                   </option>
                 </select>
               </div>
-              <div class="col-4">
+              <div class="col-auto">
                 <label for="cellSelection">Select Cell Type</label>
                 <select class="form-control" id="cellSelection" formControlName="cellType" multiple>
-                  <option *ngFor="let o of cellType">
-                    {{o}}
+                  <option *ngFor="let o of cellType" [value]="o">
+                    {{o.cellType}} ({{o.organism}})
                   </option>
                 </select>
               </div>

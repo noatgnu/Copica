@@ -13,11 +13,9 @@ export class DbBrowserComponent implements OnInit {
 
   form: FormGroup = this.fb.group({
     cellType: [],
-    experimentType: "",
-    organisms: ""
+    experimentType: ""
   });
   filename: any[] = []
-  organisms: any[] = []
   cellType: any[] = []
   oDataframe: any[] = [];
   experiment: any[] = []
@@ -28,17 +26,8 @@ export class DbBrowserComponent implements OnInit {
   constructor(private http: WebService, private fb: FormBuilder) {
     this.http.getIndex().subscribe(data => {
       this.dataframe = new DataFrame(<Object>data.body)
-
-      this.oDataframe = this.dataframe.toArray();
-      for (const a of this.oDataframe) {
-        if (!this.organisms.includes(a["Organisms"])) {
-          this.organisms.push(a["Organisms"])
-        }
-      }
-
-      this.temp = this.oDataframe
       const firstEntry = this.dataframe.first()
-      this.form.setValue({cellType: [firstEntry["Cell type"]], experimentType: firstEntry["Experiment Type"], organisms: firstEntry["Organisms"]})
+      this.form.setValue({cellType: {"cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}, experimentType: firstEntry["Experiment Type"]})
       //this.selectedFile = firstEntry["File"]
       this.updateExperimentType()
       this.updateCellType()
@@ -50,11 +39,9 @@ export class DbBrowserComponent implements OnInit {
 
   updateExperimentType() {
     this.experiment = []
-    for (const a of this.oDataframe) {
-      if (a["Organisms"] == this.form.value["organisms"]) {
-        if (!this.experiment.includes(a["Experiment Type"])) {
-          this.experiment.push(a["Experiment Type"])
-        }
+    for (const a of this.dataframe) {
+      if (!this.experiment.includes(a["Experiment Type"])) {
+        this.experiment.push(a["Experiment Type"])
       }
     }
     this.updateFormValue("experimentType")
@@ -63,33 +50,31 @@ export class DbBrowserComponent implements OnInit {
   updateCellType() {
     this.cellType = []
     this.selectedFile = []
-    for (const a of this.oDataframe) {
-      if (a["Organisms"] == this.form.value["organisms"] && a["Experiment Type"] == this.form.value["experimentType"]) {
+    for (const a of this.dataframe) {
+      if (a["Experiment Type"] == this.form.value["experimentType"]) {
         if (!this.cellType.includes(a["cellType"])) {
           if (this.selectedFile.length === 0) {
             this.selectedFile = [a["File"]]
           }
-          this.cellType.push(a["Cell type"])
+          this.cellType.push({"cellType": a["Cell type"], "organism": a["Organisms"]})
+
         }
       }
     }
+    console.log(this.cellType)
     this.updateFormValue("cellType")
 
   }
 
   updateFormValue(target: string) {
-    const a = {organisms: this.form.value["organisms"], experimentType: this.form.value["experimentType"], cellType: this.form.value["cellType"]}
+    const a = {experimentType: this.form.value["experimentType"], cellType: this.form.value["cellType"]}
     switch (target) {
       case "experimentType": {
         a[target] = this.experiment[0]
         break;
       }
-      case "organisms": {
-        a[target] = this.organisms[0]
-        break;
-      }
       case "cellType": {
-        a[target] = this.cellType[0]
+        a[target] = [this.cellType[0]]
         break;
       }
       default:
@@ -98,14 +83,15 @@ export class DbBrowserComponent implements OnInit {
     this.form.setValue(a)
   }
 
-
   selectCellType() {
     this.selectedFile = []
-    for (const a of this.oDataframe) {
-      if (a["Organisms"] == this.form.value["organisms"] &&
-        a["Experiment Type"] == this.form.value["experimentType"]) {
-        if (this.form.value["cellType"].includes(a["Cell type"])) {
-          this.selectedFile.push(a["File"])
+    for (const a of this.dataframe) {
+      if (a["Experiment Type"] === this.form.value["experimentType"]) {
+        for (const a2 of this.form.value["cellType"]) {
+          if (a["Organisms"] === a2["organism"] && a["Cell type"] === a2["cellType"]) {
+            this.selectedFile.push(a["File"])
+            break
+          }
         }
       }
     }
