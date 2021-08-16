@@ -219,7 +219,9 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
           radius.push(1)
         } else if (this.annotation[pathway].includes(t)) {
           if (!this.selectedProtein[c].includes(t)) {
-            this.selectedProtein[c].push(t)
+            if (temp[c][t] !== undefined){
+              this.selectedProtein[c].push(t)
+            }
           }
 
           this.sampleColors[t] = this.sampleColors[pathway]
@@ -243,7 +245,8 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       }
 
     }
-    console.log(this.rows)
+
+
     this.chart?.chart.update();
   }
   rows: any[] = []
@@ -284,7 +287,6 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       this.selectedProtein[cellType].splice(ind, 1)
 
     } else {
-      console.log("1")
       if (target.classList.contains("badge-success")) {
         //target.classList.remove("badge-success")
         //target.classList.add("badge-danger")

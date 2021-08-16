@@ -17,6 +17,8 @@ import { DbScatterComponent } from './component/db-scatter/db-scatter.component'
 import { HomeComponent } from './component/home/home.component';
 import { BarChartComponent } from './component/bar-chart/bar-chart.component';
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
+import { RandomChartComponent } from './component/random-chart/random-chart.component';
+import { SideBarComponent } from './component/side-bar/side-bar.component';
 
 
 @NgModule({
@@ -30,6 +32,8 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
     DbScatterComponent,
     HomeComponent,
     BarChartComponent,
+    RandomChartComponent,
+    SideBarComponent,
 
   ],
   imports: [
