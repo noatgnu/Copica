@@ -41,7 +41,7 @@ Isolated Microglia	Mus musculus	Standard	Isolated Microglia_single_shot.txt	1	Si
 Isolated Neurons	Mus musculus	Standard	Isolated Neurons_single_shot.txt	1	Single shot
 Isolated Oligodendrocytes	Mus musculus	Standard	Isolated Oligodendrocytes_single_shot.txt	1	Single shot
 Motor Cortex	Mus musculus	Standard	Motor Cortex_single_shot.txt	1	Single shot
-Olfactory Bulb		Standard	Olfactory Bulb_single_shot.txt	1	Single shot
+Olfactory Bulb	Mus musculus	Standard	Olfactory Bulb_single_shot.txt	1	Single shot
 Optic Nerve	Mus musculus	Standard	Optic Nerve_single_shot.txt	1	Single shot
 Prefrontal Cortex	Mus musculus	Standard	Prefrontal Cortex_single_shot.txt	1	Single shot
 Striatum	Mus musculus	Standard	Striatum_single_shot.txt	1	Single shot

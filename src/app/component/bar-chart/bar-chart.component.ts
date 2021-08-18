@@ -54,13 +54,30 @@ export class BarChartComponent implements OnInit {
     this.chartData = []
     const filtered: any[] = []
     const temp: any = {}
+    const result: any = {}
     this.labels = this.origin.getSeries("Cell type").distinct().bake().toArray()
     for (const g of this.origin.groupBy(row => row.label)) {
+      const gFirst = g.first()
+      const currentCellType = gFirst["Cell type"]
+      const currentCondition = gFirst["Condition"]
       for (const c of g.groupBy(row => row["Cell type"])) {
         for (const gn of c.groupBy(row => row["Gene names"])) {
           const first = gn.first()
           if (first["Gene names"] in selected) {
-            
+            if (!(first["Gene names"] in result)) {
+              result[first["Gene names"]] = {x: [], y: [], error_y: {
+                  type: "data",
+                  array: [],
+                  visible: true
+                },
+                type: 'scatter',
+                name: first["Gene names"]
+              }
+            }
+            if (gn.count() > 1) {
+              const d = gn.getSeries("Copy number").bake().toArray()
+              console.log(d)
+            }
           }
         }
       }
