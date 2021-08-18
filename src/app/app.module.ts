@@ -21,6 +21,7 @@ import { RandomChartComponent } from './component/random-chart/random-chart.comp
 import { SideBarComponent } from './component/side-bar/side-bar.component';
 import * as PlotlyJS from 'plotly.js-dist-min';
 import {PlotlyModule} from "angular-plotly.js";
+import {IconsModule} from "./icons/icons.module";
 
 PlotlyModule.plotlyjs = PlotlyJS
 
@@ -49,7 +50,8 @@ PlotlyModule.plotlyjs = PlotlyJS
     AppRoutingModule,
     FormsModule,
     NgxDatatableModule,
-    PlotlyModule
+    PlotlyModule,
+    IconsModule
   ],
   providers: [WebService],
   bootstrap: [AppComponent]

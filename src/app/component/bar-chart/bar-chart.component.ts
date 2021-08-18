@@ -12,7 +12,7 @@ import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
 })
 export class BarChartComponent implements OnInit {
   graphData: any[] = []
-  graphLayout = {width: 1000, height: 500, title: 'Graph',
+  graphLayout = {width: 1000, height: 700, title: 'Graph', margin: {l: 100, r:100, b:100, t:100},
     xaxis: {
       title: "Cell type"
     },
@@ -49,13 +49,9 @@ export class BarChartComponent implements OnInit {
 
   private assignData(selected: string[] = ["LRRK2"]) {
     this.graphData = []
-
     this.selectedProteins = selected
-    this.chartData = []
     const filtered: any[] = []
-    const temp: any = {}
     const result: any = {}
-    this.labels = this.origin.getSeries("Cell type").distinct().bake().toArray()
     for (const g of this.origin.groupBy(row => row.label)) {
       const gFirst = g.first()
 
@@ -64,35 +60,32 @@ export class BarChartComponent implements OnInit {
       console.log(gFirst["label"])
       for (const gn of g.groupBy(rowg => rowg["Gene names"])) {
         const first = gn.first()
-
-        for (const s of selected) {
-          if (first["Gene names"] === s) {
-            if (!(first["Gene names"] in result)) {
-              result[first["Gene names"]] = {x: [], y: [], error_y: {
-                  type: "data",
-                  array: [],
-                  visible: false
-                },
-                type: 'bar',
-                name: first["Gene names"]
-              }
+        if (selected.includes(first["Gene names"])) {
+          if (!(first["Gene names"] in result)) {
+            result[first["Gene names"]] = {x: [], y: [], error_y: {
+                type: "data",
+                array: [],
+                visible: false
+              },
+              type: 'bar',
+              name: first["Gene names"]
             }
-
-            if (gn.count() > 1) {
-              const d = gn.getSeries("Copy number").parseFloats().bake().toArray()
-              const average = gn.getSeries("Copy number").parseFloats().bake().average()
-              const std = gn.getSeries("Copy number").parseFloats().bake().std()
-              const sterr = std/Math.sqrt(gn.count())
-              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
-              result[first["Gene names"]].y.push(average)
-              result[first["Gene names"]].error_y.visible = true
-              result[first["Gene names"]].error_y.array.push(sterr)
-              console.log(std)
-              console.log(d)
-            } else {
-              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
-              result[first["Gene names"]].y.push(first["Copy number"])
-            }
+          }
+          for (const r of gn) {
+            filtered.push(r)
+          }
+          if (gn.count() > 1) {
+            const d = gn.getSeries("Copy number").parseFloats().bake().toArray()
+            const average = gn.getSeries("Copy number").parseFloats().bake().average()
+            const std = gn.getSeries("Copy number").parseFloats().bake().std()
+            const sterr = std/Math.sqrt(gn.count())
+            result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+            result[first["Gene names"]].y.push(average)
+            result[first["Gene names"]].error_y.visible = true
+            result[first["Gene names"]].error_y.array.push(sterr)
+          } else {
+            result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+            result[first["Gene names"]].y.push(first["Copy number"])
           }
         }
       }
@@ -100,90 +93,16 @@ export class BarChartComponent implements OnInit {
     for (const r in result) {
       this.graphData.push(result[r])
     }
-    for (const r of this.origin) {
-      if (!(r["Cell type"] in temp)) {
-        temp[r["Cell type"]] = {}
-      }
-      for (const s of selected) {
-        if (!(s in temp[r["Cell type"]])) {
-          temp[r["Cell type"]][s] = 0
-        }
-      }
-      temp[r["Cell type"]][r["Gene names"]] = r["Copy number"]
-      if (selected.includes(r["Gene names"])) {
-        filtered.push(r)
-      }
-    }
 
-    for (const s of selected) {
-      const a: ChartDataSets = {data: [], label: s}
-
-      for (const t of this.labels) {
-        a.data?.push(temp[t][s])
-
-
-      }
-      this.chartData.push(a)
-    }
     console.log(filtered)
     this.currentDf = new DataFrame(filtered)
 
     return this.currentDf;
   }
 
-  chartData: ChartDataSets[] = []
-
-  @ViewChild(BaseChartDirective) chart?: QueryList<BaseChartDirective>;
   colors: string[] = [];
   pointRadius: number[] = []
-  options: ChartOptions = {
-    scales: {
-      yAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "Copy Number",
-            fontStyle: "bold"
-          },
-          ticks: {
-            fontStyle: "bold"
-          }
-        }
-      ],
-      xAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "Cell Type",
-            fontStyle: "bold"
-          },
-          ticks: {
-            fontStyle: "bold"
-          }
-        }
-      ]
-    },
-    responsive: true,
-    //maintainAspectRatio: true,
-    animation: {
-      duration: 10
-    },
-    plugins : {
-      chartJsPluginErrorBars: {
-        color: '#666',
-        width: '60%',
-        lineWidth: 2,
-        absoluteValues: false
-      }
-    }
-  }
-  optionsradar: ChartOptions = {
-    responsive: true,
-    //maintainAspectRatio: true,
-    animation: {
-      duration: 10
-    },
-  }
+
   chartType:ChartType = "bar";
   ngOnChanges(changes: SimpleChanges) {
     for (const p in changes) {

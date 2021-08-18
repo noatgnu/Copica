@@ -12,6 +12,30 @@ import {WebService} from "../../service/web.service";
   styleUrls: ['./scatter-plot.component.css'],
 })
 export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
+  @ViewChild('myTable') table: any;
+  tableFilterModel:any = "";
+
+  tempRows: any[] = []
+
+  updateFilter() {
+    const val = this.tableFilterModel.toLowerCase()
+    if (val.length !== 0) {
+      const temp = this.rows.filter(function (d) {
+        return d["Gene names"].toLowerCase().indexOf(val) !== -1 || !val;
+      })
+      this.rows = temp
+    } else {
+      this.rows = [...this.tempRows]
+    }
+    console.log(this.rows)
+
+    this.table.offset = 0
+
+  }
+
+  toggleExpandGroup(group: any) {
+    this.table.groupHeader.toggleExpandGroup(group);
+  }
   model: any = "";
   toggleClass: boolean = true;
   selectedElement: Element[] = [];
@@ -250,6 +274,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     }
     this._data = new DataFrame(filtered);
     this.rows = this._data.toArray();
+    this.tempRows = this._data.toArray();
     for (let i = 0; i < this.rows.length; i++) {
       if (typeof this.rows[i]["Copy number"] === "number") {
         this.rows[i]["Copy number"] = this.rows[i]["Copy number"].toFixed(2)
@@ -262,7 +287,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   }
   rows: any[] = []
   columns = [
-    {prop: "Gene names"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}, {name: "Replicate", prop: "Fraction"}, {name: "Condition", prop: "Condition"}
+    {prop: "Gene names"}, {name: "Accession", prop: "Accession IDs"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}, {name: "Replicate", prop: "Fraction"}, {name: "Condition", prop: "Condition"}
   ]
   scatterChartData: ChartDataSets[] = []
   scatterPlotType: ChartType = "scatter";

@@ -39,17 +39,44 @@
 
           </div>
         </div>
-        <div class="col-5" *ngIf="rows">
+
+        <div class="col-5 mt-2" *ngIf="rows">
+          <div class="row">
+            <div class="form-group col-auto">
+              <input type="text" class="form-control" [(ngModel)]="tableFilterModel" (keyup)="updateFilter()" placeholder="Filter table with gene name">
+            </div>
+
+          </div>
+
           <ngx-datatable
             class="bootstrap"
             [rows]="rows"
             [columns]="columns"
-            [limit]="5"
+            [limit]="6"
             [rowHeight]="40"
             [columnMode]="'force'"
             [headerHeight]="30"
             [footerHeight]="70"
-          ></ngx-datatable>
+            [groupRowsBy]="'Gene names'"
+            [groupExpansionDefault]="true"
+            #myTable
+          >
+            <ngx-datatable-group-header [rowHeight]="50" #myGroupHeader>
+              <ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template>
+                <div style="padding-left: 5px">
+                  <a
+
+                    [class.datatable-icon-right]="!expanded"
+                    [class.datatable-icon-down]="expanded"
+                    title="Expand/Collapse Group"
+                    (click)="toggleExpandGroup(group)"
+                  >
+                    <b>{{group.value[0]["Gene names"]}}</b>
+                  </a>
+                </div>
+              </ng-template>
+            </ngx-datatable-group-header>
+          </ngx-datatable>
         </div>
       </div>
       <p class="card-text" *ngFor="let c of cellTypes">
