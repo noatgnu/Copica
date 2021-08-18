@@ -58,29 +58,47 @@ export class BarChartComponent implements OnInit {
     this.labels = this.origin.getSeries("Cell type").distinct().bake().toArray()
     for (const g of this.origin.groupBy(row => row.label)) {
       const gFirst = g.first()
+
       const currentCellType = gFirst["Cell type"]
       const currentCondition = gFirst["Condition"]
-      for (const c of g.groupBy(row => row["Cell type"])) {
-        for (const gn of c.groupBy(row => row["Gene names"])) {
-          const first = gn.first()
-          if (first["Gene names"] in selected) {
+      console.log(gFirst["label"])
+      for (const gn of g.groupBy(rowg => rowg["Gene names"])) {
+        const first = gn.first()
+
+        for (const s of selected) {
+          if (first["Gene names"] === s) {
             if (!(first["Gene names"] in result)) {
               result[first["Gene names"]] = {x: [], y: [], error_y: {
                   type: "data",
                   array: [],
-                  visible: true
+                  visible: false
                 },
-                type: 'scatter',
+                type: 'bar',
                 name: first["Gene names"]
               }
             }
+
             if (gn.count() > 1) {
-              const d = gn.getSeries("Copy number").bake().toArray()
+              const d = gn.getSeries("Copy number").parseFloats().bake().toArray()
+              const average = gn.getSeries("Copy number").parseFloats().bake().average()
+              const std = gn.getSeries("Copy number").parseFloats().bake().std()
+              const sterr = std/Math.sqrt(gn.count())
+              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+              result[first["Gene names"]].y.push(average)
+              result[first["Gene names"]].error_y.visible = true
+              result[first["Gene names"]].error_y.array.push(sterr)
+              console.log(std)
               console.log(d)
+            } else {
+              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+              result[first["Gene names"]].y.push(first["Copy number"])
             }
           }
         }
       }
+    }
+    for (const r in result) {
+      this.graphData.push(result[r])
     }
     for (const r of this.origin) {
       if (!(r["Cell type"] in temp)) {
@@ -99,15 +117,12 @@ export class BarChartComponent implements OnInit {
 
     for (const s of selected) {
       const a: ChartDataSets = {data: [], label: s}
-      const barGraph = {x: [], y: [], type: 'bar', name: s}
 
       for (const t of this.labels) {
         a.data?.push(temp[t][s])
-        barGraph.x.push(<never>t)
-        barGraph.y.push(<never>temp[t][s])
+
 
       }
-      this.graphData.push(barGraph)
       this.chartData.push(a)
     }
     console.log(filtered)
