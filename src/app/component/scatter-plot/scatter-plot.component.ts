@@ -126,9 +126,19 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     const temp: any = {}
     const filtered: any[] = []
     this.scatterChartData = []
-    const tempTypes: any[] = this.original.getSeries("Cell type").distinct().bake().toArray()
+    const tempTypes: any = {}
+    const group = this.original.groupBy(row => row.label)
+    for (const g of group) {
+      for (const r of g) {
+        const tempLabel = r["label"]+"_"+r["Fraction"]
+        if (!(tempLabel in tempTypes)) {
+          tempTypes[tempLabel] = true
+        }
+      }
+    }
+    //const tempTypes: any[] = this.original.getSeries("label").distinct().bake().toArray()
     this.cellTypes = []
-    for (const t of tempTypes) {
+    for (const t in tempTypes) {
       if (t !== "") {
         this.cellTypes.push(t)
 
@@ -148,17 +158,18 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       if (r["Gene names"] && r["Copy number"] && r["Rank"]) {
         r["Gene names"] = r["Gene names"].toUpperCase()
         const b = r["Gene names"].split(";")
-        if (!(r["Cell type"] in temp)) {
-          temp[r["Cell type"]] = {}
+        const tempLabel = r["label"]+"_"+r["Fraction"]
+        if (!(tempLabel in temp)) {
+          temp[tempLabel] = {}
         }
-        if (!(r["Gene names"] in temp[r["Cell type"]])) {
-          temp[r["Cell type"]][r["Gene names"]] = {x: 0, y: 0}
+        if (!(r["Gene names"] in temp[tempLabel])) {
+          temp[tempLabel][r["Gene names"]] = {x: 0, y: 0}
         }
 
-        temp[r["Cell type"]][r["Gene names"]].y = Math.log10(r["Copy number"])
-        temp[r["Cell type"]][r["Gene names"]].x = r["Rank"]
-        if (r["Cell type"] in selectedProteins) {
-          if (selectedProteins[r["Cell type"]].includes(r["Gene names"])) {
+        temp[tempLabel][r["Gene names"]].y = Math.log10(r["Copy number"])
+        temp[tempLabel][r["Gene names"]].x = r["Rank"]
+        if (tempLabel in selectedProteins) {
+          if (selectedProteins[tempLabel].includes(r["Gene names"])) {
             filtered.push(r)
           }
         }
@@ -251,7 +262,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   }
   rows: any[] = []
   columns = [
-    {prop: "Gene names"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}
+    {prop: "Gene names"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}, {name: "Replicate", prop: "Fraction"}, {name: "Condition", prop: "Condition"}
   ]
   scatterChartData: ChartDataSets[] = []
   scatterPlotType: ChartType = "scatter";

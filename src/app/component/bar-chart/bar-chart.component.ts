@@ -11,6 +11,15 @@ import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
   styleUrls: ['./bar-chart.component.css']
 })
 export class BarChartComponent implements OnInit {
+  graphData: any[] = []
+  graphLayout = {width: 1000, height: 500, title: 'Graph',
+    xaxis: {
+      title: "Cell type"
+    },
+    yaxis: {
+      title: "Copy number"
+    }
+  }
   search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -39,12 +48,23 @@ export class BarChartComponent implements OnInit {
   currentDf: IDataFrame = new DataFrame()
 
   private assignData(selected: string[] = ["LRRK2"]) {
+    this.graphData = []
 
     this.selectedProteins = selected
     this.chartData = []
     const filtered: any[] = []
     const temp: any = {}
     this.labels = this.origin.getSeries("Cell type").distinct().bake().toArray()
+    for (const g of this.origin.groupBy(row => row.label)) {
+      for (const c of g.groupBy(row => row["Cell type"])) {
+        for (const gn of c.groupBy(row => row["Gene names"])) {
+          const first = gn.first()
+          if (first["Gene names"] in selected) {
+            
+          }
+        }
+      }
+    }
     for (const r of this.origin) {
       if (!(r["Cell type"] in temp)) {
         temp[r["Cell type"]] = {}
@@ -62,13 +82,20 @@ export class BarChartComponent implements OnInit {
 
     for (const s of selected) {
       const a: ChartDataSets = {data: [], label: s}
+      const barGraph = {x: [], y: [], type: 'bar', name: s}
+
       for (const t of this.labels) {
         a.data?.push(temp[t][s])
+        barGraph.x.push(<never>t)
+        barGraph.y.push(<never>temp[t][s])
+
       }
+      this.graphData.push(barGraph)
       this.chartData.push(a)
     }
     console.log(filtered)
     this.currentDf = new DataFrame(filtered)
+
     return this.currentDf;
   }
 
@@ -109,6 +136,14 @@ export class BarChartComponent implements OnInit {
     animation: {
       duration: 10
     },
+    plugins : {
+      chartJsPluginErrorBars: {
+        color: '#666',
+        width: '60%',
+        lineWidth: 2,
+        absoluteValues: false
+      }
+    }
   }
   optionsradar: ChartOptions = {
     responsive: true,
@@ -117,7 +152,7 @@ export class BarChartComponent implements OnInit {
       duration: 10
     },
   }
-  chartType: ChartType = "bar";
+  chartType:ChartType = "bar";
   ngOnChanges(changes: SimpleChanges) {
     for (const p in changes) {
       if (p==="data") {

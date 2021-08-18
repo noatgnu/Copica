@@ -13,21 +13,27 @@
         <p class="card-text">
           Selected proteins: <span *ngFor="let p of selectedProteins" class="badge badge-pill badge-success mr-2" (click)="removeSelected(p)">{{p}}</span>
         </p>
+      <plotly-plot
+        [data]="graphData"
+        [layout]="graphLayout"
+        [updateOnDataChange]="true"
+        [updateOnLayoutChange]="true"
+      ></plotly-plot>
+      <div>
 
-      <div style="display:block">
-        <canvas baseChart
+        <!--<canvas baseChart
                 [datasets]="chartData"
                 [labels]="labels"
                 [options]="options"
                 [legend]="true"
                 [chartType]="chartType">
-        </canvas>
-        <canvas baseChart
+        </canvas>-->
+<!--        <canvas baseChart
           [datasets]="chartData"
           [options]="optionsradar"
           [labels]="labels"
           [chartType]="'radar'">
-        </canvas>
+        </canvas>-->
       </div>
 
       <div class="row">

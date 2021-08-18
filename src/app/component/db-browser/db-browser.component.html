@@ -16,9 +16,14 @@
               </div>
               <div class="col-auto">
                 <label for="cellSelection">Select Cell Type</label>
-                <select class="form-control" id="cellSelection" formControlName="cellType" multiple>
+                <select class="form-control" id="cellSelection" formControlName="cellType" multiple *ngIf="form.value['experimentType']==='Fractionated'">
                   <option *ngFor="let o of cellType" [value]="o">
-                    {{o.cellType}} ({{o.organism}})
+                    {{o.cellType}} ({{o.organism}}) {{o.cond}}-{{o.fraction}}
+                  </option>
+                </select>
+                <select class="form-control" id="cellSelection" formControlName="cellType" multiple *ngIf="form.value['experimentType']==='Single shot'">
+                  <option *ngFor="let o of cellType" [value]="o">
+                    {{o.cellType}} ({{o.organism}}) {{o.cond}}
                   </option>
                 </select>
               </div>

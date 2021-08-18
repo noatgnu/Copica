@@ -24,8 +24,16 @@ export class WebService {
     return this.http.get("assets/index.json", {observe: "response"})
   }
 
+  getIndexText() {
+    return this.http.get("assets/index.txt", {observe: "response", responseType: "text"})
+  }
+
   getDBjson(filename: string) {
     return this.http.get("assets/" + filename, {observe: "response"})
+  }
+
+  getDBtext(filename: string) {
+    return this.http.get("assets/" + filename, {observe: "response", responseType: "text"})
   }
 
   getFilter() {

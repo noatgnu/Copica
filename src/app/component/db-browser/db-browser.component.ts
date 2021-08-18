@@ -1,5 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {WebService} from "../../service/web.service";
+import * as dataforge from "data-forge"
 import {DataFrame, IDataFrame} from "data-forge";
 import {FormBuilder, FormGroup} from "@angular/forms";
 
@@ -24,10 +25,13 @@ export class DbBrowserComponent implements OnInit {
   @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
 
   constructor(private http: WebService, private fb: FormBuilder) {
-    this.http.getIndex().subscribe(data => {
-      this.dataframe = new DataFrame(<Object>data.body)
+    this.http.getIndexText().subscribe(data => {
+      const a = dataforge.fromCSV(<string>data.body)
+      this.dataframe = dataforge.fromCSV(<string>data.body)
+
       const firstEntry = this.dataframe.first()
-      this.form.setValue({cellType: {"cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}, experimentType: firstEntry["Experiment Type"]})
+      console.log(firstEntry)
+      this.form.setValue({cellType: [{"cond": firstEntry["Condition"], "fraction": firstEntry["Fraction"], "cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}], experimentType: firstEntry["Experiment type"]})
       //this.selectedFile = firstEntry["File"]
       this.updateExperimentType()
       this.updateCellType()
@@ -40,8 +44,8 @@ export class DbBrowserComponent implements OnInit {
   updateExperimentType() {
     this.experiment = []
     for (const a of this.dataframe) {
-      if (!this.experiment.includes(a["Experiment Type"])) {
-        this.experiment.push(a["Experiment Type"])
+      if (!this.experiment.includes(a["Experiment type"])) {
+        this.experiment.push(a["Experiment type"])
       }
     }
     this.updateFormValue("experimentType")
@@ -51,12 +55,12 @@ export class DbBrowserComponent implements OnInit {
     this.cellType = []
     this.selectedFile = []
     for (const a of this.dataframe) {
-      if (a["Experiment Type"] == this.form.value["experimentType"]) {
+      if (a["Experiment type"] == this.form.value["experimentType"]) {
         if (!this.cellType.includes(a["cellType"])) {
           if (this.selectedFile.length === 0) {
             this.selectedFile = [a["File"]]
           }
-          this.cellType.push({"cellType": a["Cell type"], "organism": a["Organisms"]})
+          this.cellType.push({"cellType": a["Cell type"], "organism": a["Organisms"], "cond": a["Condition"], "fraction": a["Fraction"]})
 
         }
       }
@@ -86,9 +90,9 @@ export class DbBrowserComponent implements OnInit {
   selectCellType() {
     this.selectedFile = []
     for (const a of this.dataframe) {
-      if (a["Experiment Type"] === this.form.value["experimentType"]) {
+      if (a["Experiment type"] === this.form.value["experimentType"]) {
         for (const a2 of this.form.value["cellType"]) {
-          if (a["Organisms"] === a2["organism"] && a["Cell type"] === a2["cellType"]) {
+          if (a["Organisms"] === a2["organism"] && a["Cell type"] === a2["cellType"] && a["Condition"] === a2["cond"] && a["Fraction"] === a2["fraction"]) {
             this.selectedFile.push(a["File"])
             break
           }
@@ -102,27 +106,23 @@ export class DbBrowserComponent implements OnInit {
     this.selectCellType()
     const dataDF: IDataFrame[] = []
     for (const s of this.selectedFile) {
-      this.http.getDBjson(s).subscribe(data => {
+      this.http.getDBtext(s).subscribe(data => {
         if (this.selectedFile.length > 1) {
-          dataDF.push(new DataFrame(<Object>data.body))
+
+          dataDF.push(dataforge.fromCSV(<string>data.body))
           if (this.selectedFile.length === dataDF.length) {
             this.selectedDataframe.emit(DataFrame.concat(dataDF).bake());
           }
         } else {
-          this.selectedDataframe.emit(new DataFrame(<Object>data.body))
+          this.selectedDataframe.emit(dataforge.fromCSV(<string>data.body))
         }
       })
     }
-
-
-  }
-
-  downloadSelected() {
-
   }
 
   ngOnInit(): void {
   }
+
 
 
 }

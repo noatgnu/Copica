@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
+import * as dataforge from "data-forge"
 import {WebService} from "../../service/web.service";
 import {BehaviorSubject, Observable} from "rxjs";
 import {FormBuilder} from "@angular/forms";
@@ -12,7 +13,6 @@ import {FormBuilder} from "@angular/forms";
 export class DbCellBrowseComponent implements OnInit {
   indDataframe: IDataFrame = new DataFrame();
   dataArray: IDataFrame[] = []
-  entireData: IDataFrame = new DataFrame();
   geneList: string[] = []
   organism: string[] = []
   experiment: string[] = []
@@ -27,13 +27,13 @@ export class DbCellBrowseComponent implements OnInit {
   });
 
   constructor(private http: WebService, private fb: FormBuilder) {
-    this.http.getIndex().subscribe(data => {
-      this.indDataframe = new DataFrame(<Object>data.body)
+    this.http.getIndexText().subscribe(data => {
+      this.indDataframe = dataforge.fromCSV(<string>data.body)
       const first = this.indDataframe.first();
       console.log(first)
       this.form.setValue({
         organisms: first["Organisms"],
-        experiment: first["Experiment Type"]})
+        experiment: first["Experiment type"]})
 
       this.organism = this.indDataframe.getSeries("Organisms").distinct().bake().toArray()
       //this.experiment = this.indDataframe.getSeries("Experiment Type").distinct().bake().toArray()
@@ -46,19 +46,20 @@ export class DbCellBrowseComponent implements OnInit {
           this.dataMap[r["Organisms"]] = {}
           this.dfMap[r["Organisms"]] = {}
         }
-        if (!(r["Experiment Type"] in this.dataMap[r["Organisms"]])) {
-          this.dataMap[r["Organisms"]][r["Experiment Type"]] = []
-          this.dfMap[r["Organisms"]][r["Experiment Type"]] = new DataFrame();
+        if (!(r["Experiment type"] in this.dataMap[r["Organisms"]])) {
+          this.dataMap[r["Organisms"]][r["Experiment type"]] = []
+          this.dfMap[r["Organisms"]][r["Experiment type"]] = new DataFrame();
 
         }
 
-        this.http.getDBjson(r["File"]).subscribe(data => {
+        this.http.getDBtext(r["File"]).subscribe(data => {
           co ++
-          const a =new DataFrame(<Object>data.body)
-          this.dataMap[r["Organisms"]][r["Experiment Type"]].push(a)
+          const a =dataforge.fromCSV(<string>data.body)
+          this.dataMap[r["Organisms"]][r["Experiment type"]].push(a)
           if (co === rowNumb) {
             console.log("concat")
             for (const o in this.dataMap) {
+              console.log(o)
               for (const e in this.dataMap[o]) {
                 this.dfMap[o][e] = DataFrame.concat(this.dataMap[o][e]).bake()
               }
@@ -73,6 +74,7 @@ export class DbCellBrowseComponent implements OnInit {
             this.selectData()
             //this.geneList = this.entireData.getSeries("Gene names").distinct().bake().toArray()
             this.fileLoaded.next(true);
+            console.log(this.dfMap);
           }
         })
       }
@@ -87,14 +89,13 @@ export class DbCellBrowseComponent implements OnInit {
     console.log(this.form.value)
 
     const experiment: string[] = []
-    console.log(this.dfMap[this.form.value["organism"]])
-    for (const i in this.dfMap[this.form.value["organism"]]) {
-      console.log(i)
-      experiment.push(i[0])
+
+    for (const i in this.dfMap[this.form.value["organisms"]]) {
+      experiment.push(i)
     }
     this.experiment = experiment;
     this.form.setValue({
-      organism: this.form.value["organism"],
+      organisms: this.form.value["organisms"],
       experiment: experiment[0]
     })
     this.selectData()

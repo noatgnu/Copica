@@ -19,7 +19,10 @@ import { BarChartComponent } from './component/bar-chart/bar-chart.component';
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import { RandomChartComponent } from './component/random-chart/random-chart.component';
 import { SideBarComponent } from './component/side-bar/side-bar.component';
+import * as PlotlyJS from 'plotly.js-dist-min';
+import {PlotlyModule} from "angular-plotly.js";
 
+PlotlyModule.plotlyjs = PlotlyJS
 
 @NgModule({
   declarations: [
@@ -45,7 +48,8 @@ import { SideBarComponent } from './component/side-bar/side-bar.component';
     ChartsModule,
     AppRoutingModule,
     FormsModule,
-    NgxDatatableModule
+    NgxDatatableModule,
+    PlotlyModule
   ],
   providers: [WebService],
   bootstrap: [AppComponent]

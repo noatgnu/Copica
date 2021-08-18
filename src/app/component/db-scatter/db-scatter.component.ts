@@ -41,6 +41,7 @@ export class DbScatterComponent implements OnInit {
   scatterDataHandler(e: IDataFrame) {
     this.scatterData = e;
     this.scatterDF = e;
+    console.log(e)
     this.loadScatterSubject.next(true);
   }
 
