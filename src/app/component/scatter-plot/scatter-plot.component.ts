@@ -151,13 +151,11 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     const filtered: any[] = []
     this.scatterChartData = []
     const tempTypes: any = {}
-    const group = this.original.groupBy(row => row.label)
-    for (const g of group) {
-      for (const r of g) {
-        const tempLabel = r["label"]+"_"+r["Fraction"]
-        if (!(tempLabel in tempTypes)) {
-          tempTypes[tempLabel] = true
-        }
+    const group = this.original.getSeries("label").distinct().bake().toArray()
+    for (const r of group) {
+      const tempLabel = r
+      if (!(tempLabel in tempTypes)) {
+        tempTypes[tempLabel] = true
       }
     }
     //const tempTypes: any[] = this.original.getSeries("label").distinct().bake().toArray()
@@ -178,50 +176,83 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
 
     }
     this.label = this.original.getSeries("Gene names").distinct().bake().toArray()
-    for (const r of this.original) {
-      if (r["Gene names"] && r["Copy number"] && r["Rank"]) {
-        r["Gene names"] = r["Gene names"].toUpperCase()
-        const b = r["Gene names"].split(";")
-        const tempLabel = r["label"]+"_"+r["Fraction"]
-        if (!(tempLabel in temp)) {
-          temp[tempLabel] = {}
-        }
-        if (!(r["Gene names"] in temp[tempLabel])) {
-          temp[tempLabel][r["Gene names"]] = {x: 0, y: 0}
-        }
-
-        temp[tempLabel][r["Gene names"]].y = Math.log10(r["Copy number"])
-        temp[tempLabel][r["Gene names"]].x = r["Rank"]
-        if (tempLabel in selectedProteins) {
-          if (selectedProteins[tempLabel].includes(r["Gene names"])) {
-            filtered.push(r)
+    for (const g of this.original.groupBy(row => row.label)) {
+      for (const re of g.groupBy(row => row["Gene names"])) {
+        for (const rem of re.groupBy(row => row["Accession IDs"])) {
+          const r = rem.first()
+          const b = r["Gene names"].split(";")
+          const tempLabel = r["label"]
+          if (!(tempLabel in temp)) {
+            temp[tempLabel] = {}
           }
-        }
 
-        for (const v of b) {
-          for (const f in this.http.filters) {
-            if (!(f in this.annotation)) {
-              this.annotation[f] = []
+          if (!(r["Gene names"] in temp[tempLabel])) {
+            temp[tempLabel][r["Gene names"]] = {x: 0, y: 0}
+          }
+          let x = parseFloat(r["Rank"])
+          let y = parseFloat(r["Copy number"])
+          if (rem.count() > 1) {
+            //console.log(rem)
+            const xArray = rem.getSeries("Rank").bake().toArray()
+            const yArray = rem.getSeries("Copy number").bake().toArray()
+            let rank = 0
+            let copyNumber = 0
+            for (let i = 0; i < xArray.length; i ++) {
+              if (typeof xArray[i] === "string") {
+                rank = rank + parseFloat(xArray[i])
+              } else {
+                rank = rank + xArray[i]
+              }
+              if (typeof yArray[i] === "string") {
+                copyNumber = copyNumber + parseFloat(yArray[i])
+              } else {
+                copyNumber = copyNumber + yArray[i]
+              }
+            }
+            x = rank/xArray.length
+            y = copyNumber/yArray.length
+            r["Rank"] = x
+            r["Copy number"] = y
+          }
+          if (x !== 0 && y !== 0) {
+            temp[tempLabel][r["Gene names"]].y = Math.log10(y)
+            temp[tempLabel][r["Gene names"]].x = x
+            if (tempLabel in selectedProteins) {
+              if (selectedProteins[tempLabel].includes(r["Gene names"])) {
+
+                filtered.push(r)
+              }
             }
 
-            if (this.http.filters[f].includes(v)) {
-
-                if (!(this.annotation[f].includes(r["Gene names"]))) {
-                  this.annotation[f].push(r["Gene names"])
+            for (const v of b) {
+              for (const f in this.http.filters) {
+                if (!(f in this.annotation)) {
+                  this.annotation[f] = []
                 }
 
+                if (this.http.filters[f].includes(v)) {
+
+                  if (!(this.annotation[f].includes(r["Gene names"]))) {
+                    this.annotation[f].push(r["Gene names"])
+                  }
+
+                }
+              }
+            }
+            if (Object.keys(selectedProteins).length === 0) {
+              if (pathway in this.annotation) {
+                if (this.annotation[pathway].includes(r["Gene names"])) {
+                  filtered.push(r)
+                }
+              }
             }
           }
+
         }
-        if (Object.keys(selectedProteins).length === 0) {
-          if (pathway in this.annotation) {
-            if (this.annotation[pathway].includes(r["Gene names"])) {
-              filtered.push(r)
-            }
-          }
-        }
+
       }
     }
+
     for (const c of this.cellTypes) {
       const a: ChartDataSets = {
         backgroundColor: this.sampleColors[c],
@@ -238,34 +269,40 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       const radius: number[] = []
       for (const t of this.label) {
         a.data?.push(temp[c][t])
-        if (Object.keys(selectedProteins).length>0) {
-          if (selectedProteins[c].includes(t)) {
-            if (!(t in this.sampleColors)){
-              this.sampleColors[t] = this.getRandomColor()
+        console.log(temp[c][t])
+        if (temp[c][t] !== undefined) {
+          if (Object.keys(selectedProteins).length>0) {
+            if (selectedProteins[c].includes(t)) {
+              if (!(t in this.sampleColors)){
+                this.sampleColors[t] = this.getRandomColor()
+              }
+              color.push(this.sampleColors[t])
+              radius.push(5)
+            } else {
+              color.push(this.sampleColors[c])
+              radius.push(1)
             }
-            color.push(this.sampleColors[t])
+          } else if (pathway === "") {
+            color.push(this.sampleColors[c])
+            radius.push(1)
+          } else if (this.annotation[pathway].includes(t)) {
+
+            if (!this.selectedProtein[c].includes(t)) {
+
+              if (temp[c][t] !== undefined){
+                this.selectedProtein[c].push(t)
+              }
+            }
+
+            this.sampleColors[t] = this.sampleColors[pathway]
+            color.push(this.sampleColors[pathway])
             radius.push(5)
           } else {
             color.push(this.sampleColors[c])
             radius.push(1)
           }
-        } else if (pathway === "") {
-          color.push(this.sampleColors[c])
-          radius.push(1)
-        } else if (this.annotation[pathway].includes(t)) {
-          if (!this.selectedProtein[c].includes(t)) {
-            if (temp[c][t] !== undefined){
-              this.selectedProtein[c].push(t)
-            }
-          }
-
-          this.sampleColors[t] = this.sampleColors[pathway]
-          color.push(this.sampleColors[pathway])
-          radius.push(5)
-        } else {
-          color.push(this.sampleColors[c])
-          radius.push(1)
         }
+
       }
       a.pointBackgroundColor = color
       a.pointBorderColor = color

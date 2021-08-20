@@ -102,7 +102,8 @@ export class DbBrowserComponent implements OnInit {
     //this.http.getDBjson(this.form.value[""])
   }
 
-  loadVisual() {
+  loadVisual(e: MouseEvent) {
+    e.stopPropagation()
     this.selectCellType()
     const dataDF: IDataFrame[] = []
     for (const s of this.selectedFile) {

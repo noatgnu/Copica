@@ -1,0 +1,111 @@
+<div class="container-fluid mt-2" *ngIf="data">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-3">
+          <h5 class="card-title">
+            Copy number versus Rank
+          </h5>
+        </div>
+        <div class="col-9">
+
+          <div class="d-flex justify-content-end">
+            <div class="col-3">
+              <input id="search-data" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" placeholder="Search gene name">
+
+            </div>
+            <div class="col-8">
+              <button class="btn btn-primary mr-1" (click)="searchSelectedProtein()">Add</button>
+              <button class="btn btn-danger mr-1" (click)="resetSelection()">Reset</button>
+              <button class="btn btn-info" (click)="downloadSelectedData(data)">Download Selected Proteins</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-7">
+          <div class="card mt-2 mb-2">
+            <div class="card-body">
+              <div style="display:block;align-content: center">
+                <plotly-plot
+                  [data]="graphData"
+                  [layout]="graphLayout"
+                  [updateOnDataChange]="true"
+                  [updateOnLayoutChange]="true"
+                ></plotly-plot>
+<!--                <canvas baseChart
+                        [datasets]="scatterChartData"
+                        [options]="options"
+                        [chartType]="scatterPlotType"
+                        [labels]="label"
+                ></canvas>-->
+                <p class="card-text" *ngFor="let c of cellTypes">
+                  Selected in {{c}} sample:
+                  <span class="badge badge-pill badge-info ml-1"
+                        *ngFor="let s of selectedProtein[c]" id="m-{{c + s}}" (click)="selectProtein($event, s, c, true)">{{s}}</span>
+                </p>
+                <div class="row">
+                  <div class="col-auto">
+                    <button class="btn btn-sm btn btn-primary ml-2" (click)="highlight($event,'Lrrk2')">All proteins from LRRK2 pathway</button>
+                    <button class="btn btn-sm btn-primary ml-2" (click)="highlight($event,'Kinases')">All kinases</button>
+                    <button class="btn btn-sm btn-primary ml-2" (click)="highlight($event,'Phosphatases')">All phosphatases</button>
+                  </div>
+
+                </div>
+            </div>
+          </div>
+
+          </div>
+        </div>
+
+        <div class="col-5 mt-2" *ngIf="rows">
+          <div class="row">
+            <div class="form-group col-auto">
+              <input type="text" class="form-control" [(ngModel)]="tableFilterModel" (keyup)="updateFilter()" placeholder="Filter table with gene name">
+            </div>
+
+          </div>
+
+          <ngx-datatable
+            class="bootstrap"
+            [rows]="rows"
+            [columns]="columns"
+            [rowHeight]="40"
+            [columnMode]="'force'"
+            [headerHeight]="30"
+            [footerHeight]="70"
+            [groupRowsBy]="'Gene names'"
+            [groupExpansionDefault]="true"
+            #myTable
+          >
+            <ngx-datatable-group-header [rowHeight]="50" #myGroupHeader>
+              <ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template>
+                <div style="padding-left: 5px">
+                  <a
+
+                    [class.datatable-icon-right]="!expanded"
+                    [class.datatable-icon-down]="expanded"
+                    title="Expand/Collapse Group"
+                    (click)="toggleExpandGroup(group)"
+                  >
+                    <b>{{group.value[0]["Gene names"]}}</b>
+                  </a>
+                </div>
+              </ng-template>
+            </ngx-datatable-group-header>
+          </ngx-datatable>
+        </div>
+      </div>
+
+
+
+      <!--<p class="card-text">LRRK2 pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of annotation['Lrrk2']" id="l{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+      <p class="card-text">Kinases pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of annotation['Kinases']" id="k{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+      <p class="card-text">Phosphatases pathway: <span class="badge badge-pill badge-success ml-1" *ngFor="let l of annotation['Phosphatases']" id="p{{l}}" (click)="selectProtein($event, l)">{{l}} </span> </p>
+-->
+    </div>
+  </div>
+
+</div>
+

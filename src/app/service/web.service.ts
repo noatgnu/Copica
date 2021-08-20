@@ -45,7 +45,10 @@ export class WebService {
         const a = data.body?.split("\n")
         if (a) {
           for (const n of a) {
-            this.filters[i].push(n.trim())
+            if (n.trim() !== "") {
+              this.filters[i].push(n.trim())
+            }
+
           }
         }
       })
