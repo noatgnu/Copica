@@ -57,7 +57,6 @@ export class BarChartComponent implements OnInit {
 
       const currentCellType = gFirst["Cell type"]
       const currentCondition = gFirst["Condition"]
-      console.log(gFirst["label"])
       for (const gn of g.groupBy(rowg => rowg["Gene names"])) {
         const first = gn.first()
         if (selected.includes(first["Gene names"])) {
@@ -79,12 +78,21 @@ export class BarChartComponent implements OnInit {
             const average = gn.getSeries("Copy number").parseFloats().bake().average()
             const std = gn.getSeries("Copy number").parseFloats().bake().std()
             const sterr = std/Math.sqrt(gn.count())
-            result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+            if (currentCondition !== "Standard") {
+              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+            } else {
+              result[first["Gene names"]].x.push(currentCellType)
+            }
+
             result[first["Gene names"]].y.push(average)
             result[first["Gene names"]].error_y.visible = true
             result[first["Gene names"]].error_y.array.push(sterr)
           } else {
-            result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+            if (currentCondition !== "Standard") {
+              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+            } else {
+              result[first["Gene names"]].x.push(currentCellType)
+            }
             result[first["Gene names"]].y.push(first["Copy number"])
           }
         }
