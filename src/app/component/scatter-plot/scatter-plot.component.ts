@@ -180,73 +180,77 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       for (const re of g.groupBy(row => row["Gene names"])) {
         for (const rem of re.groupBy(row => row["Accession IDs"])) {
           const r = rem.first()
-          const b = r["Gene names"].split(";")
-          const tempLabel = r["label"]
-          if (!(tempLabel in temp)) {
-            temp[tempLabel] = {}
-          }
-
-          if (!(r["Gene names"] in temp[tempLabel])) {
-            temp[tempLabel][r["Gene names"]] = {x: 0, y: 0}
-          }
-          let x = parseFloat(r["Rank"])
-          let y = parseFloat(r["Copy number"])
-          if (rem.count() > 1) {
-            //console.log(rem)
-            const xArray = rem.getSeries("Rank").bake().toArray()
-            const yArray = rem.getSeries("Copy number").bake().toArray()
-            let rank = 0
-            let copyNumber = 0
-            for (let i = 0; i < xArray.length; i ++) {
-              if (typeof xArray[i] === "string") {
-                rank = rank + parseFloat(xArray[i])
-              } else {
-                rank = rank + xArray[i]
-              }
-              if (typeof yArray[i] === "string") {
-                copyNumber = copyNumber + parseFloat(yArray[i])
-              } else {
-                copyNumber = copyNumber + yArray[i]
-              }
-            }
-            x = rank/xArray.length
-            y = copyNumber/yArray.length
-            r["Rank"] = x
-            r["Copy number"] = y
-          }
-          if (x !== 0 && y !== 0) {
-            temp[tempLabel][r["Gene names"]].y = Math.log10(y)
-            temp[tempLabel][r["Gene names"]].x = x
-            if (tempLabel in selectedProteins) {
-              if (selectedProteins[tempLabel].includes(r["Gene names"])) {
-
-                filtered.push(r)
-              }
+          if (r["Rank"] !== "" && r["Rank"]!==0) {
+            const b = r["Gene names"].split(";")
+            const tempLabel = r["label"]
+            if (!(tempLabel in temp)) {
+              temp[tempLabel] = {}
             }
 
-            for (const v of b) {
-              for (const f in this.http.filters) {
-                if (!(f in this.annotation)) {
-                  this.annotation[f] = []
+            if (!(r["Gene names"] in temp[tempLabel])) {
+              temp[tempLabel][r["Gene names"]] = {x: 0, y: 0}
+            }
+
+            let x = parseFloat(r["Rank"])
+            let y = parseFloat(r["Copy number"])
+            if (rem.count() > 1) {
+              //console.log(rem)
+              const xArray = rem.getSeries("Rank").bake().toArray()
+              const yArray = rem.getSeries("Copy number").bake().toArray()
+              let rank = 0
+              let copyNumber = 0
+              for (let i = 0; i < xArray.length; i ++) {
+                if (typeof xArray[i] === "string") {
+                  rank = rank + parseFloat(xArray[i])
+                } else {
+                  rank = rank + xArray[i]
                 }
-
-                if (this.http.filters[f].includes(v)) {
-
-                  if (!(this.annotation[f].includes(r["Gene names"]))) {
-                    this.annotation[f].push(r["Gene names"])
-                  }
-
+                if (typeof yArray[i] === "string") {
+                  copyNumber = copyNumber + parseFloat(yArray[i])
+                } else {
+                  copyNumber = copyNumber + yArray[i]
                 }
               }
+              x = rank/xArray.length
+              y = copyNumber/yArray.length
+              r["Rank"] = x
+              r["Copy number"] = y
             }
-            if (Object.keys(selectedProteins).length === 0) {
-              if (pathway in this.annotation) {
-                if (this.annotation[pathway].includes(r["Gene names"])) {
+            if (x !== 0 && y !== 0) {
+              temp[tempLabel][r["Gene names"]].y = Math.log10(y)
+              temp[tempLabel][r["Gene names"]].x = x
+              if (tempLabel in selectedProteins) {
+                if (selectedProteins[tempLabel].includes(r["Gene names"])) {
+
                   filtered.push(r)
                 }
               }
+
+              for (const v of b) {
+                for (const f in this.http.filters) {
+                  if (!(f in this.annotation)) {
+                    this.annotation[f] = []
+                  }
+
+                  if (this.http.filters[f].includes(v)) {
+
+                    if (!(this.annotation[f].includes(r["Gene names"]))) {
+                      this.annotation[f].push(r["Gene names"])
+                    }
+
+                  }
+                }
+              }
+              if (Object.keys(selectedProteins).length === 0) {
+                if (pathway in this.annotation) {
+                  if (this.annotation[pathway].includes(r["Gene names"])) {
+                    filtered.push(r)
+                  }
+                }
+              }
             }
           }
+
 
         }
 
@@ -268,9 +272,9 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       const color: ChartColor[] = []
       const radius: number[] = []
       for (const t of this.label) {
-        a.data?.push(temp[c][t])
-        console.log(temp[c][t])
+
         if (temp[c][t] !== undefined) {
+          a.data?.push(temp[c][t])
           if (Object.keys(selectedProteins).length>0) {
             if (selectedProteins[c].includes(t)) {
               if (!(t in this.sampleColors)){
@@ -318,7 +322,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       }
 
     }
-
+    console.log(this.scatterChartData)
 
     this.chart?.chart.update();
   }
