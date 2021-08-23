@@ -6,7 +6,7 @@
           <div class="form-row">
             <div class="col-6">
               <label for="organismSelection">Select Organism</label>
-              <select class="form-control" id="organismSelection" formControlName="organisms" (change)="updateExperimentType()">
+              <select class="form-control" id="organismSelection" formControlName="organisms" (change)="getData()">
                 <option *ngFor="let o of organism">
                   {{o}}
                 </option>
@@ -14,12 +14,24 @@
             </div>
             <div class="col-6">
               <label for="experimentSelection">Select Experiment</label>
-              <select class="form-control" id="experimentSelection" formControlName="experiment" (change)="updateCellType()">
+              <select class="form-control" id="experimentSelection" formControlName="experiment" (change)="getData()">
                 <option *ngFor="let o of experiment">
                   {{o}}
                 </option>
               </select>
             </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input formControlName="dda" type="checkbox" id="ddaToggle" class="form-check-input" (change)="getData()">
+            <label for="ddaToggle" class="form-check-label">Include DDA data</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input formControlName="dia" type="checkbox" id="diaToggle" class="form-check-input"  (change)="getData()">
+            <label for="diaToggle" class="form-check-label">Include DIA data</label>
           </div>
         </div>
       </form>

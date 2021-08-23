@@ -1,57 +1,57 @@
-Cell type	File	Experiment type	Organisms	Condition	Fraction
-2970	2970_single_shot.txt	Single shot	Mus musculus	Standard	1
-2991	2991_single_shot.txt	Single shot	Mus musculus	Standard	1
-3T3	3T3_single_shot.txt	Single shot	Mus musculus	Standard	1
-Cortical Neurons	Cortical Neurons_single_shot.txt	Single shot	Mus musculus	Standard	1
-FAK	FAK_single_shot.txt	Single shot	Mus musculus	Standard	1
-R1441C	R1441C_single_shot.txt	Single shot	Mus musculus	Standard	1
-WT	WT_single_shot.txt	Single shot	Mus musculus	Standard	1
-Astrocytes	Astrocytes_1_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	1
-Astrocytes	Astrocytes_2_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	2
-Astrocytes	Astrocytes_3_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	3
-Microglia	Microglia_1_young_fractionated.txt	Fractionated	Mus musculus	young	1
-Microglia	Microglia_2_young_fractionated.txt	Fractionated	Mus musculus	young	2
-Microglia	Microglia_3_young_fractionated.txt	Fractionated	Mus musculus	young	3
-Microglia	Microglia_1_adult_fractionated.txt	Fractionated	Mus musculus	adult	1
-Microglia	Microglia_2_adult_fractionated.txt	Fractionated	Mus musculus	adult	2
-Microglia	Microglia_3_adult_fractionated.txt	Fractionated	Mus musculus	adult	3
-Mouse_Wholebrain	Mouse_Wholebrain_1_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	1
-Mouse_Wholebrain	Mouse_Wholebrain_2_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	2
-Mouse_Wholebrain	Mouse_Wholebrain_3_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	3
-Mouse_Wholebrain	Mouse_Wholebrain_4_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	4
-Neurons	Neurons_1_div05_fractionated.txt	Fractionated	Mus musculus	div05	1
-Neurons	Neurons_2_div05_fractionated.txt	Fractionated	Mus musculus	div05	2
-Neurons	Neurons_3_div05_fractionated.txt	Fractionated	Mus musculus	div05	3
-Neurons	Neurons_1_div10_fractionated.txt	Fractionated	Mus musculus	div10	1
-Neurons	Neurons_2_div10_fractionated.txt	Fractionated	Mus musculus	div10	2
-Neurons	Neurons_3_div10_fractionated.txt	Fractionated	Mus musculus	div10	3
-Neurons	Neurons_1_div15_fractionated.txt	Fractionated	Mus musculus	div15	1
-Neurons	Neurons_2_div15_fractionated.txt	Fractionated	Mus musculus	div15	2
-Neurons	Neurons_3_div15_fractionated.txt	Fractionated	Mus musculus	div15	3
-Oligodendrocytes	Oligodendrocytes_1_div1__fractionated.txt	Fractionated	Mus musculus	div1_	1
-Oligodendrocytes	Oligodendrocytes_2_div1__fractionated.txt	Fractionated	Mus musculus	div1_	2
-Oligodendrocytes	Oligodendrocytes_3_div1__fractionated.txt	Fractionated	Mus musculus	div1_	3
-Oligodendrocytes	Oligodendrocytes_1_div2.5_fractionated.txt	Fractionated	Mus musculus	div2.5	1
-Oligodendrocytes	Oligodendrocytes_2_div2.5_fractionated.txt	Fractionated	Mus musculus	div2.5	2
-Oligodendrocytes	Oligodendrocytes_3_div2.5_fractionated.txt	Fractionated	Mus musculus	div2.5	3
-Oligodendrocytes	Oligodendrocytes_1_div4_fractionated.txt	Fractionated	Mus musculus	div4	1
-Oligodendrocytes	Oligodendrocytes_2_div4_fractionated.txt	Fractionated	Mus musculus	div4	2
-Oligodendrocytes	Oligodendrocytes_3_div4_fractionated.txt	Fractionated	Mus musculus	div4	3
-A549	A549_single_shot.txt	Single shot	Homo sapiens	Standard	1
-Brain	Brain_single_shot.txt	Single shot	Mus musculus	Standard	1
-Brainstem	Brainstem_single_shot.txt	Single shot	Mus musculus	Standard	1
-Cerebellum	Cerebellum_single_shot.txt	Single shot	Mus musculus	Standard	1
-Corpus Callosum	Corpus Callosum_single_shot.txt	Single shot	Mus musculus	Standard	1
-HEK293	HEK293_single_shot.txt	Single shot	Homo sapiens	Standard	1
-Isolated Astrocytes	Isolated Astrocytes_single_shot.txt	Single shot	Mus musculus	Standard	1
-Isolated Microglia	Isolated Microglia_single_shot.txt	Single shot	Mus musculus	Standard	1
-Isolated Neurons	Isolated Neurons_single_shot.txt	Single shot	Mus musculus	Standard	1
-Isolated Oligodendrocytes	Isolated Oligodendrocytes_single_shot.txt	Single shot	Mus musculus	Standard	1
-Motor Cortex	Motor Cortex_single_shot.txt	Single shot	Mus musculus	Standard	1
-Olfactory Bulb	Olfactory Bulb_single_shot.txt	Single shot	Mus musculus	Standard	1
-Optic Nerve	Optic Nerve_single_shot.txt	Single shot	Mus musculus	Standard	1
-Prefrontal Cortex	Prefrontal Cortex_single_shot.txt	Single shot	Mus musculus	Standard	1
-Striatum	Striatum_single_shot.txt	Single shot	Mus musculus	Standard	1
-Thalamus	Thalamus_single_shot.txt	Single shot	Mus musculus	Standard	1
-Ventral Hippocampus	Ventral Hippocampus_single_shot.txt	Single shot	Mus musculus	Standard	1
-Wt-MEfs	Wt-MEfs_single_shot.txt	Single shot	Mus musculus	Standard	1
+Cell type	File	Experiment type	Organisms	Condition	Fraction	Acquisition Method
+2970	2970_single_shot.txt	Single shot	Mus musculus	Standard	1	DIA
+2991	2991_single_shot.txt	Single shot	Mus musculus	Standard	1	DIA
+3T3	3T3_single_shot.txt	Single shot	Mus musculus	Standard	1	DIA
+Cortical Neurons	Cortical Neurons_single_shot.txt	Single shot	Mus musculus	Standard	1	DIA
+FAK	FAK_single_shot.txt	Single shot	Mus musculus	Standard	1	DIA
+R1441C	R1441C_single_shot.txt	Single shot	Mus musculus	Standard	1	DIA
+WT	WT_single_shot.txt	Single shot	Mus musculus	Standard	1	DIA
+Astrocytes	Astrocytes_1_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	1	DDA
+Astrocytes	Astrocytes_2_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	2	DDA
+Astrocytes	Astrocytes_3_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	3	DDA
+Microglia	Microglia_1_young_fractionated.txt	Fractionated	Mus musculus	young	1	DDA
+Microglia	Microglia_2_young_fractionated.txt	Fractionated	Mus musculus	young	2	DDA
+Microglia	Microglia_3_young_fractionated.txt	Fractionated	Mus musculus	young	3	DDA
+Microglia	Microglia_1_adult_fractionated.txt	Fractionated	Mus musculus	adult	1	DDA
+Microglia	Microglia_2_adult_fractionated.txt	Fractionated	Mus musculus	adult	2	DDA
+Microglia	Microglia_3_adult_fractionated.txt	Fractionated	Mus musculus	adult	3	DDA
+Mouse_Wholebrain	Mouse_Wholebrain_1_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	1	DDA
+Mouse_Wholebrain	Mouse_Wholebrain_2_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	2	DDA
+Mouse_Wholebrain	Mouse_Wholebrain_3_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	3	DDA
+Mouse_Wholebrain	Mouse_Wholebrain_4_Standard_fractionated.txt	Fractionated	Mus musculus	Standard	4	DDA
+Neurons	Neurons_1_div05_fractionated.txt	Fractionated	Mus musculus	div05	1	DDA
+Neurons	Neurons_2_div05_fractionated.txt	Fractionated	Mus musculus	div05	2	DDA
+Neurons	Neurons_3_div05_fractionated.txt	Fractionated	Mus musculus	div05	3	DDA
+Neurons	Neurons_1_div10_fractionated.txt	Fractionated	Mus musculus	div10	1	DDA
+Neurons	Neurons_2_div10_fractionated.txt	Fractionated	Mus musculus	div10	2	DDA
+Neurons	Neurons_3_div10_fractionated.txt	Fractionated	Mus musculus	div10	3	DDA
+Neurons	Neurons_1_div15_fractionated.txt	Fractionated	Mus musculus	div15	1	DDA
+Neurons	Neurons_2_div15_fractionated.txt	Fractionated	Mus musculus	div15	2	DDA
+Neurons	Neurons_3_div15_fractionated.txt	Fractionated	Mus musculus	div15	3	DDA
+Oligodendrocytes	Oligodendrocytes_1_div1__fractionated.txt	Fractionated	Mus musculus	div1_	1	DDA
+Oligodendrocytes	Oligodendrocytes_2_div1__fractionated.txt	Fractionated	Mus musculus	div1_	2	DDA
+Oligodendrocytes	Oligodendrocytes_3_div1__fractionated.txt	Fractionated	Mus musculus	div1_	3	DDA
+Oligodendrocytes	Oligodendrocytes_1_div2.5_fractionated.txt	Fractionated	Mus musculus	div2.5	1	DDA
+Oligodendrocytes	Oligodendrocytes_2_div2.5_fractionated.txt	Fractionated	Mus musculus	div2.5	2	DDA
+Oligodendrocytes	Oligodendrocytes_3_div2.5_fractionated.txt	Fractionated	Mus musculus	div2.5	3	DDA
+Oligodendrocytes	Oligodendrocytes_1_div4_fractionated.txt	Fractionated	Mus musculus	div4	1	DDA
+Oligodendrocytes	Oligodendrocytes_2_div4_fractionated.txt	Fractionated	Mus musculus	div4	2	DDA
+Oligodendrocytes	Oligodendrocytes_3_div4_fractionated.txt	Fractionated	Mus musculus	div4	3	DDA
+A549	A549_single_shot.txt	Single shot	Homo sapiens	Standard	1	DDA
+Brain	Brain_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Brainstem	Brainstem_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Cerebellum	Cerebellum_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Corpus Callosum	Corpus Callosum_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+HEK293	HEK293_single_shot.txt	Single shot	Homo sapiens	Standard	1	DDA
+Isolated Astrocytes	Isolated Astrocytes_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Isolated Microglia	Isolated Microglia_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Isolated Neurons	Isolated Neurons_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Isolated Oligodendrocytes	Isolated Oligodendrocytes_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Motor Cortex	Motor Cortex_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Olfactory Bulb	Olfactory Bulb_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Optic Nerve	Optic Nerve_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Prefrontal Cortex	Prefrontal Cortex_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Striatum	Striatum_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Thalamus	Thalamus_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Ventral Hippocampus	Ventral Hippocampus_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA
+Wt-MEfs	Wt-MEfs_single_shot.txt	Single shot	Mus musculus	Standard	1	DDA

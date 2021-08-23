@@ -11,6 +11,8 @@ import {FormBuilder} from "@angular/forms";
   styleUrls: ['./db-cell-browse.component.css']
 })
 export class DbCellBrowseComponent implements OnInit {
+  dda: boolean = true;
+  dia: boolean = true;
   indDataframe: IDataFrame = new DataFrame();
   dataArray: IDataFrame[] = []
   geneList: string[] = []
@@ -23,7 +25,9 @@ export class DbCellBrowseComponent implements OnInit {
   selectedData: IDataFrame = new DataFrame();
   form = this.fb.group({
     organisms: "",
-    experiment: ""
+    experiment: "",
+    dda: true,
+    dia: true
   });
 
   constructor(private http: WebService, private fb: FormBuilder) {
@@ -33,15 +37,40 @@ export class DbCellBrowseComponent implements OnInit {
       console.log(first)
       this.form.setValue({
         organisms: first["Organisms"],
-        experiment: first["Experiment type"]})
+        experiment: first["Experiment type"],
+        dia: true,
+        dda: true},
+        )
 
       this.organism = this.indDataframe.getSeries("Organisms").distinct().bake().toArray()
       //this.experiment = this.indDataframe.getSeries("Experiment Type").distinct().bake().toArray()
 
       const rowNumb = this.indDataframe.getSeries("File").bake().count()
-      let co = 0
-      for (const r of this.indDataframe) {
 
+      this.getData();
+    })
+  }
+
+  getData() {
+    let co = 0
+    const rfile = []
+    this.dataMap = {}
+    this.dfMap = {}
+    for (const r of this.indDataframe) {
+      let get = false;
+      if (r["Acquisition Method"] == "DDA") {
+        if (this.form.value["dda"]) {
+          get = true
+        }
+      } else if (r["Acquisition Method"] == "DIA") {
+        if (this.form.value["dia"]) {
+          get = true
+
+        }
+      }
+
+      if (get) {
+        rfile.push(r)
         if (!(r["Organisms"] in this.dataMap)) {
           this.dataMap[r["Organisms"]] = {}
           this.dfMap[r["Organisms"]] = {}
@@ -51,34 +80,38 @@ export class DbCellBrowseComponent implements OnInit {
           this.dfMap[r["Organisms"]][r["Experiment type"]] = new DataFrame();
 
         }
-
-        this.http.getDBtext(r["File"]).subscribe(data => {
-          co ++
-          const a =dataforge.fromCSV(<string>data.body)
-          this.dataMap[r["Organisms"]][r["Experiment type"]].push(a)
-          if (co === rowNumb) {
-            console.log("concat")
-            for (const o in this.dataMap) {
-              console.log(o)
-              for (const e in this.dataMap[o]) {
-                this.dfMap[o][e] = DataFrame.concat(this.dataMap[o][e]).bake()
-              }
-            }
-
-            for (const e in this.dfMap[r["Organisms"]]) {
-              this.experiment.push(e)
-            }
-            this.form.setValue({
-              organisms: r["Organisms"],
-              experiment: this.experiment[0]})
-            this.selectData()
-            //this.geneList = this.entireData.getSeries("Gene names").distinct().bake().toArray()
-            this.fileLoaded.next(true);
-            console.log(this.dfMap);
-          }
-        })
       }
-    })
+    }
+    for (const r of rfile) {
+      this.http.getDBtext(r["File"]).subscribe(data => {
+        co++
+        const a = dataforge.fromCSV(<string>data.body)
+        this.dataMap[r["Organisms"]][r["Experiment type"]].push(a)
+        if (co === rfile.length) {
+          console.log("concat")
+          for (const o in this.dataMap) {
+            console.log(o)
+            for (const e in this.dataMap[o]) {
+              this.dfMap[o][e] = DataFrame.concat(this.dataMap[o][e]).bake()
+            }
+          }
+
+          for (const e in this.dfMap[r["Organisms"]]) {
+            this.experiment.push(e)
+          }
+          this.form.setValue({
+            organisms: r["Organisms"],
+            experiment: this.experiment[0],
+            dda: this.form.value["dda"],
+            dia: this.form.value["dia"]
+          })
+          this.selectData()
+          //this.geneList = this.entireData.getSeries("Gene names").distinct().bake().toArray()
+          this.fileLoaded.next(true);
+          console.log(this.dfMap);
+        }
+      })
+    }
   }
 
   ngOnInit(): void {
@@ -96,7 +129,9 @@ export class DbCellBrowseComponent implements OnInit {
     this.experiment = experiment;
     this.form.setValue({
       organisms: this.form.value["organisms"],
-      experiment: experiment[0]
+      experiment: experiment[0],
+      dda: true,
+      dia: true
     })
     this.selectData()
   }
@@ -106,7 +141,7 @@ export class DbCellBrowseComponent implements OnInit {
   }
 
   selectData() {
-
     this.selectedData = this.dfMap[this.form.value["organisms"]][this.form.value["experiment"]]
+
   }
 }
