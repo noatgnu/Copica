@@ -8,6 +8,9 @@
         <div class="col-3">
           <button class="btn btn-primary" (click)="searchSelectedProtein()">Add to graph</button>
         </div>
+        <div class="col-4">
+          <button class="btn btn-primary" (click)="downloadSelectedData(currentDf)">Download Selected Data</button>
+        </div>
       </div>
 
         <p class="card-text">
@@ -18,6 +21,7 @@
         [layout]="graphLayout"
         [updateOnDataChange]="true"
         [updateOnLayoutChange]="true"
+        [config]="{responsive:true}"
       ></plotly-plot>
       <div>
 
@@ -37,9 +41,7 @@
       </div>
 
       <div class="row">
-        <div class="col-4">
-          <button class="btn btn-primary" (click)="downloadSelectedData(currentDf)">Download Selected Data</button>
-        </div>
+
       </div>
 
 

@@ -141,6 +141,7 @@ export class DbCellBrowseComponent implements OnInit {
   }
 
   selectData() {
+    console.log("select data")
     this.selectedData = this.dfMap[this.form.value["organisms"]][this.form.value["experiment"]]
 
   }

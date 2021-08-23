@@ -12,7 +12,7 @@ import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
 })
 export class BarChartComponent implements OnInit {
   graphData: any[] = []
-  graphLayout = {width: 1000, height: 700, title: 'Graph', margin: {l: 100, r:100, b:100, t:100},
+  graphLayout = {autosize:true, title: 'Copy number distribution', margin: {l: 100, r:100, b:100, t:100},
     xaxis: {
       title: "Cell type"
     },
@@ -38,11 +38,29 @@ export class BarChartComponent implements OnInit {
   private _data: IDataFrame = new DataFrame()
   labels: string[] = []
 
+  arraysCompare(a: any[], b: any[]):boolean {
+    if (a.length != b.length) {
+      return false
+    } else {
+      a.sort()
+      b.sort()
+      if (JSON.stringify(a) !== JSON.stringify(b)) {
+        return false
+      }
+    }
+    return true
+  }
+
   @Input() set data(value: IDataFrame) {
-    this.origin = value
-    this.geneList = this.origin.getSeries("Gene names").distinct().bake().toArray()
-    const a = this.assignData();
-    this._data = a;
+    console.log("update bar-chart")
+    if (this.origin.count() !== value.count()) {
+      this.origin = value
+      const gl = this.origin.getSeries("Gene names").distinct().bake().toArray()
+      if (!this.arraysCompare(gl, this.geneList)) {
+        this.geneList = gl
+        this._data = this.assignData();
+      }
+    }
   }
 
   currentDf: IDataFrame = new DataFrame()
