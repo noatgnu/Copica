@@ -3,6 +3,7 @@ import {Routes, RouterModule} from "@angular/router";
 import {DbCellBrowseComponent} from "../component/db-cell-browse/db-cell-browse.component";
 import {DbScatterComponent} from "../component/db-scatter/db-scatter.component";
 import {HomeComponent} from "../component/home/home.component";
+import {ProteomicRulerComponent} from "../component/proteomic-ruler/proteomic-ruler.component";
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'cellbrowse',
     component: DbCellBrowseComponent
+  },
+  {
+    path: 'ruler',
+    component: ProteomicRulerComponent
   }
 ]
 

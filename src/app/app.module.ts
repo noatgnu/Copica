@@ -22,6 +22,7 @@ import { SideBarComponent } from './component/side-bar/side-bar.component';
 import * as PlotlyJS from 'plotly.js-dist-min';
 import {PlotlyModule} from "angular-plotly.js";
 import {IconsModule} from "./icons/icons.module";
+import { ProteomicRulerComponent } from './component/proteomic-ruler/proteomic-ruler.component';
 
 PlotlyModule.plotlyjs = PlotlyJS
 
@@ -38,6 +39,7 @@ PlotlyModule.plotlyjs = PlotlyJS
     BarChartComponent,
     RandomChartComponent,
     SideBarComponent,
+    ProteomicRulerComponent,
 
   ],
   imports: [

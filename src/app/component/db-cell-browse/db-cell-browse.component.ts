@@ -56,6 +56,7 @@ export class DbCellBrowseComponent implements OnInit {
     const rfile = []
     this.dataMap = {}
     this.dfMap = {}
+    this.experiment = []
     for (const r of this.indDataframe) {
       let get = false;
       if (r["Acquisition Method"] == "DDA") {

@@ -13,9 +13,7 @@ import {Query} from "../../class/query";
 })
 export class DbScatterComponent implements OnInit {
   histoneDB: HistoneDb = new HistoneDb(this.http)
-  data: IDataFrame = new DataFrame<number, any>();
-  finishedLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  observeLoad: Observable<boolean> = new Observable<boolean>();
+
   loadScatterSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   observeScatter: Observable<boolean> = new Observable<boolean>()
   scatterDF: IDataFrame = new DataFrame();
@@ -23,20 +21,13 @@ export class DbScatterComponent implements OnInit {
 
   constructor(private http: WebService) {
     this.histoneDB.getHistones()
-    this.observeLoad = this.finishedLoaded.asObservable()
+
     this.observeScatter = this.loadScatterSubject.asObservable()
   }
 
-  dataframeHandle(e: IDataFrame) {
-    this.data = e;
-    if (this.data.count() > 0) {
-      this.finishedLoaded.next(true)
-    }
-  }
 
-  selectedDataHandler(e: Query) {
 
-  }
+
 
   scatterDataHandler(e: IDataFrame) {
     this.scatterData = e;
