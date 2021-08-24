@@ -4,6 +4,7 @@ import * as dataforge from "data-forge"
 import {WebService} from "../../service/web.service";
 import {BehaviorSubject, Observable} from "rxjs";
 import {FormBuilder} from "@angular/forms";
+import {UserDataService} from "../../service/user-data.service";
 
 @Component({
   selector: 'app-db-cell-browse',
@@ -27,10 +28,16 @@ export class DbCellBrowseComponent implements OnInit {
     organisms: "",
     experiment: "",
     dda: true,
-    dia: true
+    dia: true,
+    userData: false
   });
 
-  constructor(private http: WebService, private fb: FormBuilder) {
+  userDF: IDataFrame = new DataFrame()
+
+  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService) {
+    this.userData.dataObserver.subscribe(data => {
+      this.userDF = data
+    })
     this.http.getIndexText().subscribe(data => {
       this.indDataframe = dataforge.fromCSV(<string>data.body)
       const first = this.indDataframe.first();
@@ -39,7 +46,8 @@ export class DbCellBrowseComponent implements OnInit {
         organisms: first["Organisms"],
         experiment: first["Experiment type"],
         dia: true,
-        dda: true},
+        dda: true,
+        userData: false},
         )
 
       this.organism = this.indDataframe.getSeries("Organisms").distinct().bake().toArray()
@@ -104,7 +112,8 @@ export class DbCellBrowseComponent implements OnInit {
             organisms: r["Organisms"],
             experiment: this.experiment[0],
             dda: this.form.value["dda"],
-            dia: this.form.value["dia"]
+            dia: this.form.value["dia"],
+            userData: this.form.value["userData"]
           })
           this.selectData()
           //this.geneList = this.entireData.getSeries("Gene names").distinct().bake().toArray()
@@ -131,8 +140,9 @@ export class DbCellBrowseComponent implements OnInit {
     this.form.setValue({
       organisms: this.form.value["organisms"],
       experiment: experiment[0],
-      dda: true,
-      dia: true
+      dda: this.form.value["dda"],
+      dia: this.form.value["dia"],
+      userData: this.form.value["userData"]
     })
     this.selectData()
   }
@@ -143,7 +153,12 @@ export class DbCellBrowseComponent implements OnInit {
 
   selectData() {
     console.log("select data")
-    this.selectedData = this.dfMap[this.form.value["organisms"]][this.form.value["experiment"]]
 
+    this.selectedData = this.dfMap[this.form.value["organisms"]][this.form.value["experiment"]]
+    if (this.form.value["userData"]) {
+      if (this.userDF.count() > 0) {
+        this.selectedData = DataFrame.concat([this.selectedData, this.userDF])
+      }
+    }
   }
 }

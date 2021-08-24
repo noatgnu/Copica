@@ -5,7 +5,7 @@
       <form [formGroup]="columnForm">
         <div class="form-group">
           <div class="form-row">
-            <div class="col-6">
+            <div class="col-4">
               <label for="columnSelection">Select intensity columns for calculation of copy number</label>
               <select multiple class="form-control" id="columnSelection" formControlName="IntensityCols">
                 <option *ngFor="let o of column">
@@ -13,13 +13,35 @@
                 </option>
               </select>
             </div>
-            <div class="col-6">
-              <label for="identityColumnSelection">Select identifier columns</label>
-              <select multiple class="form-control" id="identityColumnSelection" formControlName="IdentifierCol">
-                <option *ngFor="let o of column">
-                  {{o}}
-                </option>
-              </select>
+            <div class="col-8">
+              <div class="form-row">
+                <div class="col-4">
+                  <label for="identityColumnSelection">Select column with UniProt accession IDs</label>
+                  <select class="form-control" id="identityColumnSelection" formControlName="IdentifierCol">
+                    <option *ngFor="let o of column">
+                      {{o}}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-4">
+                  <label for="molecularMassColumnSelection">Select column with molecular mass</label>
+                  <select class="form-control" id="molecularMassColumnSelection" formControlName="MolecularMassCol">
+                    <option *ngFor="let o of column">
+                      {{o}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-4">
+                  <label for="geneNameColumnSelection">Select gene name column</label>
+                  <select class="form-control" id="geneNameColumnSelection" formControlName="GeneNameCol">
+                    <option *ngFor="let o of column">
+                      {{o}}
+                    </option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
           <div class="form-row mt-2">

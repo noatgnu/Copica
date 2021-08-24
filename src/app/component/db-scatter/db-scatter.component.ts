@@ -12,7 +12,7 @@ import {Query} from "../../class/query";
   styleUrls: ['./db-scatter.component.css']
 })
 export class DbScatterComponent implements OnInit {
-  histoneDB: HistoneDb = new HistoneDb(this.http)
+
 
   loadScatterSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   observeScatter: Observable<boolean> = new Observable<boolean>()
@@ -20,8 +20,6 @@ export class DbScatterComponent implements OnInit {
   scatterData: IDataFrame = new DataFrame();
 
   constructor(private http: WebService) {
-    this.histoneDB.getHistones()
-
     this.observeScatter = this.loadScatterSubject.asObservable()
   }
 

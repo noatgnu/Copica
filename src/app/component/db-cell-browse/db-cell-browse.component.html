@@ -34,6 +34,12 @@
             <label for="diaToggle" class="form-check-label">Include DIA data</label>
           </div>
         </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input formControlName="userData" type="checkbox" id="userDataToggle" class="form-check-input"  (change)="getData()">
+            <label for="userDataToggle" class="form-check-label">Include User data</label>
+          </div>
+        </div>
       </form>
     </div>
   </div>

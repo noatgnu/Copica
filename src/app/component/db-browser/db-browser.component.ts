@@ -3,6 +3,7 @@ import {WebService} from "../../service/web.service";
 import * as dataforge from "data-forge"
 import {DataFrame, IDataFrame} from "data-forge";
 import {FormBuilder, FormGroup} from "@angular/forms";
+import {UserDataService} from "../../service/user-data.service";
 
 @Component({
   selector: 'app-db-browser',
@@ -14,7 +15,8 @@ export class DbBrowserComponent implements OnInit {
 
   form: FormGroup = this.fb.group({
     cellType: [],
-    experimentType: ""
+    experimentType: "",
+    userData: false
   });
   filename: any[] = []
   cellType: any[] = []
@@ -23,15 +25,19 @@ export class DbBrowserComponent implements OnInit {
   temp: any[] = [];
   selectedFile: any[] = [];
   @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
-
-  constructor(private http: WebService, private fb: FormBuilder) {
+  userDF: IDataFrame = new DataFrame();
+  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService) {
+    this.userData.dataObserver.subscribe(data => {
+      this.userDF = data
+      console.log(this.userDF)
+    })
     this.http.getIndexText().subscribe(data => {
       const a = dataforge.fromCSV(<string>data.body)
       this.dataframe = dataforge.fromCSV(<string>data.body)
 
       const firstEntry = this.dataframe.first()
       console.log(firstEntry)
-      this.form.setValue({cellType: [{"cond": firstEntry["Condition"], "fraction": firstEntry["Fraction"], "cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}], experimentType: firstEntry["Experiment type"]})
+      this.form.setValue({cellType: [{"cond": firstEntry["Condition"], "fraction": firstEntry["Fraction"], "cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}], experimentType: firstEntry["Experiment type"], userData: false})
       //this.selectedFile = firstEntry["File"]
       this.updateExperimentType()
       this.updateCellType()
@@ -71,7 +77,7 @@ export class DbBrowserComponent implements OnInit {
   }
 
   updateFormValue(target: string) {
-    const a = {experimentType: this.form.value["experimentType"], cellType: this.form.value["cellType"]}
+    const a = {experimentType: this.form.value["experimentType"], cellType: this.form.value["cellType"], userData: this.form.value["userData"]}
     switch (target) {
       case "experimentType": {
         a[target] = this.experiment[0]
@@ -108,15 +114,25 @@ export class DbBrowserComponent implements OnInit {
     const dataDF: IDataFrame[] = []
     for (const s of this.selectedFile) {
       this.http.getDBtext(s).subscribe(data => {
+        let result: IDataFrame = new DataFrame()
         if (this.selectedFile.length > 1) {
 
           dataDF.push(dataforge.fromCSV(<string>data.body))
           if (this.selectedFile.length === dataDF.length) {
-            this.selectedDataframe.emit(DataFrame.concat(dataDF).bake());
+            result = DataFrame.concat(dataDF).bake()
+
           }
         } else {
-          this.selectedDataframe.emit(dataforge.fromCSV(<string>data.body))
+          result = dataforge.fromCSV(<string>data.body)
         }
+        console.log(result)
+        if (this.form.value["userData"]) {
+          if (this.userDF.count() > 0) {
+            result = DataFrame.concat([result, this.userDF]).bake()
+          }
+        }
+        console.log(result)
+        this.selectedDataframe.emit(result);
       })
     }
   }

@@ -26,11 +26,14 @@ export class FileSummaryComponent implements OnInit {
     this.rowNum = this._dataframe.count();
   }
   @Output() selectedData: EventEmitter<Query> = new EventEmitter<Query>();
+
   constructor(private fb: FormBuilder) {
 
     this.columnForm = fb.group({
       IntensityCols: [],
-      IdentifierCol: []
+      IdentifierCol: "",
+      MolecularMassCol: "",
+      GeneNameCol: "",
     })
   }
 
@@ -49,6 +52,8 @@ export class FileSummaryComponent implements OnInit {
       query.df = this.dataframe
       query.IntensityCols = this.columnForm.value["IntensityCols"]
       query.IdentifierCol = this.columnForm.value["IdentifierCol"]
+      query.MolecularMassCol = this.columnForm.value["MolecularMassCol"]
+      query.GeneNameCol = this.columnForm.value["GeneNameCol"]
       this.selectedData.emit(query)
     } else {
       alert("Please select at least one Intensity and one Identifier columns")
