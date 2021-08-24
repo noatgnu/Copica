@@ -20,6 +20,7 @@ export class ProteomicRulerComponent implements OnInit {
   data: IDataFrame = new DataFrame<number, any>();
   histoneDB: HistoneDb = new HistoneDb(this.http)
   ruler?: ProteomicRuler
+  scatterData: IDataFrame = new DataFrame();
   constructor(private http: WebService, private userData: UserDataService) {
     //this.histoneDB.getHistones()
     this.observeLoad = this.finishedLoaded.asObservable()
@@ -47,7 +48,9 @@ export class ProteomicRulerComponent implements OnInit {
         }
       }
     }
-    this.userData.updateData(new DataFrame(data))
+    this.scatterData = new DataFrame(data)
+    this.userData.updateData(this.scatterData)
+
     this.finishedProcessing.next(true)
   }
 

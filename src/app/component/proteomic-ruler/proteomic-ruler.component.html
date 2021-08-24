@@ -12,6 +12,9 @@
 <div *ngIf="observeLoad|async">
   <app-file-summary [dataframe]="data" (selectedData)="selectedDataHandler($event)"></app-file-summary>
 </div>
+<div class="container-fluid mt-2" *ngIf="observeProcess|async">
+  <app-scatter-plot [data]="scatterData"></app-scatter-plot>
+</div>
 <div class="container mt-2" *ngIf="observeProcess|async">
   <button class="btn btn-info" (click)="downloadProcessedData()">Download Processed Data</button>
 </div>
