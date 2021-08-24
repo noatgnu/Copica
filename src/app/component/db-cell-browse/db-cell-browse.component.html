@@ -6,7 +6,7 @@
           <div class="form-row">
             <div class="col-6">
               <label for="organismSelection">Select Organism</label>
-              <select class="form-control" id="organismSelection" formControlName="organisms" (change)="getData()">
+              <select class="form-control" id="organismSelection" formControlName="organisms" (change)="getData(true)">
                 <option *ngFor="let o of organism">
                   {{o}}
                 </option>
@@ -36,7 +36,7 @@
         </div>
         <div class="form-group">
           <div class="form-check">
-            <input formControlName="userData" type="checkbox" id="userDataToggle" class="form-check-input"  (change)="getData()">
+            <input formControlName="userData" type="checkbox" id="userDataToggle" class="form-check-input"  (change)="getData(false, false)">
             <label for="userDataToggle" class="form-check-label">Include User data</label>
           </div>
         </div>

@@ -59,12 +59,15 @@ export class DbCellBrowseComponent implements OnInit {
     })
   }
 
-  getData() {
+  getData(experiment:boolean = false, remap: boolean = false) {
     let co = 0
     const rfile = []
     this.dataMap = {}
     this.dfMap = {}
-    this.experiment = []
+    if (experiment) {
+      this.experiment = []
+    }
+
     for (const r of this.indDataframe) {
       let get = false;
       if (r["Acquisition Method"] == "DDA") {
@@ -87,7 +90,6 @@ export class DbCellBrowseComponent implements OnInit {
         if (!(r["Experiment type"] in this.dataMap[r["Organisms"]])) {
           this.dataMap[r["Organisms"]][r["Experiment type"]] = []
           this.dfMap[r["Organisms"]][r["Experiment type"]] = new DataFrame();
-
         }
       }
     }
@@ -97,20 +99,28 @@ export class DbCellBrowseComponent implements OnInit {
         const a = dataforge.fromCSV(<string>data.body)
         this.dataMap[r["Organisms"]][r["Experiment type"]].push(a)
         if (co === rfile.length) {
-          console.log("concat")
           for (const o in this.dataMap) {
-            console.log(o)
             for (const e in this.dataMap[o]) {
               this.dfMap[o][e] = DataFrame.concat(this.dataMap[o][e]).bake()
             }
           }
 
-          for (const e in this.dfMap[r["Organisms"]]) {
+          for (const e in this.dfMap[this.form.value["organisms"]]) {
             this.experiment.push(e)
           }
+
+          let exp = this.form.value["experiment"]
+          if (experiment) {
+            if (!(this.experiment.includes(exp))) {
+              exp = this.experiment[0]
+              console.log(exp)
+            }
+          }
+
+          console.log(this.experiment)
           this.form.setValue({
-            organisms: r["Organisms"],
-            experiment: this.experiment[0],
+            organisms: this.form.value["organisms"],
+            experiment: exp,
             dda: this.form.value["dda"],
             dia: this.form.value["dia"],
             userData: this.form.value["userData"]
@@ -126,25 +136,6 @@ export class DbCellBrowseComponent implements OnInit {
 
   ngOnInit(): void {
 
-  }
-
-  updateExperimentType() {
-    console.log(this.form.value)
-
-    const experiment: string[] = []
-
-    for (const i in this.dfMap[this.form.value["organisms"]]) {
-      experiment.push(i)
-    }
-    this.experiment = experiment;
-    this.form.setValue({
-      organisms: this.form.value["organisms"],
-      experiment: experiment[0],
-      dda: this.form.value["dda"],
-      dia: this.form.value["dia"],
-      userData: this.form.value["userData"]
-    })
-    this.selectData()
   }
 
   updateCellType() {
