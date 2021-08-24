@@ -1,3 +1,13 @@
+<div class="container">
+  <div class="alert alert-light">
+    <p class="fs-6 text-muted">
+      The following a Javascript implementation of the <i>Proteomic Ruler</i> algorithm based on Histone proteins in the dataset from <br>
+
+      <i>Wiśniewski, J. R., Hein, M. Y., Cox, J. and Mann, M. (2014) A “Proteomic Ruler” for Protein Copy Number and Concentration Estimation without Spike-in Standards. Mol Cell Proteomics 13, 3497–3506.</i>
+
+    </p>
+  </div>
+</div>
 <app-file-uploader (dataframe)="dataframeHandle($event)"></app-file-uploader>
 <div *ngIf="observeLoad|async">
   <app-file-summary [dataframe]="data" (selectedData)="selectedDataHandler($event)"></app-file-summary>
