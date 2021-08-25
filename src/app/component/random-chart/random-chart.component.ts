@@ -28,7 +28,8 @@ export class RandomChartComponent implements OnInit, OnDestroy {
     //maintainAspectRatio: true,
     animation: {
       duration: 10
-    }
+    },
+    legend: {display: false}
   }
 
   getRandomColor() {

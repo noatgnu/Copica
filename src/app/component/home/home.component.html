@@ -1,1 +1,23 @@
-<app-random-chart></app-random-chart>
+<!--<app-random-chart class="background">
+  <div class="content">
+    <p>testreasdsadsadsad</p>
+  </div>
+</app-random-chart>-->
+<div class="container">
+  <div class="jumbotron">
+    <div class="row">
+      <div class="col-2">
+        <app-random-chart></app-random-chart>
+      </div>
+      <div class="col-10">
+        <p>
+          Copica is a Javascript based database for copy number data from different sources of data that operate entirely in your web browser.
+          The source code for the project as well as the data displayed could be obtained from the following <a href="https://github.com/noatgnu/Copica">GitHub repository</a>.
+        </p>
+        <p>
+          At of current, the database is indexing <span *ngIf="loadFinishedObserver|async"><b>{{this.indexData.count()}}</b></span> datasets.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
