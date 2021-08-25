@@ -24,7 +24,7 @@
                   </select>
                 </div>
                 <div class="col-4">
-                  <label for="molecularMassColumnSelection">Select column with molecular mass</label>
+                  <label for="molecularMassColumnSelection">Select column with molecular weight</label>
                   <select class="form-control" id="molecularMassColumnSelection" formControlName="MolecularMassCol">
                     <option *ngFor="let o of column">
                       {{o}}
@@ -42,6 +42,15 @@
                   </select>
                 </div>
               </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input formControlName="fetchUniProt" type="checkbox" id="fetchUniProt" class="form-check-input">
+                    <label for="fetchUniProt" class="form-check-label">Fetch UniProt data for Gene names and molecular weight</label>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
           <div class="form-row mt-2">

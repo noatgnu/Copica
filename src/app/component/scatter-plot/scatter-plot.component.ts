@@ -181,7 +181,11 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
         for (const rem of re.groupBy(row => row["Accession IDs"])) {
           const r = rem.first()
           if (r["Rank"] !== "" && r["Rank"]!==0) {
-            const b = r["Gene names"].split(";")
+            let b = ["Undefined"]
+            if (r["Gene names"] !== undefined) {
+              b = r["Gene names"].split(";")
+            }
+
             const tempLabel = r["label"]
             if (!(tempLabel in temp)) {
               temp[tempLabel] = {}
