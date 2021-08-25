@@ -45,9 +45,7 @@ export class ProteomicRuler {
         normalizationFactor.push(1)
       }
     }
-    console.log(this.df)
     const mmass = this.df.getSeries(this.molecular_mass_col).bake().toArray()
-    console.log(mmass)
     this.df = this.df.withSeries(this.molecular_mass_col, new Series(this.convertToDalton(mmass)))
 
     this.df = this.df.withSeries("normalization_factor", new Series(normalizationFactor)).bake()
@@ -92,8 +90,9 @@ export class ProteomicRuler {
       for (const d of data) {
         res.push(d*1000)
       }
+    } else {
+      return data
     }
-    console.log(res)
     return res
   }
 

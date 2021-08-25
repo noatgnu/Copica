@@ -67,7 +67,7 @@ export class FileSummaryComponent implements OnInit {
 
             if (this.uniprot.results.has(a)) {
               if (c === "Mass") {
-                result[c].push(parseFloat(this.uniprot.results.get(a)[c]))
+                result[c].push(parseFloat(this.uniprot.results.get(a)[c].replace(",", "")))
               } else {
                 result[c].push(this.uniprot.results.get(a)[c])
               }
