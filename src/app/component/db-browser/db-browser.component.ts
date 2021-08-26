@@ -4,6 +4,7 @@ import * as dataforge from "data-forge"
 import {DataFrame, IDataFrame} from "data-forge";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {UserDataService} from "../../service/user-data.service";
+import {SettingsService} from "../../service/settings.service";
 
 @Component({
   selector: 'app-db-browser',
@@ -26,15 +27,27 @@ export class DbBrowserComponent implements OnInit {
   selectedFile: any[] = [];
   @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
   userDF: IDataFrame = new DataFrame();
-  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService) {
+  datasetSettings: any = {}
+  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService, private settings: SettingsService) {
     this.userData.dataObserver.subscribe(data => {
       this.userDF = data
       console.log(this.userDF)
     })
     this.http.getIndexText().subscribe(data => {
-      const a = dataforge.fromCSV(<string>data.body)
       this.dataframe = dataforge.fromCSV(<string>data.body)
-
+      this.datasetSettings = this.settings.getDatasetSettings()
+      const temp: any[] = []
+      for (const r of this.dataframe) {
+        if (r.File in this.datasetSettings) {
+          if (this.datasetSettings[r.File]) {
+            temp.push(r)
+          }
+        } else {
+          this.datasetSettings[r.File] = true
+          temp.push(r)
+        }
+      }
+      this.dataframe = new DataFrame(temp)
       const firstEntry = this.dataframe.first()
       console.log(firstEntry)
       this.form.setValue({cellType: [{"cond": firstEntry["Condition"], "fraction": firstEntry["Fraction"], "cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}], experimentType: firstEntry["Experiment type"], userData: false})

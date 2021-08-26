@@ -1,0 +1,83 @@
+<div class="container" *ngIf="loadFinishedObserver|async">
+  <ngb-accordion>
+    <ngb-panel id="dataset-settings">
+      <ng-template ngbPanelHeader let-opened="opened">
+        <button ngbPanelToggle class="btn p-0" style="width: 100%">Currently enabled datasets ({{enabled}})</button>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <ngx-datatable
+          class="bootstrap fullscreen"
+          [rows]="rows"
+          columnMode="force"
+          [columns]="columns"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          rowHeight="auto"
+
+        >
+          <ngx-datatable-column
+            [resizeable]="true"
+            [draggable]="true"
+            [width]="30"
+            [sortable]="false"
+          >
+            <ng-template
+              ngx-datatable-header-template
+              let-value="value"
+              let-allRowsSelected="allRowsSelected"
+              let-selectFn="selectFn"
+            >
+
+            </ng-template>
+            <ng-template
+              ngx-datatable-cell-template
+              let-value="value"
+              let-isSelected="isSelected"
+              let-row="row"
+            >
+              <input type="checkbox" [checked]="datasetsSettings[row.File]" (change)="toggleDatasets($event, row.File)" />
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Organisms" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <span><b>{{row["Organisms"]}}</b></span>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Cell type" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <span><b>{{row["Cell type"]}}</b></span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Condition" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <span>{{row["Condition"]}}</span>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Fraction" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <span>{{row["Fraction"]}}</span>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Acquisition Method" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <span>{{row["Acquisition Method"]}}</span>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="File" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <a href="assets/{{row.File}}">Download</a>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+        <div class="row mt-2">
+          <div class="col-4">
+            <button class="btn btn-success mr-2" (click)="saveSettings($event)">Save Settings</button>
+            <button class="btn btn-danger" (click)="clearSettings($event)">Default Settings</button>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+</div>
+

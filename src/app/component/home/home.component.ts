@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {WebService} from "../../service/web.service";
 import {DataFrame, IDataFrame, fromCSV} from "data-forge";
 import {BehaviorSubject, Observable} from "rxjs";
+import {SettingsService} from "../../service/settings.service";
 
 @Component({
   selector: 'app-home',
@@ -14,7 +15,6 @@ export class HomeComponent implements OnInit {
   indexData: IDataFrame = new DataFrame()
   loadFinishedCheck: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   loadFinishedObserver: Observable<boolean> = this.loadFinishedCheck.asObservable()
-
   constructor(private http: WebService) {
     this.http.getIndexText().subscribe(data => {
       this.indexData = fromCSV(<string>data.body)

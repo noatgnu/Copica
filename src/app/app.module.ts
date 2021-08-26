@@ -23,6 +23,7 @@ import * as PlotlyJS from 'plotly.js-dist-min';
 import {PlotlyModule} from "angular-plotly.js";
 import {IconsModule} from "./icons/icons.module";
 import { ProteomicRulerComponent } from './component/proteomic-ruler/proteomic-ruler.component';
+import { DatasetSettingsComponent } from './component/dataset-settings/dataset-settings.component';
 
 PlotlyModule.plotlyjs = PlotlyJS
 
@@ -40,6 +41,7 @@ PlotlyModule.plotlyjs = PlotlyJS
     RandomChartComponent,
     SideBarComponent,
     ProteomicRulerComponent,
+    DatasetSettingsComponent,
 
   ],
   imports: [

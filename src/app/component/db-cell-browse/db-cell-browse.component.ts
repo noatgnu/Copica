@@ -5,6 +5,7 @@ import {WebService} from "../../service/web.service";
 import {BehaviorSubject, Observable} from "rxjs";
 import {FormBuilder} from "@angular/forms";
 import {UserDataService} from "../../service/user-data.service";
+import {SettingsService} from "../../service/settings.service";
 
 @Component({
   selector: 'app-db-cell-browse',
@@ -33,13 +34,27 @@ export class DbCellBrowseComponent implements OnInit {
   });
 
   userDF: IDataFrame = new DataFrame()
-
-  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService) {
+  datasetSettings: any = {}
+  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService, private settings: SettingsService) {
     this.userData.dataObserver.subscribe(data => {
       this.userDF = data
     })
     this.http.getIndexText().subscribe(data => {
+      this.datasetSettings = this.settings.getDatasetSettings()
       this.indDataframe = dataforge.fromCSV(<string>data.body)
+      const temp: any[] = []
+      for (const r of this.indDataframe) {
+        if (r.File in this.datasetSettings) {
+          if (this.datasetSettings[r.File]) {
+            temp.push(r)
+          }
+        } else {
+          this.datasetSettings[r.File] = true
+          temp.push(r)
+        }
+      }
+      console.log(this.datasetSettings)
+      this.indDataframe = new DataFrame(temp)
       const first = this.indDataframe.first();
       console.log(first)
       this.form.setValue({
