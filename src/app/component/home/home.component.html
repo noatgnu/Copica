@@ -27,7 +27,61 @@
 
 </div>
 
-
 <div class="container">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">FAQ</h3>
+      <hr/>
+      <h5 class="card-text">
+        What is Proteomic ruler?
+      </h5>
+      <p class="card-text">
+        Proteomic ruler is a histone-based estimation of protein copy numbers and concentrations per cell as described in Wisniewki. J.R et.al (PMID: 25225357). MS readout can be used to calculate protein copy numbers based on the cumulative intensity of histones identified.
+      </p>
+      <h5 class="card-text">
+        My MS experiment has identified 1000 proteins can I use this data set to estimate copy numbers?
+      </h5>
+      <p class="card-text">
+        Not recommended. The data set should be complex enough to have a maximum coverage for histone proteins to be identified from whole cell tryptic digests. It is recommended to have at least 6,000 to 10,000 proteins to be identified to have accurate estimation of copy numbers.
+      </p>
+      <h5 class="card-text">
+        What is DDA and DIA?
+      </h5>
+      <p class="card-text">
+        DDA (Data Dependent Acquisition) is an MS acquisition mode where the Mass spectrometer is operated to sequence the peptides based on the abundance across the LC elution profile.
+        <br/>
+        DIA (Data Independent Acquisition) is a targeted MS2 acquisition mode where the Mass spectrometer is operated to sequence peptide precursors within the selected mass range across the LC elution profile.
+      </p>
+      <h5 class="card-text">
+        What are these datasets?
+      </h5>
+      <p class="card-text">
+        The Copica has <span *ngIf="loadFinishedObserver|async"><b>{{this.indexData.count()}}</b></span> datasets which includes the experiments from our lab as well as published deep proteomic experiments. We aim to add more in house generated data of different tissues as well as cells.
+      </p>
+      <h5 class="card-text">
+        I have a deep proteomic data can I use Copica to estimate copy numbers?
+      </h5>
+      <p class="card-text">
+        Yes, ensure the dataset is deep enough and derived from a whole cell extract. Also depending on the search algorithm that has been ensure the data set has MS1 or MS2 (DIA only) intensity and protein molecular weight and ploidy of the cell type information.
+      </p>
+      <h5 class="card-text">
+        What is single shot and fractionated data means?
+      </h5>
+      <p class="card-text">
+        Single shot is an experiment where MS analysis has been carried out without any pre fractionation. Fractionated data, peptide digest has been pre-fractionated using C18 or High-pH RPLC or SCX fractionation method to have 12 or 24 or 48 pooled fractions to improve the coverage.
+      </p>
+      <h5 class="card-text">
+        Can I download the data?
+      </h5>
+      <p class="card-text">
+        Yes, Copica has an option to download as txt file as well as png format of the graphs/plots.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4">
   <app-dataset-settings></app-dataset-settings>
 </div>
+
+
