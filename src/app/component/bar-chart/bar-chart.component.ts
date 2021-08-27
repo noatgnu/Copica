@@ -58,6 +58,7 @@ export class BarChartComponent implements OnInit {
       const gl = this.origin.getSeries("Gene names").distinct().bake().toArray()
       if (!this.arraysCompare(gl, this.geneList)) {
         this.geneList = gl
+        this.graphData = []
         this._data = this.assignData();
       }
     }

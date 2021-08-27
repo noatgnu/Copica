@@ -82,7 +82,7 @@ export class DbCellBrowseComponent implements OnInit {
     if (experiment) {
       this.experiment = []
     }
-
+    const expo = this.experiment
     for (const r of this.indDataframe) {
       let get = false;
       if (r["Acquisition Method"] == "DDA") {
@@ -121,18 +121,18 @@ export class DbCellBrowseComponent implements OnInit {
           }
 
           for (const e in this.dfMap[this.form.value["organisms"]]) {
-            this.experiment.push(e)
+            if (!(expo.includes(e))) {
+              expo.push(e)
+            }
           }
 
           let exp = this.form.value["experiment"]
           if (experiment) {
-            if (!(this.experiment.includes(exp))) {
-              exp = this.experiment[0]
-              console.log(exp)
+            if (!(expo.includes(exp))) {
+              exp = expo[0]
             }
           }
 
-          console.log(this.experiment)
           this.form.setValue({
             organisms: this.form.value["organisms"],
             experiment: exp,
@@ -140,6 +140,7 @@ export class DbCellBrowseComponent implements OnInit {
             dia: this.form.value["dia"],
             userData: this.form.value["userData"]
           })
+          this.experiment = expo
           this.selectData()
           //this.geneList = this.entireData.getSeries("Gene names").distinct().bake().toArray()
           this.fileLoaded.next(true);
