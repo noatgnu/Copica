@@ -45,7 +45,8 @@ export class FileSummaryComponent implements OnInit {
       IdentifierCol: proteinID,
       MolecularMassCol: mmass,
       GeneNameCol: geneNames,
-      fetchUniProt: this.columnForm.value.fetchUniProt
+      fetchUniProt: this.columnForm.value.fetchUniProt,
+      Ploidy: 2
     })
     //this.uniprotFetch(this._dataframe)
   }
@@ -92,7 +93,8 @@ export class FileSummaryComponent implements OnInit {
             IdentifierCol: this.columnForm.value["IdentifierCol"],
             MolecularMassCol: "Mass",
             GeneNameCol: "Gene names",
-            fetchUniProt: this.columnForm.value["fetchUniProt"]
+            fetchUniProt: this.columnForm.value["fetchUniProt"],
+            Ploidy: this.columnForm.value["Ploidy"]
           }
         )
         this.emitTriggerBehavior.next(true)
@@ -107,6 +109,7 @@ export class FileSummaryComponent implements OnInit {
         query.IdentifierCol = this.columnForm.value["IdentifierCol"]
         query.MolecularMassCol = this.columnForm.value["MolecularMassCol"]
         query.GeneNameCol = this.columnForm.value["GeneNameCol"]
+        query.Ploidy = this.columnForm.value["Ploidy"]
         console.log(query)
         this.selectedData.emit(query)
       }
@@ -117,7 +120,8 @@ export class FileSummaryComponent implements OnInit {
       IdentifierCol: "",
       MolecularMassCol: "",
       GeneNameCol: "",
-      fetchUniProt: false
+      fetchUniProt: false,
+      Ploidy: 2
     })
   }
 

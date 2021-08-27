@@ -7,4 +7,5 @@ export class Query {
   IdentifierCol: string = ""
   MolecularMassCol: string = ""
   GeneNameCol: string = ""
+  Ploidy: number = 2
 }

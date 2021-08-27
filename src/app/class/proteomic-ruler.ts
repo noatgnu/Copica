@@ -22,7 +22,8 @@ export class ProteomicRuler {
   histone_mass: number = 0
   total_molecules: number = 0
   total_protein: number = 0
-  constructor(histone: HistoneDb, dataframe: IDataFrame, selectedIntensityCols: string[] = [], selectedIDCol: string = "Majority protein IDs", molMassCol: string = "Mol. weight [kDa]") {
+  constructor(histone: HistoneDb, dataframe: IDataFrame, selectedIntensityCols: string[] = [], selectedIDCol: string = "Majority protein IDs", molMassCol: string = "Mol. weight [kDa]", ploidy: number = 2) {
+    this.ploidy = ploidy
     this.protein_ids_column = selectedIDCol
     this.molecular_mass_col = molMassCol
     this.histone = histone

@@ -32,7 +32,7 @@ export class ProteomicRulerComponent implements OnInit {
   }
 
   selectedDataHandler(e: Query) {
-    this.ruler = new ProteomicRuler(this.histoneDB, e.df, e.IntensityCols, e.IdentifierCol, e.MolecularMassCol)
+    this.ruler = new ProteomicRuler(this.histoneDB, e.df, e.IntensityCols, e.IdentifierCol, e.MolecularMassCol, e.Ploidy)
     const data: any[] = []
     const columns = this.ruler.intensityCols
     for (const r of this.ruler.df) {
