@@ -19,8 +19,8 @@ export class DbCellBrowseComponent implements OnInit {
   customDataName: any[] = []
   graphData: GraphData = new GraphData()
   selectedGenes: string[] = []
-  dda: boolean = true;
-  dia: boolean = true;
+  dda: boolean = false;
+  dia: boolean = false;
   indDataframe: IDataFrame = new DataFrame();
   dataArray: IDataFrame[] = []
   geneList: string[] = []
@@ -34,8 +34,8 @@ export class DbCellBrowseComponent implements OnInit {
   form = this.fb.group({
     organisms: "",
     experiment: "",
-    dda: true,
-    dia: true,
+    dda: this.dda,
+    dia: this.dia,
     userData: false
   });
 
@@ -77,11 +77,10 @@ export class DbCellBrowseComponent implements OnInit {
       this.form.setValue({
         organisms: first["Organisms"],
         experiment: first["Experiment type"],
-        dia: this.dda,
-        dda: this.dia,
+        dia: this.dia,
+        dda: this.dda,
         userData: false},
         )
-
       this.organism = this.indDataframe.getSeries("Organisms").distinct().bake().toArray()
       //this.experiment = this.indDataframe.getSeries("Experiment Type").distinct().bake().toArray()
       this.getData();
@@ -159,7 +158,6 @@ export class DbCellBrowseComponent implements OnInit {
           this.selectData()
           //this.geneList = this.entireData.getSeries("Gene names").distinct().bake().toArray()
           this.fileLoaded.next(true);
-          console.log(this.dfMap);
         }
       })
     }
@@ -188,6 +186,8 @@ export class DbCellBrowseComponent implements OnInit {
             this.dia = true
           }
         }
+        console.log(this.dda)
+        console.log(this.dia)
       }
       if (res.datasets) {
         const d = res.datasets.split(",")
@@ -206,7 +206,7 @@ export class DbCellBrowseComponent implements OnInit {
   }
 
   selectData() {
-    console.log("select data")
+    console.log(this.form.value)
 
     this.selectedData = this.dfMap[this.form.value["organisms"]][this.form.value["experiment"]]
     if (this.form.value["userData"]) {
@@ -233,6 +233,7 @@ export class DbCellBrowseComponent implements OnInit {
     if (this.form.value.dda) {
       methods.push("dda")
     }
+
     const url = this.router.createUrlTree(["/cellbrowse", e.join(","), methods.join(","), this.selectedFiles.join(",")])
     if (this.location.path() !== url.toString()) {
       this.location.go(url.toString())
