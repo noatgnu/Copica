@@ -120,7 +120,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   label: string[] = []
   @Input() set data(value: IDataFrame) {
     this.original = value
-    this.selectedFiles = this.location.path(true).replace("/copybrowse/", "")
+    this.selectedFiles = this.location.path(true).replace("/copybrowse/", "").replace("/ruler", "")
     this.assignData();
   }
   cellTypes: string[] = []
