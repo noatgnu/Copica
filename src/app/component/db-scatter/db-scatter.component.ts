@@ -5,6 +5,7 @@ import {WebService} from "../../service/web.service";
 import {HistoneDb} from "../../class/histone-db";
 import {BehaviorSubject, Observable} from "rxjs";
 import {Query} from "../../class/query";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-db-scatter',

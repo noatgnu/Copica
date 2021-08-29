@@ -1,9 +1,10 @@
-import {Component, Input, OnInit, QueryList, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChild} from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
 import {BaseChartDirective} from "ng2-charts";
 import {ChartOptions, ChartDataSets, ChartType, Chart} from "chart.js";
-import {Observable, OperatorFunction} from "rxjs";
+import {BehaviorSubject, Observable, OperatorFunction} from "rxjs";
 import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
+import {GraphData} from "../../class/graph-data";
 
 @Component({
   selector: 'app-bar-chart',
@@ -14,12 +15,17 @@ export class BarChartComponent implements OnInit {
   graphData: any[] = []
   graphLayout = {autosize:true, title: 'Copy number distribution', margin: {l: 100, r:100, b:100, t:100},
     xaxis: {
-      title: "Cell type"
+      title: "Cell type",
+      type: "category"
     },
     yaxis: {
       title: "Copy number"
     }
   }
+
+  drawTriggerSubject = new BehaviorSubject<boolean>(false)
+  @Output() updateSelection = new EventEmitter<string[]>()
+
   search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -30,7 +36,14 @@ export class BarChartComponent implements OnInit {
   model: any = "";
   origin: IDataFrame = new DataFrame()
   geneList: string[] = []
-  selectedProteins: string[] = []
+  _selectedProteins: string[] = []
+  set selectedProteins(values: string[]) {
+    this._selectedProteins = values
+  }
+
+  get selectedProteins(): string[] {
+    return this._selectedProteins
+  }
   get data(): IDataFrame {
     return this._data;
   }
@@ -51,7 +64,23 @@ export class BarChartComponent implements OnInit {
     return true
   }
 
-  @Input() set data(value: IDataFrame) {
+  initialLoad = true
+  updateTrigger = 0
+
+  _gData:GraphData = new GraphData()
+
+  get gData(): GraphData {
+    return this._gData
+  }
+
+  @Input() set gData(value: GraphData) {
+    this._gData = value;
+    this.selectedProteins = value.selectedProteins
+    this.data = value.data
+  }
+
+
+  set data(value: IDataFrame) {
     console.log("update bar-chart")
     if (this.origin.count() !== value.count()) {
       this.origin = value
@@ -59,7 +88,7 @@ export class BarChartComponent implements OnInit {
       if (!this.arraysCompare(gl, this.geneList)) {
         this.geneList = gl
         this.graphData = []
-        this._data = this.assignData();
+        this._data = this.assignData(this.selectedProteins);
       }
     }
   }
@@ -74,46 +103,50 @@ export class BarChartComponent implements OnInit {
     for (const g of this.origin.groupBy(row => row.label)) {
       const gFirst = g.first()
 
-      const currentCellType = gFirst["Cell type"]
+      const currentCellType = gFirst["Cell type"].toString()
       const currentCondition = gFirst["Condition"]
       for (const gn of g.groupBy(rowg => rowg["Gene names"])) {
         const first = gn.first()
         if (selected.includes(first["Gene names"])) {
-          if (!(first["Gene names"] in result)) {
-            result[first["Gene names"]] = {x: [], y: [], error_y: {
-                type: "data",
-                array: [],
-                visible: false
-              },
-              type: 'bar',
-              name: first["Gene names"]
+          for (const ga of gn.groupBy(acc => acc["Accession IDs"])) {
+            const firstA = ga.first()
+            const name = firstA["Gene names"] + ":" + firstA["Accession IDs"]
+            if (!(name in result)) {
+              result[name] = {x: [], y: [], error_y: {
+                  type: "data",
+                  array: [],
+                  visible: false
+                },
+                type: 'bar',
+                name: name
+              }
             }
-          }
-          for (const r of gn) {
-            filtered.push(r)
-          }
-          if (gn.count() > 1) {
-            const d = gn.getSeries("Copy number").parseFloats().bake().toArray()
-            const average = gn.getSeries("Copy number").parseFloats().bake().average()
-            const std = gn.getSeries("Copy number").parseFloats().bake().std()
-            const sterr = std/Math.sqrt(gn.count())
-            if (currentCondition !== "Standard") {
-              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
-            } else {
-              result[first["Gene names"]].x.push(currentCellType)
+            for (const r of ga) {
+              filtered.push(r)
             }
+            if (gn.count() > 1) {
+              const average = gn.getSeries("Copy number").parseFloats().bake().average()
+              const std = gn.getSeries("Copy number").parseFloats().bake().std()
+              const sterr = std/Math.sqrt(gn.count())
+              if (currentCondition !== "Standard") {
+                result[name].x.push(currentCellType + " " + currentCondition)
+              } else {
+                result[name].x.push(currentCellType)
+              }
 
-            result[first["Gene names"]].y.push(average)
-            result[first["Gene names"]].error_y.visible = true
-            result[first["Gene names"]].error_y.array.push(sterr)
-          } else {
-            if (currentCondition !== "Standard") {
-              result[first["Gene names"]].x.push(currentCellType + " " + currentCondition)
+              result[name].y.push(average)
+              result[name].error_y.visible = true
+              result[name].error_y.array.push(sterr)
             } else {
-              result[first["Gene names"]].x.push(currentCellType)
+              if (currentCondition !== "Standard") {
+                result[name].x.push(currentCellType + " " + currentCondition)
+              } else {
+                result[name].x.push(currentCellType)
+              }
+              result[name].y.push(firstA["Copy number"])
             }
-            result[first["Gene names"]].y.push(first["Copy number"])
           }
+
         }
       }
     }
@@ -121,7 +154,7 @@ export class BarChartComponent implements OnInit {
       this.graphData.push(result[r])
     }
 
-    console.log(filtered)
+    console.log(this.graphData)
     this.currentDf = new DataFrame(filtered)
 
     return this.currentDf;
@@ -143,6 +176,7 @@ export class BarChartComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
   }
 
   searchSelectedProtein(){
@@ -152,6 +186,7 @@ export class BarChartComponent implements OnInit {
           this.selectedProteins.push(this.model)
         }
         this.assignData(this.selectedProteins)
+        this.updateSelection.next(this.selectedProteins)
       }
     }
   }
@@ -160,8 +195,8 @@ export class BarChartComponent implements OnInit {
     for (let i = 0; i < this.selectedProteins.length; i ++) {
       if (this.selectedProteins[i] === p) {
         this.selectedProteins.splice(i, 1)
-        console.log(this.selectedProteins)
         this.assignData(this.selectedProteins)
+        this.updateSelection.next(this.selectedProteins)
         break
       }
     }

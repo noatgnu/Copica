@@ -76,18 +76,96 @@
             <ngx-datatable-group-header [rowHeight]="50" #myGroupHeader>
               <ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template>
                 <div style="padding-left: 5px">
-                  <a
+                  <div class="row">
+                    <div class="col-2 text-sm-left">
+                      <a
+                        [class.datatable-icon-right]="!expanded"
+                        [class.datatable-icon-down]="expanded"
+                        title="Expand/Collapse Group"
+                        (click)="toggleExpandGroup(group)"
+                      >
+                        <b>{{group.value[0]["Gene names"]}}</b>
+                      </a>
+                    </div>
+                    <div class="col-10 text-sm-right">
+                      <a  href="#/cellbrowse/{{group.value[0]['Gene names']}}/dia,dda/{{selectedFiles}}">View</a>
+                    </div>
+                  </div>
 
-                    [class.datatable-icon-right]="!expanded"
-                    [class.datatable-icon-down]="expanded"
-                    title="Expand/Collapse Group"
-                    (click)="toggleExpandGroup(group)"
-                  >
-                    <b>{{group.value[0]["Gene names"]}}</b>
-                  </a>
                 </div>
               </ng-template>
             </ngx-datatable-group-header>
+            <ngx-datatable-column
+              [resizeable]="true"
+              [draggable]="true"
+              [sortable]="false"
+              name="Cell type"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{row["Cell type"]}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column
+              [resizeable]="true"
+              [draggable]="true"
+              [sortable]="false"
+              name="Gene names"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{row["Gene names"]}}
+              </ng-template>
+
+            </ngx-datatable-column>
+            <ngx-datatable-column
+              [resizeable]="true"
+              [draggable]="true"
+              [sortable]="false"
+              name="Accession IDs"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{row["Accession IDs"]}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column
+              [resizeable]="true"
+              [draggable]="true"
+              [sortable]="false"
+              name="Copy number"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{row["Copy number"]}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column
+              [resizeable]="true"
+              [draggable]="true"
+              [sortable]="false"
+              name="Rank"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{row["Rank"]}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column
+              [resizeable]="true"
+              [draggable]="true"
+              [sortable]="false"
+              name="Condition"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{row["Condition"]}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column
+              [resizeable]="true"
+              [draggable]="true"
+              [sortable]="false"
+              name="Fractions"
+            >
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{row["Fraction"]}}
+              </ng-template>
+            </ngx-datatable-column>
           </ngx-datatable>
         </div>
       </div>

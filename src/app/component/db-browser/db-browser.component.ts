@@ -5,6 +5,8 @@ import {DataFrame, IDataFrame} from "data-forge";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {UserDataService} from "../../service/user-data.service";
 import {SettingsService} from "../../service/settings.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-db-browser',
@@ -28,10 +30,9 @@ export class DbBrowserComponent implements OnInit {
   @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
   userDF: IDataFrame = new DataFrame();
   datasetSettings: any = {}
-  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService, private settings: SettingsService) {
+  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService, private settings: SettingsService, private route: ActivatedRoute, private router: Router, private location: Location) {
     this.userData.dataObserver.subscribe(data => {
       this.userDF = data
-      console.log(this.userDF)
     })
     this.http.getIndexText().subscribe(data => {
       this.dataframe = dataforge.fromCSV(<string>data.body)
@@ -49,7 +50,6 @@ export class DbBrowserComponent implements OnInit {
       }
       this.dataframe = new DataFrame(temp)
       const firstEntry = this.dataframe.first()
-      console.log(firstEntry)
       this.form.setValue({cellType: [{"cond": firstEntry["Condition"], "fraction": firstEntry["Fraction"], "cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}], experimentType: firstEntry["Experiment type"], userData: false})
       //this.selectedFile = firstEntry["File"]
       this.updateExperimentType()
@@ -84,7 +84,6 @@ export class DbBrowserComponent implements OnInit {
         }
       }
     }
-    console.log(this.cellType)
     this.updateFormValue("cellType")
 
   }
@@ -124,35 +123,62 @@ export class DbBrowserComponent implements OnInit {
   loadVisual(e: MouseEvent) {
     e.stopPropagation()
     this.selectCellType()
+    this.processData();
+  }
+
+  private processData(updateUrl: boolean = true) {
     const dataDF: IDataFrame[] = []
+    console.log(this.selectedFile)
+    if (updateUrl) {
+      this.updateURL()
+    }
+
     for (const s of this.selectedFile) {
+      console.log(s)
+      console.log(this.selectedFile)
+      const a = this.selectedFile
       this.http.getDBtext(s).subscribe(data => {
+        console.log(a)
         let result: IDataFrame = new DataFrame()
-        if (this.selectedFile.length > 1) {
+        if (a.length > 1) {
 
           dataDF.push(dataforge.fromCSV(<string>data.body))
-          if (this.selectedFile.length === dataDF.length) {
+          if (a.length === dataDF.length) {
             result = DataFrame.concat(dataDF).bake()
 
           }
         } else {
           result = dataforge.fromCSV(<string>data.body)
         }
-        console.log(result)
+
         if (this.form.value["userData"]) {
           if (this.userDF.count() > 0) {
             result = DataFrame.concat([result, this.userDF]).bake()
           }
         }
-        console.log(result)
+
         this.selectedDataframe.emit(result);
+
+
       })
     }
   }
 
   ngOnInit(): void {
+    this.route.params.subscribe(res => {
+      if (res.datasets) {
+        const d = res.datasets.split(",")
+        if (d) {
+          this.selectedFile = d
+          this.processData(false)
+        }
+      }
+    })
   }
 
-
+  updateURL(): void {
+    const url = this.router.createUrlTree(["copybrowse", this.selectedFile.join(",")])
+    this.location.go(url.toString())
+  }
 
 }

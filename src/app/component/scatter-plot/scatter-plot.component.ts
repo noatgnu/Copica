@@ -5,6 +5,9 @@ import {Observable, OperatorFunction} from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import {DataFrame, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {location} from "ngx-bootstrap/utils/facade/browser";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-scatter-plot',
@@ -27,8 +30,6 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     } else {
       this.rows = [...this.tempRows]
     }
-    console.log(this.rows)
-
     this.table.offset = 0
 
   }
@@ -107,7 +108,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
 
-  constructor(private http: WebService) {
+  constructor(private http: WebService, private location: Location) {
     for (const f in this.http.filters) {
       this.sampleColors[f] = this.getRandomColor()
     }
@@ -119,6 +120,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   label: string[] = []
   @Input() set data(value: IDataFrame) {
     this.original = value
+    this.selectedFiles = this.location.path(true).replace("/copybrowse/", "")
     this.assignData();
   }
   cellTypes: string[] = []
@@ -178,6 +180,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     this.label = this.original.getSeries("Gene names").distinct().bake().toArray()
     for (const g of this.original.groupBy(row => row.label)) {
       for (const re of g.groupBy(row => row["Gene names"])) {
+
         for (const rem of re.groupBy(row => row["Accession IDs"])) {
           const r = rem.first()
           if (r["Rank"] !== "" && r["Rank"]!==0) {
@@ -225,7 +228,6 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
               temp[tempLabel][r["Gene names"]].x = x
               if (tempLabel in selectedProteins) {
                 if (selectedProteins[tempLabel].includes(r["Gene names"])) {
-
                   filtered.push(r)
                 }
               }
@@ -324,9 +326,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       if (typeof this.rows[i]["Copy number"] === "number") {
         this.rows[i]["Copy number"] = this.rows[i]["Copy number"].toFixed(2)
       }
-
     }
-    console.log(this.scatterChartData)
 
     this.chart?.chart.update();
   }
@@ -341,7 +341,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   height = 750
   min_x = 0
   min_y = 0
-
+  selectedFiles: string = ""
   ngOnInit(): void {
 
   }
@@ -389,10 +389,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
         this.selectedProtein[cellType].splice(ind, 1)
         //this.selectedElement.splice(ind, 1)
       }
-
-
     }
-    console.log(this.selectedProtein)
     this.assignData(this.selectedProtein)
   }
 

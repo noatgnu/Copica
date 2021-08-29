@@ -14,11 +14,19 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'copybrowse/:datasets',
+    component: DbScatterComponent
+  },
+  {
     path: 'copybrowse',
     component: DbScatterComponent
   },
   {
-    path: 'cellbrowse',
+    path: 'cellbrowse/:gene/:methods/:datasets',
+    component: DbCellBrowseComponent
+  },
+  {
+    path: 'cellbrowse/:gene/:methods',
     component: DbCellBrowseComponent
   },
   {

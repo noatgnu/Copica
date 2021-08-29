@@ -1,6 +1,9 @@
 <div class="container" *ngIf="fileLoadedObserver|async">
   <div class="card">
     <div class="card-body">
+      <ngb-alert type="primary" *ngIf="customData">
+        Currently viewing a custom dataset {{customDataName.join(",")}}
+      </ngb-alert>
       <form [formGroup]="form">
         <div class="form-group">
           <div class="form-row">
@@ -45,4 +48,4 @@
   </div>
 </div>
 
-<app-bar-chart *ngIf="fileLoadedObserver|async" [data]="selectedData"></app-bar-chart>
+<app-bar-chart *ngIf="fileLoadedObserver|async" [gData]="graphData" (updateSelection)="updateSelected($event)"></app-bar-chart>
