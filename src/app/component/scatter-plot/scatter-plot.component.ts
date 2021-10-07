@@ -1,12 +1,20 @@
-import {Component, Input, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges} from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  AfterViewInit,
+  OnChanges,
+  ViewChild,
+  SimpleChanges,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import {ChartDataSets, ChartType, ChartOptions, ChartColor} from "chart.js"
 import {BaseChartDirective, Label} from "ng2-charts";
 import {Observable, OperatorFunction} from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import {DataFrame, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {location} from "ngx-bootstrap/utils/facade/browser";
 import {Location} from "@angular/common";
 
 @Component({
@@ -17,7 +25,7 @@ import {Location} from "@angular/common";
 export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('myTable') table: any;
   tableFilterModel:any = "";
-
+  @Output() heatmap: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
   tempRows: any[] = []
 
   updateFilter() {
@@ -50,21 +58,40 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   colors: string[] = [];
   pointRadius: number[] = []
   options: ChartOptions = {
+    legend: {
+      labels: {
+        fontStyle: "bold",
+        fontSize: 14
+      }
+    },
     scales: {
+
       yAxes: [
         {
           scaleLabel: {
             display: true,
-            labelString: "log10 Copy Number"
-          }
+            labelString: "log10 Copy Number",
+            fontStyle: "bold",
+            fontSize: 20
+          },
+          ticks: {
+            fontStyle: "bold",
+            fontSize: 14
+          },
         }
       ],
       xAxes: [
         {
           scaleLabel: {
             display: true,
-            labelString: "Rank"
-          }
+            labelString: "Rank",
+            fontStyle: "bold",
+            fontSize: 20
+          },
+          ticks: {
+            fontStyle: "bold",
+            fontSize: 14
+          },
         }
       ]
     },
@@ -142,11 +169,12 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     this.currentHightlight = pathway
   }
 
+  heatmapData: IDataFrame = new DataFrame()
   private assignData(selectedProteins: any = {}, pathway: string = "Lrrk2") {
     if (Object.keys(selectedProteins).length > 0){
       this.selectedProtein = selectedProteins
     }
-
+    const heatmapData: any = {}
     this.pointRadius = []
     this.lrrk2 = []
     const temp: any = {}
@@ -281,6 +309,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
 
         if (temp[c][t] !== undefined) {
           a.data?.push(temp[c][t])
+
           if (Object.keys(selectedProteins).length>0) {
             if (selectedProteins[c].includes(t)) {
               if (!(t in this.sampleColors)){
@@ -296,9 +325,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
             color.push(this.sampleColors[c])
             radius.push(1)
           } else if (this.annotation[pathway].includes(t)) {
-
             if (!this.selectedProtein[c].includes(t)) {
-
               if (temp[c][t] !== undefined){
                 this.selectedProtein[c].push(t)
               }
@@ -326,8 +353,22 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       if (typeof this.rows[i]["Copy number"] === "number") {
         this.rows[i]["Copy number"] = this.rows[i]["Copy number"].toFixed(2)
       }
+      const temp_name = this.rows[i]["Accession IDs"] + "(" +  this.rows[i]["Gene names"] + ")"
+      if (!(temp_name in heatmapData)) {
+        heatmapData[temp_name] = {"ID": temp_name}
+      }
+      const sample_name = this.rows[i]["label"] + "_" + this.rows[i]["Fraction"]
+      if (!(sample_name in heatmapData[temp_name])) {
+        heatmapData[temp_name][sample_name] = this.rows[i]["Copy number"]
+      }
     }
-
+    const heatmapDF: any[] = []
+    for (const k in heatmapData) {
+      heatmapDF.push(heatmapData[k])
+    }
+    if (heatmapDF.length > 0) {
+      this.heatmapData = new DataFrame(heatmapDF)
+    }
     this.chart?.chart.update();
   }
   rows: any[] = []

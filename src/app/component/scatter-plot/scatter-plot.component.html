@@ -51,6 +51,9 @@
           </div>
 
           </div>
+          <div class="row" *ngIf="heatmapData.count() > 0">
+            <app-heatmap [data]="heatmapData"></app-heatmap>
+          </div>
         </div>
 
         <div class="col-5 mt-2" *ngIf="rows">

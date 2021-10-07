@@ -1,0 +1,37 @@
+<div class="container-fluid mt-2">
+  <h5>Distribution Heatmap</h5>
+  <div class="form-row">
+    <div class="form-group col-auto">
+      <label class="sr-only" for="colorMin">Color Scale Minimum</label>
+      <div class="input-group mr-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text">Min</div>
+        </div>
+        <input type="number" id="colorMin" class="form-control" [(ngModel)]="value.min">
+      </div>
+
+    </div>
+    <div class="form-group col-auto">
+      <label class="sr-only" for="colorMax">Color Scale Maximum</label>
+      <div class="input-group mr-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text">Max</div>
+        </div>
+        <input type="number" id="colorMax" class="form-control" [(ngModel)]="value.max">
+      </div>
+
+    </div>
+    <div class="form-group col-2">
+      <button class="btn btn-primary" (click)="rescale($event)">Rescale</button>
+    </div>
+  </div>
+
+  <plotly-plot divId="heatmap" [data]="graphData" [layout]="graphLayout" [updateOnLayoutChange]="true" [updateOnDataChange]="true" [config]="{responsive:true}">
+  </plotly-plot>
+
+  <div class="container mt-2 mb-2">
+    <button class="btn btn-sm btn-primary mx-auto" (click)="downloadPlotlyExtra('svg')">Download SVG</button>
+  </div>
+</div>
+
+

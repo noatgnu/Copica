@@ -24,6 +24,7 @@ import {PlotlyModule} from "angular-plotly.js";
 import {IconsModule} from "./icons/icons.module";
 import { ProteomicRulerComponent } from './component/proteomic-ruler/proteomic-ruler.component';
 import { DatasetSettingsComponent } from './component/dataset-settings/dataset-settings.component';
+import {HeatmapComponent} from "./component/heatmap/heatmap.component";
 
 PlotlyModule.plotlyjs = PlotlyJS
 
@@ -42,6 +43,7 @@ PlotlyModule.plotlyjs = PlotlyJS
     SideBarComponent,
     ProteomicRulerComponent,
     DatasetSettingsComponent,
+    HeatmapComponent
 
   ],
   imports: [

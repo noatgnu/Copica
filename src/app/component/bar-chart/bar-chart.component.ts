@@ -5,6 +5,7 @@ import {ChartOptions, ChartDataSets, ChartType, Chart} from "chart.js";
 import {BehaviorSubject, Observable, OperatorFunction} from "rxjs";
 import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
 import {GraphData} from "../../class/graph-data";
+import {PlotlyService} from "angular-plotly.js";
 
 @Component({
   selector: 'app-bar-chart',
@@ -13,13 +14,16 @@ import {GraphData} from "../../class/graph-data";
 })
 export class BarChartComponent implements OnInit {
   graphData: any[] = []
-  graphLayout = {autosize:true, title: 'Copy number distribution', margin: {l: 100, r:100, b:100, t:100},
+  graphLayout = {autosize:true, title: '<br>Copy number distribution</br>', margin: {l: 100, r:100, b:100, t:100},
     xaxis: {
-      title: "Cell type",
-      type: "category"
+      title: "<b>Cell type</b>",
+      type: "category",
+      tickfont: {
+        size: "12"
+      }
     },
     yaxis: {
-      title: "Copy number"
+      title: "<b>Copy number</b>"
     }
   }
 
@@ -93,6 +97,12 @@ export class BarChartComponent implements OnInit {
     }
   }
 
+  async downloadPlotlyExtra(format: string) {
+    const graph = this.plotly.getInstanceByDivId('barchart');
+    const p = await this.plotly.getPlotly();
+    await p.downloadImage(graph, {format: format, filename: "image"})
+
+  }
   currentDf: IDataFrame = new DataFrame()
 
   private assignData(selected: string[] = ["LRRK2"]) {
@@ -171,7 +181,7 @@ export class BarChartComponent implements OnInit {
       }
     }
   }
-  constructor() {
+  constructor(private plotly: PlotlyService) {
 
   }
 

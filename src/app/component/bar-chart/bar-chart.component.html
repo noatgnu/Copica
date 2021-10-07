@@ -5,20 +5,29 @@
         <div class="col-5">
           <input id="search-data" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" placeholder="Search gene name">
         </div>
+
+
         <div class="col-3">
           <button class="btn btn-primary" (click)="searchSelectedProtein()">Add to graph</button>
         </div>
-        <div class="col-4">
-          <button class="btn btn-primary" (click)="downloadSelectedData(currentDf)">Download Selected Data</button>
+        <div class="col-3">
+          <div ngbDropdown class="d-inline-block">
+            <button class="btn btn-outline-secondary" ngbDropdownToggle id="fileMenu">Download Data</button>
+            <div ngbDropdownMenu aria-labelledby="fileMenu">
+              <button ngbDropdownItem (click)="downloadSelectedData(currentDf)">Download Selected Data</button>
+              <button ngbDropdownItem (click)="downloadPlotlyExtra('svg')">Download Graph as SVG</button>
+            </div>
+          </div>
         </div>
       </div>
 
-        <p class="card-text">
-          Selected proteins: <span *ngFor="let p of selectedProteins" class="badge badge-pill badge-success mr-2" (click)="removeSelected(p)">{{p}}</span>
-        </p>
+      <p class="card-text">
+        Selected proteins: <span *ngFor="let p of selectedProteins" class="badge badge-pill badge-success mr-2" (click)="removeSelected(p)">{{p}}</span>
+      </p>
 
     </div>
     <plotly-plot
+      [divId]="'barchart'"
       [data]="graphData"
       [layout]="graphLayout"
       [updateOnDataChange]="true"

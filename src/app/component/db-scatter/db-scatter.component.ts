@@ -13,20 +13,14 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./db-scatter.component.css']
 })
 export class DbScatterComponent implements OnInit {
-
-
   loadScatterSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   observeScatter: Observable<boolean> = new Observable<boolean>()
   scatterDF: IDataFrame = new DataFrame();
   scatterData: IDataFrame = new DataFrame();
-
+  heatmapData: IDataFrame = new DataFrame();
   constructor(private http: WebService) {
     this.observeScatter = this.loadScatterSubject.asObservable()
   }
-
-
-
-
 
   scatterDataHandler(e: IDataFrame) {
     this.scatterData = e;
@@ -50,6 +44,10 @@ export class DbScatterComponent implements OnInit {
       document.body.removeChild(a);
     }
     window.URL.revokeObjectURL(url)
+  }
+
+  handleHeatmap(data: IDataFrame) {
+    this.heatmapData = data
   }
 
   ngOnInit() {

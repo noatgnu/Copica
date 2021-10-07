@@ -1,6 +1,6 @@
 <app-db-browser (selectedDataframe)="scatterDataHandler($event)"></app-db-browser>
 <div *ngIf="observeScatter|async">
-  <app-scatter-plot [data]="scatterData"></app-scatter-plot>
+  <app-scatter-plot [data]="scatterData" (heatmap)="handleHeatmap($event)"></app-scatter-plot>
   <div class="container mt-4">
     <button class="btn btn-primary" (click)="downloadSelectedData(scatterDF)">Download Data</button>
   </div>
