@@ -57,7 +57,14 @@
                     </div>
                   </div>
                 </div>
-
+                <div class="col-auto">
+                  <button class="btn btn-outline-primary" (click)="getUrl()">
+                    Get link
+                  </button>
+                </div>
+              </div>
+              <div class="row" *ngIf="shareUrl">
+                <span class="text-success">Share link: <a href="{{shareUrl}}">Here</a></span>
               </div>
           </div>
 

@@ -14,6 +14,10 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'copybrowse/:datasets/:gene',
+    component: DbScatterComponent
+  },
+  {
     path: 'copybrowse/:datasets',
     component: DbScatterComponent
   },

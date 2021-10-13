@@ -18,7 +18,7 @@ export class DbScatterComponent implements OnInit {
   scatterDF: IDataFrame = new DataFrame();
   scatterData: IDataFrame = new DataFrame();
   heatmapData: IDataFrame = new DataFrame();
-  constructor(private http: WebService) {
+  constructor(private http: WebService, private route: ActivatedRoute) {
     this.observeScatter = this.loadScatterSubject.asObservable()
   }
 
@@ -51,5 +51,20 @@ export class DbScatterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.route.params.subscribe(res => {
+      console.log(res)
+      if (res.gene) {
+        const g = res.gene.split(",")
+        if (g) {
+          this.http.scatterData = g
+        }
+      }
+      if (res.datasets) {
+        const g = res.datasets.split(",")
+        if (g) {
+          this.http.scatterFiles = g
+        }
+      }
+    })
   }
 }

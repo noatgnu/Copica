@@ -166,11 +166,18 @@ export class DbBrowserComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(res => {
+      console.log(res)
       if (res.datasets) {
         const d = res.datasets.split(",")
         if (d) {
           this.selectedFile = d
           this.processData(false)
+        }
+      }
+      if (res.gene) {
+        const g = res.gene.split(",")
+        if (g) {
+          this.http.scatterData = g
         }
       }
     })

@@ -8,6 +8,8 @@ import {HistoneItem} from "../class/histone-item";
   providedIn: 'root'
 })
 export class WebService {
+  scatterData: string[] = []
+  scatterFiles: string[] = []
   private _filters: any = {
     Kinases: "kinases.txt",
     Lrrk2: "lrrk2.txt",

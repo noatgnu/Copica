@@ -35,20 +35,12 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
 
-  batchSelection(modal: any) {
-    modal.close()
-    if (this.model.length > 2) {
-      if (this.label.includes(this.model)) {
-        for (const c of this.cellTypes) {
-          if (!(this.selectedProtein[c].includes(this.model))) {
-            this.selectedProtein[c].push(this.model)
-          }
-        }
-
-      }
+  batchSelection(modal?: any) {
+    if (modal) {
+      modal.close()
     }
+
     const data = []
-    this.assignData(this.selectedProtein, "")
     for (const r of this.closeResult.split("\n")) {
       const a = r.trim()
       const e = a.split(";")
@@ -75,17 +67,36 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
         }
       }
     }
-    for (const c of this.cellTypes) {
-      const g = this.original.where(row => row["label"] === c).bake()
-      const l = g.getSeries("Gene names").bake().toArray()
-      for (const d of data) {
-        if (!(this.selectedProtein[c].includes(d))) {
+    if (this.cellTypes.length > 0) {
+      for (const c of this.cellTypes) {
+        const g = this.original.where(row => row["label"] === c).bake()
+        const l = g.getSeries("Gene names").bake().toArray()
+        for (const d of data) {
+          if (!(this.selectedProtein[c].includes(d))) {
+            if (l.includes(d)) {
+              this.selectedProtein[c].push(d)
+            }
+          }
+        }
+      }
+    } else {
+      for (const a of this.original.groupBy(row => row["label"]).bake()) {
+        const g = a.first()
+        const l = a.getSeries("Gene names").bake().toArray()
+        for (const d of data) {
+          console.log(d)
           if (l.includes(d)) {
-            this.selectedProtein[c].push(d)
+            if (!(g["label"] in this.selectedProtein)) {
+              this.selectedProtein[g["label"]] = []
+            }
+            this.selectedProtein[g["label"]].push(d)
+            console.log(this.selectedProtein[g["label"]].length)
           }
         }
       }
     }
+
+    console.log(this.selectedProtein)
     this.assignData(this.selectedProtein, "")
   }
   @ViewChild('myTable') table: any;
@@ -201,6 +212,10 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
 
 
   constructor(private modalService: NgbModal, private http: WebService, private location: Location) {
+    if (this.http.scatterData.length > 0) {
+      this.closeResult = this.http.scatterData.join("\n")
+    }
+
     for (const f in this.http.filters) {
       this.sampleColors[f] = this.getRandomColor()
     }
@@ -210,10 +225,29 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   }
   private _data: IDataFrame = new DataFrame();
   label: string[] = []
+  changed: boolean|undefined = undefined
   @Input() set data(value: IDataFrame) {
-    this.original = value
-    this.selectedFiles = this.location.path(true).replace("/copybrowse/", "").replace("/ruler", "")
-    this.assignData();
+    if (value.count() >0) {
+      this.original = value
+      this.label = this.original.getSeries("Gene names").distinct().bake().toArray()
+      if (this.changed === undefined) {
+        this.changed = true
+      } else {
+        this.changed = this.selectedFiles !== this.location.path(true).replace("/copybrowse/", "").replace("/ruler", "");
+
+      }
+      if (this.changed) {
+
+
+        this.selectedFiles = this.location.path(true).replace("/copybrowse/", "").replace("/ruler", "")
+        if (this.closeResult !== "") {
+          this.batchSelection()
+        } else {
+          this.assignData();
+        }
+      }
+    }
+
   }
   cellTypes: string[] = []
 
@@ -236,6 +270,8 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
 
   heatmapData: IDataFrame = new DataFrame()
   private assignData(selectedProteins: any = {}, pathway: string = "Lrrk2") {
+
+    this.closeResult = ""
     if (Object.keys(selectedProteins).length > 0){
       this.selectedProtein = selectedProteins
     }
@@ -247,20 +283,22 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     this.scatterChartData = []
     const tempTypes: any = {}
     const group = this.original.getSeries("label").distinct().bake().toArray()
+    console.log(this.original)
     for (const r of group) {
       const tempLabel = r
       if (!(tempLabel in tempTypes)) {
         tempTypes[tempLabel] = true
       }
     }
+    console.log(selectedProteins, pathway)
     //const tempTypes: any[] = this.original.getSeries("label").distinct().bake().toArray()
     this.cellTypes = []
     for (const t in tempTypes) {
       if (t !== "") {
         this.cellTypes.push(t)
-
       }
     }
+    console.log(this.cellTypes)
     for (const c of this.cellTypes) {
       if (!(c in this.sampleColors)) {
         this.sampleColors[c] = this.getRandomColor()
@@ -268,9 +306,8 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       if (!(c in this.selectedProtein)) {
         this.selectedProtein[c] = []
       }
-
     }
-    this.label = this.original.getSeries("Gene names").distinct().bake().toArray()
+    console.log(selectedProteins)
     for (const g of this.original.groupBy(row => row.label)) {
       for (const re of g.groupBy(row => row["Gene names"])) {
 
@@ -355,7 +392,8 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
 
       }
     }
-
+    console.log(temp)
+    console.log(selectedProteins)
     for (const c of this.cellTypes) {
       const a: ChartDataSets = {
         backgroundColor: this.sampleColors[c],
@@ -436,6 +474,8 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     }
     this.chart?.chart.update();
   }
+
+
   rows: any[] = []
   columns = [
     {prop: "Gene names"}, {name: "Accession", prop: "Accession IDs"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}, {name: "Replicate", prop: "Fraction"}, {name: "Condition", prop: "Condition"}
@@ -448,8 +488,8 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   min_x = 0
   min_y = 0
   selectedFiles: string = ""
-  ngOnInit(): void {
 
+  ngOnInit(): void {
   }
 
   selectProtein(event: MouseEvent, protein: string, cellType: string, manual: boolean =  false) {
@@ -549,5 +589,17 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       document.body.removeChild(a);
     }
     window.URL.revokeObjectURL(url)
+  }
+  shareUrl = ""
+  getUrl() {
+    const data: string[] = []
+    for (const s in this.selectedProtein) {
+      for (const p of this.selectedProtein[s]) {
+        if (!(data.includes(p))) {
+          data.push(p)
+        }
+      }
+    }
+    this.shareUrl = window.location.origin +"/#/copybrowse/" + this.http.scatterFiles.join(",") + "/" + data.join(",")
   }
 }
