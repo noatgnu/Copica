@@ -42,12 +42,21 @@
               </p>
               <div class="row">
                 <div class="col-auto">
-                  <button class="btn btn-sm btn btn-primary ml-2" (click)="highlight('Lrrk2')">Proteins from LRRK2 pathway</button>
-                  <button class="btn btn-sm btn-primary ml-2" (click)="highlight('Kinases')">Kinases</button>
-                  <button class="btn btn-sm btn-primary ml-2" (click)="highlight('Phosphatases')">Phosphatases</button>
-                  <button class="btn btn-sm btn btn-primary ml-2" (click)="highlight('PD')">PD genes</button>
-                  <button class="btn btn-sm btn-primary ml-2" (click)="highlight('PINK1')">Proteins from PINK1 pathway</button>
-                  <button class="btn btn-sm btn-primary ml-2" (click)="highlight('PDGWAS')">PD genes from GWAS</button>
+                  <div ngbDropdown class="d-inline-block">
+                    <button class="btn btn-sm btn-primary" id="builtinList">
+                      Batch selection of protein list
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="builtinList">
+                      <button ngbDropdownItem (click)="highlight('Lrrk2')">Proteins from LRRK2 pathway</button>
+                      <button ngbDropdownItem (click)="highlight('Kinases')">Kinases</button>
+                      <button ngbDropdownItem (click)="highlight('Phosphatases')">Phosphatases</button>
+                      <button ngbDropdownItem (click)="highlight('PD')">PD genes</button>
+                      <button ngbDropdownItem (click)="highlight('PINK1')">Proteins from PINK1 pathway</button>
+                      <button ngbDropdownItem (click)="highlight('PDGWAS')">PD genes from GWAS</button>
+                    </div>
+                  </div>
+
+
                 </div>
 
               </div>
