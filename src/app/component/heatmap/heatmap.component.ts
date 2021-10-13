@@ -30,7 +30,11 @@ export class HeatmapComponent implements OnInit {
   _data: IDataFrame = new DataFrame();
   @Input() set data(value:IDataFrame) {
     this._data = value
-    this.graphHeatmap()
+    if (this._data.count() > 1) {
+      this.graphHeatmap()
+    }
+
+    console.log(this._data)
   }
   get data(): IDataFrame {
     return this._data
@@ -49,7 +53,9 @@ export class HeatmapComponent implements OnInit {
 
   graphHeatmap() {
     this.graphData = [
-      {z: [], x: [], y:[], type: "heatmap", hoverongaps: false, colorscale: []}
+      {z: [], x: [], y:[], type: "heatmap", hoverongaps: false,
+        //colorscale: []
+      }
     ]
     const columns = this.data.getColumnNames()
     for (const c of columns.slice(1)) {
@@ -95,9 +101,10 @@ export class HeatmapComponent implements OnInit {
     this.graphLayout.height = 40*this.graphData[0].y.length + 200
     this.graphLayout.yaxis_nticks = this.graphData[0].y.length
     this.graphLayout.xaxis_nticks = this.graphData[0].x.length
-    this.colorScale(minValue, maxValue);
-    this.value.min = minValue
-    this.value.max = maxValue
+    console.log(this.graphData)
+    //this.colorScale(minValue, maxValue);
+    //this.value.min = minValue
+    //this.value.max = maxValue
   }
 
 

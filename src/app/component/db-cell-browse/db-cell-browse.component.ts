@@ -186,8 +186,6 @@ export class DbCellBrowseComponent implements OnInit {
             this.dia = true
           }
         }
-        console.log(this.dda)
-        console.log(this.dia)
       }
       if (res.datasets) {
         const d = res.datasets.split(",")

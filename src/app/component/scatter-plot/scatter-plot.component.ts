@@ -16,6 +16,8 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import {DataFrame, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
 import {Location} from "@angular/common";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {mod} from "ngx-bootstrap/chronos/utils";
 
 @Component({
   selector: 'app-scatter-plot',
@@ -23,6 +25,69 @@ import {Location} from "@angular/common";
   styleUrls: ['./scatter-plot.component.css'],
 })
 export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
+  searchType: string = "Gene names"
+  closeResult: string = ""
+  openModal(modal: any) {
+    this.modalService.open(modal, {ariaLabelledBy: "batch-selection", size: "xl"}).result.then((result) => {
+      console.log(this.closeResult)
+    })
+
+  }
+
+
+  batchSelection(modal: any) {
+    modal.close()
+    if (this.model.length > 2) {
+      if (this.label.includes(this.model)) {
+        for (const c of this.cellTypes) {
+          if (!(this.selectedProtein[c].includes(this.model))) {
+            this.selectedProtein[c].push(this.model)
+          }
+        }
+
+      }
+    }
+    const data = []
+    this.assignData(this.selectedProtein, "")
+    for (const r of this.closeResult.split("\n")) {
+      const a = r.trim()
+      const e = a.split(";")
+      let selected = false
+      for (const f of e) {
+        switch (this.searchType) {
+          case "Gene names":
+            for (const b of this.label) {
+              const c = b.split(";")
+              for (const d of c) {
+                if (f === d) {
+                  selected = true
+                  data.push(b)
+                  break
+                }
+              }
+            }
+            break
+          default:
+            break
+        }
+        if (selected) {
+          break
+        }
+      }
+    }
+    for (const c of this.cellTypes) {
+      const g = this.original.where(row => row["label"] === c).bake()
+      const l = g.getSeries("Gene names").bake().toArray()
+      for (const d of data) {
+        if (!(this.selectedProtein[c].includes(d))) {
+          if (l.includes(d)) {
+            this.selectedProtein[c].push(d)
+          }
+        }
+      }
+    }
+    this.assignData(this.selectedProtein, "")
+  }
   @ViewChild('myTable') table: any;
   tableFilterModel:any = "";
   @Output() heatmap: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
@@ -135,7 +200,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
 
-  constructor(private http: WebService, private location: Location) {
+  constructor(private modalService: NgbModal, private http: WebService, private location: Location) {
     for (const f in this.http.filters) {
       this.sampleColors[f] = this.getRandomColor()
     }
