@@ -19,7 +19,7 @@ export class WebService {
     PDGWAS: "pd.gwas.txt"}
   filters: any = {}
   proteinAtlasURL: string = "https://www.proteinatlas.org/api/search_download.php?"
-  defaultProteinAtlastColumns: string[] = ["g", "gs"]
+  defaultProteinAtlastColumns: string[] = ["g", "gs", "gd"]
   selected: string[] = []
   updateSelected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   toParamString(options: Map<string, string>): string {

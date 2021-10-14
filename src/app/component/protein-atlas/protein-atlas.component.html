@@ -11,6 +11,16 @@
           </select>
         </div>
       </div>
+      <div class="row" *ngIf="sharelinks.length > 0">
+        <div class="col-auto">
+          More details from Protein Atlas:
+          <a href="https://www.proteinatlas.org/{{s.ensembl}}-{{s.gene}}" *ngFor="let s of sharelinks" target="_blank">
+            <span class="badge badge-info mr-1" ngbPopover="{{s.description}}" triggers="mouseenter:mouseleave" popoverTitle="{{s.gene}}">
+              {{s.gene}}
+            </span>
+          </a>
+        </div>
+      </div>
       <plotly-plot
         [divId]="'proteinAtlast'"
         [data]="graphData"
@@ -18,6 +28,33 @@
         [updateOnDataChange]="true"
         [updateOnLayoutChange]="true"
       ></plotly-plot>
+      <div class="alert alert-secondary mt-2">
+        <p>
+          Protein Atlast references:
+          <br>
+          Uhlén M et al., Tissue-based map of the human proteome. Science (2015)
+          PubMed: 25613900 DOI: 10.1126/science.1260419
+          <br>
+          Thul PJ et al., A subcellular map of the human proteome. Science. (2017)
+          PubMed: 28495876 DOI: 10.1126/science.aal3321
+          <br>
+          Uhlen M et al., A pathology atlas of the human cancer transcriptome. Science. (2017)
+          PubMed: 28818916 DOI: 10.1126/science.aan2507
+          <br>
+          Uhlen M et al., Towards a knowledge-based Human Protein Atlas. Nat Biotechnol. (2010)
+          PubMed: 21139605 DOI: 10.1038/nbt1210-1248
+          <br>
+          Berglund L et al., A genecentric Human Protein Atlas for expression profiles based on antibodies. Mol Cell Proteomics. (2008)
+          PubMed: 18669619 DOI: 10.1074/mcp.R800013-MCP200
+          <br>
+          Uhlén M et al., A human protein atlas for normal and cancer tissues based on antibody proteomics. Mol Cell Proteomics. (2005)
+          PubMed: 16127175 DOI: 10.1074/mcp.M500279-MCP200
+          <br>
+          Pontén F et al., The Human Protein Atlas - a tool for pathology. J Pathol. (2008)
+          PubMed: 18853439 DOI: 10.1002/path.2440
+        </p>
+
+      </div>
     </div>
   </div>
 </div>

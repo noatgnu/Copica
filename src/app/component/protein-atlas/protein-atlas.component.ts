@@ -28,6 +28,7 @@ export class ProteinAtlasComponent implements OnInit {
   columnsOption: string[] = []
   selectedOption = ""
   observe: Observable<boolean>|undefined;
+  sharelinks: any = []
   constructor(private http: WebService) {
     this.http.getProteinAtlasColumnsMap().subscribe(data => {
       if (data) {
@@ -65,6 +66,7 @@ export class ProteinAtlasComponent implements OnInit {
     for (const s of this.http.selected) {
       obs.push(this.http.getProteinAtlas([s], this.columnsMap[this.selectedOption]))
     }
+    this.sharelinks = []
     this.graphData = []
     forkJoin(obs).subscribe(d => {
       for (const h of d) {
@@ -77,7 +79,7 @@ export class ProteinAtlasComponent implements OnInit {
                 type: 'bar',
                 name: r["Gene"]
               }
-              console.log(r)
+              this.sharelinks.push({ensembl: r["Ensembl"], gene: r["Gene"], description: r["Gene description"]})
               for (const k in r) {
                 const d = k.replace(" [NX]", "").split(" - ")
 
