@@ -10,7 +10,7 @@ import {forkJoin, Observable, Subscription} from "rxjs";
 })
 export class ProteinAtlasComponent implements OnInit {
   graphData: any = []
-  graphLayout: any = {autosize:true, title: '<br>Copy number distribution</br>', margin: {l: 100, r:100, b:100, t:100},
+  graphLayout: any = {autosize:true, title: '<br>RNA-seq data distribution</br>', margin: {l: 100, r:100, b:100, t:100},
     xaxis: {
       title: "<b>Cell type</b>",
       type: "category",
