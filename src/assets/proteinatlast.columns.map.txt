@@ -1,0 +1,293 @@
+Column name	Columns parameter value
+Gene	g
+Gene synonym	gs
+Ensembl	eg
+Gene description	gd
+Uniprot	up
+Chromosome	chr
+Position	chrp
+Protein class	pc
+Biological process	upbp
+Molecular function	up_mf
+Disease involvement	di
+Evidence	pe
+HPA evidence	evih
+UniProt evidence	eviu
+NeXtProt evidence	evin
+MS evidence	evim
+RNA tissue specificity	rnats
+RNA tissue distribution	rnatd
+RNA tissue specificity score	rnatss
+RNA tissue specific NX	rnatsm
+RNA single cell type specificity	rnascs
+RNA single cell type distribution	rnascd
+RNA single cell type specificity score	rnascss
+RNA single cell type specific NX	rnascsm
+RNA cancer specificity	rnacas
+RNA cancer distribution	rnacad
+RNA cancer specificity score	rnacass
+RNA cancer specific FPKM	rnacasm
+RNA brain regional specificity	rnabrs
+RNA brain regional distribution	rnabrd
+RNA brain regional specificity score	rnabrss
+RNA brain regional specific NX	rnabrsm
+RNA blood cell specificity	rnabcs
+RNA blood cell distribution	rnabcd
+RNA blood cell specificity score	rnabcss
+RNA blood cell specific NX	rnabcsm
+RNA blood lineage specificity	rnabls
+RNA blood lineage distribution	rnabld
+RNA blood lineage specificity score	rnablss
+RNA blood lineage specific NX	rnablsm
+RNA cell line specificity	rnacls
+RNA cell line distribution	rnacld
+RNA cell line specificity score	rnaclss
+RNA cell line specific NX	rnaclsm
+RNA mouse brain regional specificity	rnambrs
+RNA mouse brain regional distribution	rnambrd
+RNA mouse brain regional specificity score	rnambrss
+RNA mouse brain regional specific pTPM	rnambrsm
+RNA pig brain regional specificity	rnapbrs
+RNA pig brain regional distribution	rnapbrd
+RNA pig brain regional specificity score	rnapbrss
+RNA pig brain regional specific pTPM	rnapbrsm
+Antibody	ab
+Reliability (IH)	relih
+Reliability (Mouse Brain)	relmb
+Reliability (IF)	relce
+Subcellular location	scl
+Secretome location	secl
+CCD Protein	ccdp
+CCD Transcript	ccdt
+Blood concentration - Conc. blood IM [pg/L]	blconcia
+Blood concentration - Conc. blood MS [pg/L]	blconcms
+Subcellular main location	scml
+Subcellular additional location	scal
+Antibody RRID	abrr
+Pathology prognostics - Breast cancer	prognostic_breast_cancer
+Pathology prognostics - Cervical cancer	prognostic_cervical_cancer
+Pathology prognostics - Colorectal cancer	prognostic_colorectal_cancer
+Pathology prognostics - Endometrial cancer	prognostic_endometrial_cancer
+Pathology prognostics - Glioma	prognostic_glioma
+Pathology prognostics - Head and neck cancer	prognostic_head_and_neck_cancer
+Pathology prognostics - Liver cancer	prognostic_liver_cancer
+Pathology prognostics - Lung cancer	prognostic_lung_cancer
+Pathology prognostics - Melanoma	prognostic_melanoma
+Pathology prognostics - Ovarian cancer	prognostic_ovarian_cancer
+Pathology prognostics - Pancreatic cancer	prognostic_pancreatic_cancer
+Pathology prognostics - Prostate cancer	prognostic_prostate_cancer
+Pathology prognostics - Renal cancer	prognostic_renal_cancer
+Pathology prognostics - Stomach cancer	prognostic_stomach_cancer
+Pathology prognostics - Testis cancer	prognostic_testis_cancer
+Pathology prognostics - Thyroid cancer	prognostic_thyroid_cancer
+Pathology prognostics - Urothelial cancer	prognostic_urothelial_cancer
+Tissue RNA - adipose tissue [NX]	t_RNA_adipose_tissue
+Tissue RNA - adrenal gland [NX]	t_RNA_adrenal_gland
+Tissue RNA - amygdala [NX]	t_RNA_amygdala
+Tissue RNA - appendix [NX]	t_RNA_appendix
+Tissue RNA - basal ganglia [NX]	t_RNA_basal_ganglia
+Tissue RNA - bone marrow [NX]	t_RNA_bone_marrow
+Tissue RNA - breast [NX]	t_RNA_breast
+Tissue RNA - cerebellum [NX]	t_RNA_cerebellum
+Tissue RNA - cerebral cortex [NX]	t_RNA_cerebral_cortex
+Tissue RNA - cervix, uterine [NX]	t_RNA_cervix_uterine
+Tissue RNA - colon [NX]	t_RNA_colon
+Tissue RNA - corpus callosum [NX]	t_RNA_corpus_callosum
+Tissue RNA - ductus deferens [NX]	t_RNA_ductus_deferens
+Tissue RNA - duodenum [NX]	t_RNA_duodenum
+Tissue RNA - endometrium 1 [NX]	t_RNA_endometrium_1
+Tissue RNA - epididymis [NX]	t_RNA_epididymis
+Tissue RNA - esophagus [NX]	t_RNA_esophagus
+Tissue RNA - fallopian tube [NX]	t_RNA_fallopian_tube
+Tissue RNA - gallbladder [NX]	t_RNA_gallbladder
+Tissue RNA - heart muscle [NX]	t_RNA_heart_muscle
+Tissue RNA - hippocampal formation [NX]	t_RNA_hippocampal_formation
+Tissue RNA - hypothalamus [NX]	t_RNA_hypothalamus
+Tissue RNA - kidney [NX]	t_RNA_kidney
+Tissue RNA - liver [NX]	t_RNA_liver
+Tissue RNA - lung [NX]	t_RNA_lung
+Tissue RNA - lymph node [NX]	t_RNA_lymph_node
+Tissue RNA - midbrain [NX]	t_RNA_midbrain
+Tissue RNA - olfactory region [NX]	t_RNA_olfactory_region
+Tissue RNA - ovary [NX]	t_RNA_ovary
+Tissue RNA - pancreas [NX]	t_RNA_pancreas
+Tissue RNA - parathyroid gland [NX]	t_RNA_parathyroid_gland
+Tissue RNA - pituitary gland [NX]	t_RNA_pituitary_gland
+Tissue RNA - placenta [NX]	t_RNA_placenta
+Tissue RNA - pons and medulla [NX]	t_RNA_pons_and_medulla
+Tissue RNA - prostate [NX]	t_RNA_prostate
+Tissue RNA - rectum [NX]	t_RNA_rectum
+Tissue RNA - retina [NX]	t_RNA_retina
+Tissue RNA - salivary gland [NX]	t_RNA_salivary_gland
+Tissue RNA - seminal vesicle [NX]	t_RNA_seminal_vesicle
+Tissue RNA - skeletal muscle [NX]	t_RNA_skeletal_muscle
+Tissue RNA - skin 1 [NX]	t_RNA_skin_1
+Tissue RNA - small intestine [NX]	t_RNA_small_intestine
+Tissue RNA - smooth muscle [NX]	t_RNA_smooth_muscle
+Tissue RNA - spinal cord [NX]	t_RNA_spinal_cord
+Tissue RNA - spleen [NX]	t_RNA_spleen
+Tissue RNA - stomach 1 [NX]	t_RNA_stomach_1
+Tissue RNA - testis [NX]	t_RNA_testis
+Tissue RNA - thalamus [NX]	t_RNA_thalamus
+Tissue RNA - thymus [NX]	t_RNA_thymus
+Tissue RNA - thyroid gland [NX]	t_RNA_thyroid_gland
+Tissue RNA - tongue [NX]	t_RNA_tongue
+Tissue RNA - tonsil [NX]	t_RNA_tonsil
+Tissue RNA - urinary bladder [NX]	t_RNA_urinary_bladder
+Tissue RNA - vagina [NX]	t_RNA_vagina
+Tissue RNA - B-cells [NX]	t_RNA_B-cells
+Tissue RNA - dendritic cells [NX]	t_RNA_dendritic_cells
+Tissue RNA - granulocytes [NX]	t_RNA_granulocytes
+Tissue RNA - monocytes [NX]	t_RNA_monocytes
+Tissue RNA - NK-cells [NX]	t_RNA_NK-cells
+Tissue RNA - T-cells [NX]	t_RNA_T-cells
+Tissue RNA - total PBMC [NX]	t_RNA_total_PBMC
+Cell RNA - A-431 [NX]	cell_RNA_A-431
+Cell RNA - A549 [NX]	cell_RNA_A549
+Cell RNA - AF22 [NX]	cell_RNA_AF22
+Cell RNA - AN3-CA [NX]	cell_RNA_AN3-CA
+Cell RNA - ASC diff [NX]	cell_RNA_ASC_diff
+Cell RNA - ASC TERT1 [NX]	cell_RNA_ASC_TERT1
+Cell RNA - BEWO [NX]	cell_RNA_BEWO
+Cell RNA - BJ [NX]	cell_RNA_BJ
+Cell RNA - BJ hTERT+ [NX]	cell_RNA_BJ_hTERT+
+Cell RNA - BJ hTERT+ SV40 Large T+ [NX]	cell_RNA_BJ_hTERT+_SV40_Large_T+
+Cell RNA - BJ hTERT+ SV40 Large T+ RasG12V [NX]	cell_RNA_BJ_hTERT+_SV40_Large_T+_RasG12V
+Cell RNA - CACO-2 [NX]	cell_RNA_CACO-2
+Cell RNA - CAPAN-2 [NX]	cell_RNA_CAPAN-2
+Cell RNA - Daudi [NX]	cell_RNA_Daudi
+Cell RNA - EFO-21 [NX]	cell_RNA_EFO-21
+Cell RNA - fHDF/TERT166 [NX]	cell_RNA_fHDF/TERT166
+Cell RNA - GAMG [NX]	cell_RNA_GAMG
+Cell RNA - HaCaT [NX]	cell_RNA_HaCaT
+Cell RNA - HAP1 [NX]	cell_RNA_HAP1
+Cell RNA - HBEC3-KT [NX]	cell_RNA_HBEC3-KT
+Cell RNA - HBF TERT88 [NX]	cell_RNA_HBF_TERT88
+Cell RNA - HDLM-2 [NX]	cell_RNA_HDLM-2
+Cell RNA - HEK 293 [NX]	cell_RNA_HEK_293
+Cell RNA - HEL [NX]	cell_RNA_HEL
+Cell RNA - HeLa [NX]	cell_RNA_HeLa
+Cell RNA - Hep G2 [NX]	cell_RNA_Hep_G2
+Cell RNA - HHSteC [NX]	cell_RNA_HHSteC
+Cell RNA - HL-60 [NX]	cell_RNA_HL-60
+Cell RNA - HMC-1 [NX]	cell_RNA_HMC-1
+Cell RNA - HSkMC [NX]	cell_RNA_HSkMC
+Cell RNA - hTCEpi [NX]	cell_RNA_hTCEpi
+Cell RNA - hTEC/SVTERT24-B [NX]	cell_RNA_hTEC/SVTERT24-B
+Cell RNA - hTERT-HME1 [NX]	cell_RNA_hTERT-HME1
+Cell RNA - hTERT-RPE1 [NX]	cell_RNA_hTERT-RPE1
+Cell RNA - HUVEC TERT2 [NX]	cell_RNA_HUVEC_TERT2
+Cell RNA - JURKAT [NX]	cell_RNA_JURKAT
+Cell RNA - K-562 [NX]	cell_RNA_K-562
+Cell RNA - Karpas-707 [NX]	cell_RNA_Karpas-707
+Cell RNA - LHCN-M2 [NX]	cell_RNA_LHCN-M2
+Cell RNA - MCF7 [NX]	cell_RNA_MCF7
+Cell RNA - MOLT-4 [NX]	cell_RNA_MOLT-4
+Cell RNA - NB-4 [NX]	cell_RNA_NB-4
+Cell RNA - NTERA-2 [NX]	cell_RNA_NTERA-2
+Cell RNA - OE19 [NX]	cell_RNA_OE19
+Cell RNA - PC-3 [NX]	cell_RNA_PC-3
+Cell RNA - REH [NX]	cell_RNA_REH
+Cell RNA - RH-30 [NX]	cell_RNA_RH-30
+Cell RNA - RPMI-8226 [NX]	cell_RNA_RPMI-8226
+Cell RNA - RPTEC TERT1 [NX]	cell_RNA_RPTEC_TERT1
+Cell RNA - RT4 [NX]	cell_RNA_RT4
+Cell RNA - SCLC-21H [NX]	cell_RNA_SCLC-21H
+Cell RNA - SH-SY5Y [NX]	cell_RNA_SH-SY5Y
+Cell RNA - SiHa [NX]	cell_RNA_SiHa
+Cell RNA - SK-BR-3 [NX]	cell_RNA_SK-BR-3
+Cell RNA - SK-MEL-30 [NX]	cell_RNA_SK-MEL-30
+Cell RNA - SuSa [NX]	cell_RNA_SuSa
+Cell RNA - T-47d [NX]	cell_RNA_T-47d
+Cell RNA - THP-1 [NX]	cell_RNA_THP-1
+Cell RNA - TIME [NX]	cell_RNA_TIME
+Cell RNA - U-138 MG [NX]	cell_RNA_U-138_MG
+Cell RNA - U-2 OS [NX]	cell_RNA_U-2_OS
+Cell RNA - U-2197 [NX]	cell_RNA_U-2197
+Cell RNA - U-251 MG [NX]	cell_RNA_U-251_MG
+Cell RNA - U-266/70 [NX]	cell_RNA_U-266/70
+Cell RNA - U-266/84 [NX]	cell_RNA_U-266/84
+Cell RNA - U-698 [NX]	cell_RNA_U-698
+Cell RNA - U-87 MG [NX]	cell_RNA_U-87_MG
+Cell RNA - U-937 [NX]	cell_RNA_U-937
+Cell RNA - WM-115 [NX]	cell_RNA_WM-115
+Blood RNA - basophil [NX]	blood_RNA_basophil
+Blood RNA - classical monocyte [NX]	blood_RNA_classical_monocyte
+Blood RNA - eosinophil [NX]	blood_RNA_eosinophil
+Blood RNA - gdT-cell [NX]	blood_RNA_gdT-cell
+Blood RNA - intermediate monocyte [NX]	blood_RNA_intermediate_monocyte
+Blood RNA - MAIT T-cell [NX]	blood_RNA_MAIT_T-cell
+Blood RNA - memory B-cell [NX]	blood_RNA_memory_B-cell
+Blood RNA - memory CD4 T-cell [NX]	blood_RNA_memory_CD4_T-cell
+Blood RNA - memory CD8 T-cell [NX]	blood_RNA_memory_CD8_T-cell
+Blood RNA - myeloid DC [NX]	blood_RNA_myeloid_DC
+Blood RNA - naive B-cell [NX]	blood_RNA_naive_B-cell
+Blood RNA - naive CD4 T-cell [NX]	blood_RNA_naive_CD4_T-cell
+Blood RNA - naive CD8 T-cell [NX]	blood_RNA_naive_CD8_T-cell
+Blood RNA - neutrophil [NX]	blood_RNA_neutrophil
+Blood RNA - NK-cell [NX]	blood_RNA_NK-cell
+Blood RNA - non-classical monocyte [NX]	blood_RNA_non-classical_monocyte
+Blood RNA - plasmacytoid DC [NX]	blood_RNA_plasmacytoid_DC
+Blood RNA - T-reg [NX]	blood_RNA_T-reg
+Blood RNA - total PBMC [NX]	blood_RNA_total_PBMC
+Brain RNA - amygdala [NX]	brain_RNA_amygdala
+Brain RNA - basal ganglia [NX]	brain_RNA_basal_ganglia
+Brain RNA - cerebellum [NX]	brain_RNA_cerebellum
+Brain RNA - cerebral cortex [NX]	brain_RNA_cerebral_cortex
+Brain RNA - hippocampal formation [NX]	brain_RNA_hippocampal_formation
+Brain RNA - hypothalamus [NX]	brain_RNA_hypothalamus
+Brain RNA - midbrain [NX]	brain_RNA_midbrain
+Brain RNA - olfactory region [NX]	brain_RNA_olfactory_region
+Brain RNA - pons and medulla [NX]	brain_RNA_pons_and_medulla
+Brain RNA - thalamus [NX]	brain_RNA_thalamus
+Single Cell Type RNA - Alveolar cells type 1 [NX]	sc_RNA_Alveolar_cells_type_1
+Single Cell Type RNA - Alveolar cells type 2 [NX]	sc_RNA_Alveolar_cells_type_2
+Single Cell Type RNA - B-cells [NX]	sc_RNA_B-cells
+Single Cell Type RNA - Basal glandular cells [NX]	sc_RNA_Basal_glandular_cells
+Single Cell Type RNA - Basal keratinocytes [NX]	sc_RNA_Basal_keratinocytes
+Single Cell Type RNA - Bipolar cells [NX]	sc_RNA_Bipolar_cells
+Single Cell Type RNA - Cardiomyocytes [NX]	sc_RNA_Cardiomyocytes
+Single Cell Type RNA - Cholangiocytes [NX]	sc_RNA_Cholangiocytes
+Single Cell Type RNA - Ciliated cells [NX]	sc_RNA_Ciliated_cells
+Single Cell Type RNA - Club cells [NX]	sc_RNA_Club_cells
+Single Cell Type RNA - Collecting duct cells [NX]	sc_RNA_Collecting_duct_cells
+Single Cell Type RNA - Cone photoreceptor cells [NX]	sc_RNA_Cone_photoreceptor_cells
+Single Cell Type RNA - Cytotrophoblasts [NX]	sc_RNA_Cytotrophoblasts
+Single Cell Type RNA - Distal tubular cells [NX]	sc_RNA_Distal_tubular_cells
+Single Cell Type RNA - Ductal cells [NX]	sc_RNA_Ductal_cells
+Single Cell Type RNA - Early spermatids [NX]	sc_RNA_Early_spermatids
+Single Cell Type RNA - Endothelial cells [NX]	sc_RNA_Endothelial_cells
+Single Cell Type RNA - Enterocytes [NX]	sc_RNA_Enterocytes
+Single Cell Type RNA - Erythroid cells [NX]	sc_RNA_Erythroid_cells
+Single Cell Type RNA - Exocrine glandular cells [NX]	sc_RNA_Exocrine_glandular_cells
+Single Cell Type RNA - Extravillous trophoblasts [NX]	sc_RNA_Extravillous_trophoblasts
+Single Cell Type RNA - Fibroblasts [NX]	sc_RNA_Fibroblasts
+Single Cell Type RNA - Glandular cells [NX]	sc_RNA_Glandular_cells
+Single Cell Type RNA - granulocytes [NX]	sc_RNA_granulocytes
+Single Cell Type RNA - Hepatocytes [NX]	sc_RNA_Hepatocytes
+Single Cell Type RNA - Hofbauer cells [NX]	sc_RNA_Hofbauer_cells
+Single Cell Type RNA - Horizontal cells [NX]	sc_RNA_Horizontal_cells
+Single Cell Type RNA - Intestinal endocrine cells [NX]	sc_RNA_Intestinal_endocrine_cells
+Single Cell Type RNA - Ito cells [NX]	sc_RNA_Ito_cells
+Single Cell Type RNA - Kupffer cells [NX]	sc_RNA_Kupffer_cells
+Single Cell Type RNA - Late spermatids [NX]	sc_RNA_Late_spermatids
+Single Cell Type RNA - Leydig cells [NX]	sc_RNA_Leydig_cells
+Single Cell Type RNA - Macrophages [NX]	sc_RNA_Macrophages
+Single Cell Type RNA - Melanocytes [NX]	sc_RNA_Melanocytes
+Single Cell Type RNA - monocytes [NX]	sc_RNA_monocytes
+Single Cell Type RNA - Mucus-secreting cells [NX]	sc_RNA_Mucus-secreting_cells
+Single Cell Type RNA - Muller glia cells [NX]	sc_RNA_Muller_glia_cells
+Single Cell Type RNA - Pancreatic endocrine cells [NX]	sc_RNA_Pancreatic_endocrine_cells
+Single Cell Type RNA - Paneth cells [NX]	sc_RNA_Paneth_cells
+Single Cell Type RNA - Peritubular cells [NX]	sc_RNA_Peritubular_cells
+Single Cell Type RNA - Proximal tubular cells [NX]	sc_RNA_Proximal_tubular_cells
+Single Cell Type RNA - Rod photoreceptor cells [NX]	sc_RNA_Rod_photoreceptor_cells
+Single Cell Type RNA - Sertoli cells [NX]	sc_RNA_Sertoli_cells
+Single Cell Type RNA - Smooth muscle cells [NX]	sc_RNA_Smooth_muscle_cells
+Single Cell Type RNA - Spermatocytes [NX]	sc_RNA_Spermatocytes
+Single Cell Type RNA - Spermatogonia [NX]	sc_RNA_Spermatogonia
+Single Cell Type RNA - Suprabasal keratinocytes [NX]	sc_RNA_Suprabasal_keratinocytes
+Single Cell Type RNA - Syncytiotrophoblasts [NX]	sc_RNA_Syncytiotrophoblasts
+Single Cell Type RNA - T-cells [NX]	sc_RNA_T-cells
+Single Cell Type RNA - Undifferentiated cells [NX]	sc_RNA_Undifferentiated_cells
+Single Cell Type RNA - Urothelial cells [NX]	sc_RNA_Urothelial_cells

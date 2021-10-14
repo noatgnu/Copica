@@ -18,6 +18,16 @@ export class WebService {
     PINK1: "pink1.txt",
     PDGWAS: "pd.gwas.txt"}
   filters: any = {}
+  proteinAtlasURL: string = "https://www.proteinatlas.org/api/search_download.php?"
+  defaultProteinAtlastColumns: string[] = ["g", "gs"]
+  toParamString(options: Map<string, string>): string {
+    const pArray: string[] = [];
+    options.forEach((value, key) => {
+      pArray.push(encodeURI(key + '=' + value));
+    });
+    return pArray.join('&');
+  }
+
   constructor(private http: HttpClient) { }
 
   getOrganisms() : Observable<HistoneItem[]> {
@@ -34,6 +44,10 @@ export class WebService {
 
   getIndexText() {
     return this.http.get("assets/index.txt", {observe: "response", responseType: "text"})
+  }
+
+  getProteinAtlasColumnsMap(){
+    return this.http.get("assets/proteinatlast.columns.map.txt", {observe: "response", responseType: "text"})
   }
 
   getDBjson(filename: string) {
@@ -61,5 +75,21 @@ export class WebService {
         }
       })
     }
+  }
+
+  getProteinAtlas(genes: string[], columns: string[]) {
+    const d = this.defaultProteinAtlastColumns
+    for (const c of columns) {
+      d.push(c)
+    }
+    const options: Map<string, string> = new Map<string, string>([
+      ["search", genes.join(",")],
+      ["format", "tsv"],
+      ["columns", d.join(",")],
+      ["compress", "no"]
+      ]
+    )
+    const url = this.proteinAtlasURL + this.toParamString(options)
+    return this.http.get(url, {responseType: "text", observe: "response"})
   }
 }
