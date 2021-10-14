@@ -137,6 +137,7 @@ export class DbBrowserComponent implements OnInit {
       console.log(s)
       console.log(this.selectedFile)
       const a = this.selectedFile
+      this.http.scatterFiles = this.selectedFile
       this.http.getDBtext(s).subscribe(data => {
         console.log(a)
         let result: IDataFrame = new DataFrame()
