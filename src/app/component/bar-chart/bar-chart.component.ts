@@ -6,6 +6,7 @@ import {BehaviorSubject, Observable, OperatorFunction} from "rxjs";
 import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
 import {GraphData} from "../../class/graph-data";
 import {PlotlyService} from "angular-plotly.js";
+import {WebService} from "../../service/web.service";
 
 @Component({
   selector: 'app-bar-chart',
@@ -106,6 +107,8 @@ export class BarChartComponent implements OnInit {
   currentDf: IDataFrame = new DataFrame()
 
   private assignData(selected: string[] = ["LRRK2"]) {
+    this.http.updateSelected.next(true)
+    this.http.selected = selected
     this.graphData = []
     this.selectedProteins = selected
     const filtered: any[] = []
@@ -164,7 +167,6 @@ export class BarChartComponent implements OnInit {
       this.graphData.push(result[r])
     }
 
-    console.log(this.graphData)
     this.currentDf = new DataFrame(filtered)
 
     return this.currentDf;
@@ -181,7 +183,7 @@ export class BarChartComponent implements OnInit {
       }
     }
   }
-  constructor(private plotly: PlotlyService) {
+  constructor(private plotly: PlotlyService, private http: WebService) {
 
   }
 

@@ -1,0 +1,26 @@
+<div class="container mt-2">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="form-group col-auto">
+          <label for="selectOption">Select Protein Atlas Datasets</label>
+          <select class="form-control" id="selectOption" [(ngModel)]="selectedOption" (change)="getColumns()">
+            <option *ngFor="let o of columnsOption" [value]="o">
+              {{o}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <plotly-plot
+        [divId]="'proteinAtlast'"
+        [data]="graphData"
+        [layout]="graphLayout"
+        [updateOnDataChange]="true"
+        [updateOnLayoutChange]="true"
+      ></plotly-plot>
+    </div>
+  </div>
+</div>
+
+
+

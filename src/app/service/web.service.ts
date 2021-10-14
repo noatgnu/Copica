@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {Observable, throwError} from "rxjs";
+import {BehaviorSubject, Observable, throwError} from "rxjs";
 import {catchError, retry} from "rxjs/operators";
 import {HistoneItem} from "../class/histone-item";
 
@@ -20,6 +20,8 @@ export class WebService {
   filters: any = {}
   proteinAtlasURL: string = "https://www.proteinatlas.org/api/search_download.php?"
   defaultProteinAtlastColumns: string[] = ["g", "gs"]
+  selected: string[] = []
+  updateSelected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   toParamString(options: Map<string, string>): string {
     const pArray: string[] = [];
     options.forEach((value, key) => {
@@ -84,12 +86,12 @@ export class WebService {
     }
     const options: Map<string, string> = new Map<string, string>([
       ["search", genes.join(",")],
-      ["format", "tsv"],
+      ["format", "json"],
       ["columns", d.join(",")],
       ["compress", "no"]
       ]
     )
     const url = this.proteinAtlasURL + this.toParamString(options)
-    return this.http.get(url, {responseType: "text", observe: "response"})
+    return this.http.get(url, {responseType: "json", observe: "response"})
   }
 }

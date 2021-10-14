@@ -16,6 +16,7 @@ import {Location} from "@angular/common";
   styleUrls: ['./db-cell-browse.component.css']
 })
 export class DbCellBrowseComponent implements OnInit {
+  viewProteinAtlast: boolean = false;
   customDataName: any[] = []
   graphData: GraphData = new GraphData()
   selectedGenes: string[] = []
