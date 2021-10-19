@@ -92,6 +92,7 @@ export class ProteinAtlasComponent implements OnInit {
           }
         }
       }
+      this.graphData = []
       for (const d in data) {
         this.graphData.push(data[d])
       }
