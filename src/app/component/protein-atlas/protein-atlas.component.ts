@@ -13,7 +13,8 @@ export class ProteinAtlasComponent implements OnInit {
   graphLayout: any = {autosize:true, title: '<br>RNA-seq data distribution</br>', margin: {l: 100, r:100, b:100, t:100},
     xaxis: {
       title: "<b>Cell type</b>",
-      type: "category",
+      tickmode: "array",
+      ticktext: [],
       tickfont: {
         size: "10"
       }
@@ -69,6 +70,7 @@ export class ProteinAtlasComponent implements OnInit {
     this.sharelinks = []
     this.graphData = []
     forkJoin(obs).subscribe(d => {
+      this.graphLayout.xaxis.ticktext = []
       for (const h of d) {
         if (h.body) {
           for (const r of Object.values(h.body)) {
@@ -86,6 +88,9 @@ export class ProteinAtlasComponent implements OnInit {
                 if (k.indexOf("[NX]") >= 0) {
                   data[r["Gene"]].y.push(parseFloat(r[k]))
                   data[r["Gene"]].x.push(d[1])
+                }
+                if (!(this.graphLayout.xaxis.ticktext.includes(d[1]))) {
+                  this.graphLayout.xaxis.ticktext.push(d[1])
                 }
               }
             }
