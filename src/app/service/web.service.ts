@@ -80,7 +80,8 @@ export class WebService {
   }
 
   getProteinAtlas(genes: string[], columns: string[]) {
-    const d = this.defaultProteinAtlastColumns
+    console.log(columns)
+    const d = this.defaultProteinAtlastColumns.slice()
     for (const c of columns) {
       d.push(c)
     }

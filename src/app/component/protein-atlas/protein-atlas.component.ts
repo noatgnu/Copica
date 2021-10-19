@@ -16,7 +16,7 @@ export class ProteinAtlasComponent implements OnInit {
       tickmode: "array",
       ticktext: [],
       tickfont: {
-        size: "10"
+        size: "12"
       }
     },
     yaxis: {
@@ -67,6 +67,7 @@ export class ProteinAtlasComponent implements OnInit {
     for (const s of this.http.selected) {
       obs.push(this.http.getProteinAtlas([s], this.columnsMap[this.selectedOption]))
     }
+
     this.sharelinks = []
     this.graphData = []
     forkJoin(obs).subscribe(d => {
