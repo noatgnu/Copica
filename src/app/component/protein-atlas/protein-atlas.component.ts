@@ -96,7 +96,7 @@ export class ProteinAtlasComponent implements OnInit {
       for (const d in data) {
         this.graphData.push(data[d])
       }
-
+      this.graphLayout.title = "<b>" + this.selectedOption + " RNA-seq data distribution</b>"
       console.log(this.graphData)
     })
 
