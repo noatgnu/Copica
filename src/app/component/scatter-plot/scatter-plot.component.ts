@@ -45,25 +45,28 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       const a = r.trim()
       const e = a.split(";")
       let selected = false
-      for (const f of e) {
-        switch (this.searchType) {
-          case "Gene names":
-            for (const b of this.label) {
-              const c = b.split(";")
-              for (const d of c) {
-                if (f === d) {
-                  selected = true
-                  data.push(b)
-                  break
+      for (let f of e) {
+        f = f.trim()
+        if (f !== "") {
+          switch (this.searchType) {
+            case "Gene names":
+              for (const b of this.label) {
+                const c = b.split(";")
+                for (const d of c) {
+                  if (f === d) {
+                    selected = true
+                    data.push(b)
+                    break
+                  }
                 }
               }
-            }
+              break
+            default:
+              break
+          }
+          if (selected) {
             break
-          default:
-            break
-        }
-        if (selected) {
-          break
+          }
         }
       }
     }
