@@ -15,7 +15,7 @@ export class ProteinAtlasComponent implements OnInit {
       title: "<b>Cell type</b>",
       type: "category",
       tickfont: {
-        size: "12"
+        size: "10"
       }
     },
     yaxis: {
