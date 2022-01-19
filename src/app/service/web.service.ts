@@ -16,7 +16,13 @@ export class WebService {
     Phosphatases: "phosphatases.txt",
     PD: "pd.txt",
     PINK1: "pink1.txt",
-    PDGWAS: "pd.gwas.txt"}
+    PDGWAS: "pd.gwas.txt",
+    DUBS: "dubs.txt",
+    E3Ligase: "e3ligase.txt",
+    AD: "AD.txt",
+    MitoHuman: "Mito.Human.txt",
+    MitoMouse: "Mito.Mouse.txt"
+  }
   filters: any = {}
   proteinAtlasURL: string = "https://www.proteinatlas.org/api/search_download.php?"
   defaultProteinAtlastColumns: string[] = ["g", "gs", "gd"]
