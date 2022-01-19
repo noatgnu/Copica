@@ -99,6 +99,7 @@ export class WebService {
       ]
     )
     const url = this.proteinAtlasURL + this.toParamString(options)
+    console.log(url)
     return this.http.get(url, {responseType: "json", observe: "response"})
   }
 }

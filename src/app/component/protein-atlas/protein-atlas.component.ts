@@ -72,9 +72,11 @@ export class ProteinAtlasComponent implements OnInit {
     this.graphData = []
     forkJoin(obs).subscribe(d => {
       this.graphLayout.xaxis.ticktext = []
+      console.log(d)
       for (const h of d) {
         if (h.body) {
           for (const r of Object.values(h.body)) {
+            console.log(r)
             if (this.http.selected.includes(r["Gene"])) {
               data[r["Gene"]] = {
                 x: [],
@@ -84,9 +86,9 @@ export class ProteinAtlasComponent implements OnInit {
               }
               this.sharelinks.push({ensembl: r["Ensembl"], gene: r["Gene"], description: r["Gene description"]})
               for (const k in r) {
-                const d = k.replace(" [NX]", "").split(" - ")
+                const d = k.replace(" [nTPM]", "").split(" - ")
 
-                if (k.indexOf("[NX]") >= 0) {
+                if (k.indexOf("[nTPM]") >= 0) {
                   data[r["Gene"]].y.push(parseFloat(r[k]))
                   data[r["Gene"]].x.push(d[1])
                 }
