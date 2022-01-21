@@ -22,38 +22,35 @@
                   Batch selection of protein list
                 </button>
                 <div ngbDropdownMenu aria-labelledby="builtinList">
-                  <button ngbDropdownItem (click)="highlight('Lrrk2')">Proteins from LRRK2 pathway</button>
+                  <button ngbDropdownItem (click)="highlight('Lrrk2')">LRRK2 pathway</button>
                   <button ngbDropdownItem (click)="highlight('Kinases')">Kinases</button>
                   <button ngbDropdownItem (click)="highlight('Phosphatases')">Phosphatases</button>
-                  <button ngbDropdownItem (click)="highlight('PD')">PD genes</button>
-                  <button ngbDropdownItem (click)="highlight('PINK1')">Proteins from PINK1 pathway</button>
-                  <button ngbDropdownItem (click)="highlight('PDGWAS')">PD genes from GWAS</button>
+                  <button ngbDropdownItem (click)="highlight('PD')">PD genes (Mendelian)</button>
+                  <button ngbDropdownItem (click)="highlight('PINK1')">PINK1 pathway</button>
+                  <button ngbDropdownItem (click)="highlight('PDGWAS')">PD genes (GWAS)</button>
                   <button ngbDropdownItem (click)="highlight('DUBS')">
-                    DUBs
+                    Deubiquitilases (DUBs)
                   </button>
-                  <button ngbDropdownItem (click)="highlight('E3Ligase')">
-                    E3 Ligase
+                  <button ngbDropdownItem (click)="highlight('E1_E2_E3Ligase')">
+                    E1,E2,E3 Ligase
                   </button>
                   <button ngbDropdownItem (click)="highlight('AD')">
                     AD Genes
                   </button>
                   <button ngbDropdownItem (click)="highlight('Lysosome')">
-                    Lysosomal Genes
+                    Lysosomal Proteins
                   </button>
                   <button ngbDropdownItem (click)="highlight('Golgi')">
-                    Golgi Genes
+                    Golgi Proteins
                   </button>
                   <button ngbDropdownItem (click)="highlight('Glycosylation')">
-                    Glycosylation Genes
+                    Glycosylation proteins
                   </button>
                   <button ngbDropdownItem (click)="highlight('Metabolism')">
-                    Metabolism Genes
+                    Metabolism pathway
                   </button>
-                  <button ngbDropdownItem (click)="highlight('MitoHuman')">
-                    Human Mitochondrial Proteins
-                  </button>
-                  <button ngbDropdownItem (click)="highlight('MitoMouse')">
-                    Mouse Mitochondrial Proteins
+                  <button ngbDropdownItem (click)="highlight('Mito')">
+                    Mitochondrial proteins
                   </button>
                   <button ngbDropdownItem (click)="openModal(content)">Search custom list</button>
                 </div>
