@@ -33,17 +33,17 @@ Oligodendrocytes	Mus musculus	div4	Oligodendrocytes_3_div4_fractionated.txt	3	Fr
 2970	Mus musculus	Standard	2970_single_shot.txt	1	Single shot	DIA
 2991	Mus musculus	Standard	2991_single_shot.txt	1	Single shot	DIA
 3T3	Mus musculus	Standard	3T3_single_shot.txt	1	Single shot	DIA
-Cortical Neurons	Mus musculus	Standard	Cortical Neurons_single_shot.txt	1	Single shot	DIA
+Cortical Neurons	Mus musculus	Standard	Cortical Neurons_single_shot.txt	1	Fractionated	DIA
 FAK	Mus musculus	Standard	FAK_single_shot.txt	1	Single shot	DIA
 R1441C	Mus musculus	Standard	R1441C_single_shot.txt	1	Single shot	DIA
 WT	Mus musculus	Standard	WT_single_shot.txt	1	Single shot	DIA
-A549	Homo sapiens	Standard	A549_single_shot.txt	1	Single shot	DDA
+A549	Homo sapiens	Standard	A549_single_shot.txt	1	Fractionated	DDA
 Brain	Mus musculus	Standard	Brain_single_shot.txt	1	Single shot	DDA
 Brainstem	Mus musculus	Standard	Brainstem_single_shot.txt	1	Single shot	DDA
 Cerebellum	Mus musculus	Standard	Cerebellum_single_shot.txt	1	Single shot	DDA
 Corpus Callosum	Mus musculus	Standard	Corpus Callosum_single_shot.txt	1	Single shot	DDA
-HEK293	Homo sapiens	Standard	HEK293_single_shot.txt	1	Single shot	DDA
-HMC3	Homo sapiens	DMSO	HMC3_single_shot.txt	1	Single shot	DDA
+HEK293	Homo sapiens	Standard	HEK293_single_shot.txt	1	Fractionated	DDA
+HMC3	Homo sapiens	DMSO	HMC3_single_shot.txt	1	Fractionated	DDA
 Isolated Astrocytes	Mus musculus	Standard	Isolated Astrocytes_single_shot.txt	1	Single shot	DDA
 Isolated Microglia	Mus musculus	Standard	Isolated Microglia_single_shot.txt	1	Single shot	DDA
 Isolated Neurons	Mus musculus	Standard	Isolated Neurons_single_shot.txt	1	Single shot	DDA
@@ -52,8 +52,8 @@ Motor Cortex	Mus musculus	Standard	Motor Cortex_single_shot.txt	1	Single shot	DD
 Olfactory Bulb	Mus musculus	Standard	Olfactory Bulb_single_shot.txt	1	Single shot	DDA
 Optic Nerve	Mus musculus	Standard	Optic Nerve_single_shot.txt	1	Single shot	DDA
 Prefrontal Cortex	Mus musculus	Standard	Prefrontal Cortex_single_shot.txt	1	Single shot	DDA
-SHSy5Y	Homo sapiens	DMSO	SHSy5Y_single_shot.txt	1	Single shot	DDA
+SHSy5Y	Homo sapiens	DMSO	SHSy5Y_single_shot.txt	1	Fractionated	DDA
 Striatum	Mus musculus	Standard	Striatum_single_shot.txt	1	Single shot	DDA
 Thalamus	Mus musculus	Standard	Thalamus_single_shot.txt	1	Single shot	DDA
 Ventral Hippocampus	Mus musculus	Standard	Ventral Hippocampus_single_shot.txt	1	Single shot	DDA
-Wt-MEfs	Mus musculus	Standard	Wt-MEfs_single_shot.txt	1	Single shot	DDA
+Wt-MEfs	Mus musculus	Standard	Wt-MEfs_single_shot.txt	1	Fractionated	DDA
