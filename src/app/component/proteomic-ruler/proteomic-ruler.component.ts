@@ -43,7 +43,7 @@ export class ProteomicRulerComponent implements OnInit {
             "Accession IDs": r[e.IdentifierCol].toUpperCase(),
             "Copy number": r[columns[i]+"_copyNumber"],
             "Rank": r[columns[i]+"_copyNumber_rank"],
-            "Cell type": "UserCellType"+i, "Experiment type": "Experiment"+i, "Fraction": i, "Condition": "Standard", "label": "UserCellType"+i+"Standard"
+            "Cell type": "UserCellType_"+columns[i], "Experiment type": "Experiment"+i, "Fraction": i, "Condition": "Standard", "label": "UserCellType_"+columns[i]+"_Standard"
           })
         }
       }
