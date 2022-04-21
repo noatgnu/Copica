@@ -1,0 +1,51 @@
+<div class="d-flex flex-row-reverse">
+  <div class="p-2">
+    <button class="btn btn-primary" [disabled]="loaded===false" (click)="searchHandler()">Search</button>
+  </div>
+  <div class="p-2">
+    <input
+      [disabled]="loaded===false" id="searchProteinOrGene" type="text"
+      class="form-control" [(ngModel)]="tableFilterModel"
+      placeholder="{{loading}}" [ngbTypeahead]="search">
+  </div>
+</div>
+
+<div class="row" *ngIf="results.length > 0">
+<!--  <div class="col-6">
+    <table class="table table-bordered table-striped">
+      <thead>
+      <tr>
+        <th scope="col">
+          Gene name
+        </th>
+        <th scope="col">
+          Copy number
+        </th>
+        <th scope="col">
+          Rank
+        </th>
+        <th scope="col">
+          Sample
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let r of results">
+        <td>{{r["Gene names"]}}</td>
+        <td>{{r["Copy number"]|number:'.1-2'}}</td>
+        <td>{{r["Rank"]}}</td>
+        <td>{{r["Cell type"]}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>-->
+  <div class="card" *ngIf="graphData.length > 0"
+       style="
+       width: 100%;">
+    <div class="card-body">
+      <plotly-plot [data]="graphData" [layout]="graphLayout" [updateOnDataChange]="true" [updateOnLayoutChange]="true">
+      </plotly-plot>
+    </div>
+  </div>
+
+</div>

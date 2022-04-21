@@ -26,6 +26,7 @@ import { ProteomicRulerComponent } from './component/proteomic-ruler/proteomic-r
 import { DatasetSettingsComponent } from './component/dataset-settings/dataset-settings.component';
 import {HeatmapComponent} from "./component/heatmap/heatmap.component";
 import { ProteinAtlasComponent } from './component/protein-atlas/protein-atlas.component';
+import { BasicSearchComponent } from './component/basic-search/basic-search.component';
 
 PlotlyModule.plotlyjs = PlotlyJS
 
@@ -45,7 +46,8 @@ PlotlyModule.plotlyjs = PlotlyJS
     ProteomicRulerComponent,
     DatasetSettingsComponent,
     HeatmapComponent,
-    ProteinAtlasComponent
+    ProteinAtlasComponent,
+    BasicSearchComponent
 
   ],
   imports: [
