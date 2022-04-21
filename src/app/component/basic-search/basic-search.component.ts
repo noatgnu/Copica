@@ -19,7 +19,6 @@ export class BasicSearchComponent implements OnInit {
   graphData: any[] = []
   graphLayout: any = {
     title: {
-      text: "<b>Copy number data for " + this.tableFilterModel + " </b>",
       font: {
         family: "Arial Black",
         size: 24,
