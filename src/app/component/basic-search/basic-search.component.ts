@@ -133,6 +133,7 @@ export class BasicSearchComponent implements OnInit {
       graph.push(temp[t])
     }
     this.graphData = graph
+    this.graphLayout.title = "<b>Copy number data for " + this.tableFilterModel + " </b>",
     this.graphLayout.height = height
     console.log(this.results)
   }
