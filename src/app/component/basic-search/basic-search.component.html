@@ -1,4 +1,13 @@
 <div class="d-flex flex-row-reverse">
+
+  <div class="p-2" *ngIf="results.length > 0">
+    <button class="btn btn-secondary" [disabled]="results.length === 0" (click)="download()">Download</button>
+  </div>
+
+  <div class="p-2" *ngIf="results.length > 0">
+    <button class="btn btn-danger" [disabled]="results.length === 0" (click)="clear()">Clear</button>
+  </div>
+
   <div class="p-2">
     <button class="btn btn-primary" [disabled]="loaded===false" (click)="searchHandler()">Search</button>
   </div>

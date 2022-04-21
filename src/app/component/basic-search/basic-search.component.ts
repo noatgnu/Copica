@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {WebService} from "../../service/web.service";
 import {SettingsService} from "../../service/settings.service";
-import {fromCSV} from "data-forge";
+import {DataFrame, fromCSV} from "data-forge";
 import {Observable, OperatorFunction} from "rxjs";
 import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
 
@@ -24,7 +24,7 @@ export class BasicSearchComponent implements OnInit {
         size: 24,
       }
     },
-    margin: {l:300, r:10, t:50, b:50},
+    margin: {l:300, r:50, t:50, b:50},
     height: 200,
     responsive: true,
     xaxis: {
@@ -41,6 +41,7 @@ export class BasicSearchComponent implements OnInit {
       }
     }
   }
+  uniqueY: string[] = []
   constructor(private web: WebService, private settings: SettingsService) {
     this.settings.databaseEnableSettings.asObservable().subscribe(data => {
       if (data) {
@@ -90,7 +91,6 @@ export class BasicSearchComponent implements OnInit {
   }
 
   searchHandler() {
-    this.results = []
     this.searchGene().then()
   }
 
@@ -109,31 +109,58 @@ export class BasicSearchComponent implements OnInit {
           for (const r of df) {
             const intersect = r["Gene names"].split(";").filter((value: string) => chosen.includes(value))
             if (intersect.length > 0) {
-              if (!temp[r["Cell type"]]) {
-                temp[r["Cell type"]] = {
+              if (!temp[this.tableFilterModel]) {
+                temp[this.tableFilterModel] = {
                   type: "bar",
                   x: [],
                   y: [],
                   orientation: 'h',
-                  showlegend: false
+                  showlegend: true,
+                  name: this.tableFilterModel
                 }
               }
               this.results.push(r)
-              temp[r["Cell type"]].x.push(parseFloat(r["Copy number"]))
-              temp[r["Cell type"]].y.push(r["label"]+"_"+r["Fraction"])
-              height = height + 25
+              temp[this.tableFilterModel].x.push(parseFloat(r["Copy number"]))
+              temp[this.tableFilterModel].y.push(r["label"]+"_"+r["Fraction"])
+              if (!this.uniqueY.includes(r["label"]+"_"+r["Fraction"])) {
+                this.uniqueY.push(r["label"]+"_"+r["Fraction"])
+              }
+
             }
           }
         }
       }
     }
-    const graph: any[] = []
+    const graph: any[] = this.graphData.slice()
     for (const t in temp) {
       graph.push(temp[t])
     }
     this.graphData = graph
-    this.graphLayout.title = "<b>Copy number data for " + this.tableFilterModel + " </b>",
-    this.graphLayout.height = height
+    this.graphLayout.title = "<b>Copy number data for </b>"
+    this.graphLayout.height = height + 50*this.uniqueY.length
     console.log(this.results)
+  }
+
+  clear() {
+    this.results = []
+    this.uniqueY =[]
+    this.graphData = []
+  }
+
+  download() {
+    const blob = new Blob([new DataFrame(this.results).toCSV()], {type: 'text/csv'})
+    const url = window.URL.createObjectURL(blob);
+
+    if (typeof(navigator.msSaveOrOpenBlob)==="function") {
+      navigator.msSaveBlob(blob, "data.csv")
+    } else {
+      const a = document.createElement("a")
+      a.href = url
+      a.download = "data.csv"
+      document.body.appendChild(a)
+      a.click();
+      document.body.removeChild(a);
+    }
+    window.URL.revokeObjectURL(url)
   }
 }
