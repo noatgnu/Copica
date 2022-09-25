@@ -17,7 +17,6 @@ import {DataFrame, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
 import {Location} from "@angular/common";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {mod} from "ngx-bootstrap/chronos/utils";
 
 @Component({
   selector: 'app-scatter-plot',
@@ -581,7 +580,9 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     const blob = new Blob([data.toCSV()], {type: 'text/csv'})
     const url = window.URL.createObjectURL(blob);
 
+    // @ts-ignore
     if (typeof(navigator.msSaveOrOpenBlob)==="function") {
+      // @ts-ignore
       navigator.msSaveBlob(blob, "data.csv")
     } else {
       const a = document.createElement("a")

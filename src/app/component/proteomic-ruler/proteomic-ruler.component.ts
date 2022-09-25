@@ -67,7 +67,9 @@ export class ProteomicRulerComponent implements OnInit {
     if (this.ruler) {
       const blob = new Blob([this.ruler.df.toCSV()], {type: 'text/csv'})
       const url = window.URL.createObjectURL(blob);
+      // @ts-ignore
       if (typeof(navigator.msSaveOrOpenBlob)==="function") {
+        // @ts-ignore
         navigator.msSaveBlob(blob, "data.csv")
       } else {
         const a = document.createElement("a")

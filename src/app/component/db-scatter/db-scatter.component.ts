@@ -33,7 +33,9 @@ export class DbScatterComponent implements OnInit {
     const blob = new Blob([data.toCSV()], {type: 'text/csv'})
     const url = window.URL.createObjectURL(blob);
 
+    // @ts-ignore
     if (typeof(navigator.msSaveOrOpenBlob)==="function") {
+      // @ts-ignore
       navigator.msSaveBlob(blob, "data.csv")
     } else {
       const a = document.createElement("a")

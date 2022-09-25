@@ -28,7 +28,8 @@ export class BasicSearchComponent implements OnInit {
     height: 200,
     responsive: true,
     xaxis: {
-      "title": "<b>Copy number</b>"
+      "title": "<b>Copy number</b>",
+      "side": "top"
     },
     yaxis: {
       "title" : "<b>Samples</b>",
@@ -38,7 +39,8 @@ export class BasicSearchComponent implements OnInit {
       "tickfont": {
         "size": 17,
         "color": 'black'
-      }
+      },
+      "side": "left"
     }
   }
   uniqueY: string[] = []
@@ -151,7 +153,9 @@ export class BasicSearchComponent implements OnInit {
     const blob = new Blob([new DataFrame(this.results).toCSV()], {type: 'text/csv'})
     const url = window.URL.createObjectURL(blob);
 
+    // @ts-ignore
     if (typeof(navigator.msSaveOrOpenBlob)==="function") {
+      // @ts-ignore
       navigator.msSaveBlob(blob, "data.csv")
     } else {
       const a = document.createElement("a")
