@@ -138,7 +138,7 @@ export class BasicSearchComponent implements OnInit {
       graph.push(temp[t])
     }
     this.graphData = graph
-    this.graphLayout.title = "<b>Copy number data for </b>"
+    //this.graphLayout.title = "<b>Copy number data for </b>"
     this.graphLayout.height = height + 50*this.uniqueY.length
     console.log(this.results)
   }
