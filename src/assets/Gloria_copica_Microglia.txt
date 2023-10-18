@@ -1,4 +1,4 @@
-Accession IDs	Copy number	Rank	Gene names	Cell Type	Fraction	Condition	Experiment type	label
+Accession IDs	Copy number	Rank	Gene names	Cell type	Fraction	Condition	Experiment type	label
 P62805	95937353.39	1	H4C1	Microglia	1	Standard	Single shot	Microglia
 P09382	87010307.7	2	LGALS1	Microglia	1	Standard	Single shot	Microglia
 P62857	66060563.71	3	RPS28	Microglia	1	Standard	Single shot	Microglia

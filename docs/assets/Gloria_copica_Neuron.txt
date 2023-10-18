@@ -1,4 +1,4 @@
-Accession IDs	Copy number	Rank	Gene names	Cell Type	Fraction	Condition	Experiment type	label
+Accession IDs	Copy number	Rank	Gene names	Cell type	Fraction	Condition	Experiment type	label
 P62805	108911120.6	1	H4C1	Neuron	1	Standard	Single shot	Neuron
 P62807	53293580.99	2	H2BC4	Neuron	1	Standard	Single shot	Neuron
 P61604	34271337.89	3	HSPE1	Neuron	1	Standard	Single shot	Neuron

@@ -1,4 +1,4 @@
-Accession IDs	Copy number	Rank	Gene names	Cell Type	Fraction	Condition	Experiment type	label
+Accession IDs	Copy number	Rank	Gene names	Cell type	Fraction	Condition	Experiment type	label
 P67936	214125256.6	1	TPM4	Astrocyte	1	Standard	Single shot	Astrocyte
 P04792	190424621.3	2	HSPB1	Astrocyte	1	Standard	Single shot	Astrocyte
 P46776	132173312.9	3	RPL27A	Astrocyte	1	Standard	Single shot	Astrocyte

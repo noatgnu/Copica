@@ -115,7 +115,7 @@ export class BarChartComponent implements OnInit {
     const result: any = {}
     for (const g of this.origin.groupBy(row => row.label)) {
       const gFirst = g.first()
-
+      console.log(gFirst)
       const currentCellType = gFirst["Cell type"].toString()
       const currentCondition = gFirst["Condition"]
       for (const gn of g.groupBy(rowg => rowg["Gene names"])) {
