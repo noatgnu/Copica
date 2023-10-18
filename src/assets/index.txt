@@ -58,3 +58,6 @@ Thalamus	Mus musculus	Standard	Thalamus_single_shot.txt	1	Single shot	DDA
 Ventral Hippocampus	Mus musculus	Standard	Ventral Hippocampus_single_shot.txt	1	Single shot	DDA
 Wt-MEfs	Mus musculus	Standard	Wt-MEfs_single_shot.txt	1	Fractionated	DDA
 ARPE19	Homo sapiens	WT	ARPE19_Copy numbers_Alessi Lab_050422.txt	1	Fractionated	DDA
+Microglia	Mus musculus	Standard	Gloria_copica_Microglia.txt	1	Single shot	DIA
+Astrocytes	Mus musculus	Standard	Gloria_copica_Astrocyte.txt	1	Single shot	DIA
+Neuron	Mus musculus	Standard	Gloria_copica_Neuron.txt	1	Single shot	DIA
