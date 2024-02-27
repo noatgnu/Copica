@@ -3,7 +3,7 @@ import {DataFrame, IDataFrame} from "data-forge";
 import * as dataforge from "data-forge"
 import {WebService} from "../../service/web.service";
 import {BehaviorSubject, combineLatest, Observable} from "rxjs";
-import {FormBuilder} from "@angular/forms";
+import {UntypedFormBuilder} from "@angular/forms";
 import {UserDataService} from "../../service/user-data.service";
 import {SettingsService} from "../../service/settings.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
@@ -43,7 +43,7 @@ export class DbCellBrowseComponent implements OnInit {
   userDF: IDataFrame = new DataFrame()
   datasetSettings: any = {}
 
-  constructor(private router: Router, private location: Location, private route: ActivatedRoute, private http: WebService, private fb: FormBuilder, private userData: UserDataService, private settings: SettingsService) {
+  constructor(private router: Router, private location: Location, private route: ActivatedRoute, private http: WebService, private fb: UntypedFormBuilder, private userData: UserDataService, private settings: SettingsService) {
     this.userData.dataObserver.subscribe(data => {
       this.userDF = data
     })

@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {WebService} from "../../service/web.service";
 import * as dataforge from "data-forge"
 import {DataFrame, IDataFrame} from "data-forge";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
 import {UserDataService} from "../../service/user-data.service";
 import {SettingsService} from "../../service/settings.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -16,7 +16,7 @@ import {Location} from "@angular/common";
 export class DbBrowserComponent implements OnInit {
   dataframe: IDataFrame = new DataFrame();
 
-  form: FormGroup = this.fb.group({
+  form: UntypedFormGroup = this.fb.group({
     cellType: [],
     experimentType: "",
     userData: false
@@ -30,7 +30,7 @@ export class DbBrowserComponent implements OnInit {
   @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
   userDF: IDataFrame = new DataFrame();
   datasetSettings: any = {}
-  constructor(private http: WebService, private fb: FormBuilder, private userData: UserDataService, private settings: SettingsService, private route: ActivatedRoute, private router: Router, private location: Location) {
+  constructor(private http: WebService, private fb: UntypedFormBuilder, private userData: UserDataService, private settings: SettingsService, private route: ActivatedRoute, private router: Router, private location: Location) {
     this.userData.dataObserver.subscribe(data => {
       this.userDF = data
     })

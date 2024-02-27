@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DataFrame, IDataFrame, Series} from "data-forge";
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {UntypedFormBuilder, FormControl, UntypedFormGroup} from "@angular/forms";
 import {Query} from "../../class/query";
 import {UniprotService} from "../../service/uniprot.service";
 import {BehaviorSubject, Observable} from "rxjs";
@@ -14,7 +14,7 @@ export class FileSummaryComponent implements OnInit {
   column: string[] = [];
   columnNum = 0;
   rowNum = 0;
-  columnForm: FormGroup = new FormGroup({});
+  columnForm: UntypedFormGroup = new UntypedFormGroup({});
   get dataframe(): IDataFrame {
     return this._dataframe;
   }
@@ -56,7 +56,7 @@ export class FileSummaryComponent implements OnInit {
 
   @Output() selectedData: EventEmitter<Query> = new EventEmitter<Query>();
 
-  constructor(private fb: FormBuilder, private uniprot: UniprotService) {
+  constructor(private fb: UntypedFormBuilder, private uniprot: UniprotService) {
     this.uniprot.uniprotParseStatusObserver.subscribe(status => {
       if (status) {
         console.log(this.accList)
