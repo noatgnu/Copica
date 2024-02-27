@@ -61,3 +61,4 @@ ARPE19	Homo sapiens	WT	ARPE19_Copy numbers_Alessi Lab_050422.txt	1	Fractionated	
 Microglia	Homo sapiens	Standard	Gloria_copica_Microglia.txt	1	Single shot	DIA
 Astrocytes	Homo sapiens	Standard	Gloria_copica_Astrocyte.txt	1	Single shot	DIA
 Neurons	Homo sapiens	Standard	Gloria_copica_Neuron.txt	1	Single shot	DIA
+iPSC motor neurons  Homo sapiens  WT  Wt_Motorneurons_Copies.txt  1 Single shot DIA
