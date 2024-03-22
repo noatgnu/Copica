@@ -40,7 +40,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     const data = []
-    for (const r of this.closeResult.split("\n")) {
+    for (const r of this.closeResult.toUpperCase().split("\n")) {
       const a = r.trim()
       const e = a.split(";")
       let selected = false
