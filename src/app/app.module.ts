@@ -27,7 +27,6 @@ import { DatasetSettingsComponent } from './component/dataset-settings/dataset-s
 import {HeatmapComponent} from "./component/heatmap/heatmap.component";
 import { ProteinAtlasComponent } from './component/protein-atlas/protein-atlas.component';
 import { BasicSearchComponent } from './component/basic-search/basic-search.component';
-import { BatchSearchModalComponent } from './component/batch-search-modal/batch-search-modal.component';
 
 PlotlyModule.plotlyjs = PlotlyJS
 
@@ -48,8 +47,7 @@ PlotlyModule.plotlyjs = PlotlyJS
     DatasetSettingsComponent,
     HeatmapComponent,
     ProteinAtlasComponent,
-    BasicSearchComponent,
-    BatchSearchModalComponent
+    BasicSearchComponent
 
   ],
   imports: [

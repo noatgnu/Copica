@@ -17,7 +17,6 @@ import {DataFrame, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
 import {Location} from "@angular/common";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {BatchSearchModalComponent} from "../batch-search-modal/batch-search-modal.component";
 
 @Component({
   selector: 'app-scatter-plot',
@@ -27,19 +26,19 @@ import {BatchSearchModalComponent} from "../batch-search-modal/batch-search-moda
 export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   searchType: string = "Gene names"
   closeResult: string = ""
-
-  openBatchSelection() {
-    const ref = this.modalService.open(BatchSearchModalComponent, {size: "xl"})
-    ref.closed.subscribe((data) => {
-      if (data) {
-        this.searchType = data.searchType
-        this.closeResult = data.closeResult
-        this.batchSelection()
-      }
+  openModal(modal: any) {
+    this.modalService.open(modal, {ariaLabelledBy: "batch-selection", size: "xl"}).result.then((result) => {
+      console.log(this.closeResult)
     })
+
   }
 
-  batchSelection() {
+
+  batchSelection(modal?: any) {
+    if (modal) {
+      modal.close()
+    }
+
     const data = []
     for (const r of this.closeResult.split("\n")) {
       const a = r.trim()
