@@ -52,7 +52,7 @@
                   <button ngbDropdownItem (click)="highlight('Mito')">
                     Mitochondrial proteins
                   </button>
-                  <button ngbDropdownItem (click)="openModal(content)">Search custom list</button>
+                  <button ngbDropdownItem (click)="openBatchSelection()">Search custom list</button>
                 </div>
               </div>
               <button class="btn btn-info" (click)="downloadSelectedData(data)">Download Selected</button>
@@ -225,34 +225,4 @@
 -->
     </div>
   </div>
-
 </div>
-
-<ng-template #content let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Batch Selection</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <div class="row mb-2">
-      <div class="col-4">
-        <select class="form-control" [(ngModel)]="searchType">
-          <option>
-            Gene names
-          </option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="entryList" class="sr-only">Entries List</label>
-      <textarea class="form-control" id="entryList" [(ngModel)]="closeResult" rows="5"></textarea>
-    </div>
-
-
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="batchSelection(modal)">Submit</button>
-  </div>
-</ng-template>
