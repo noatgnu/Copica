@@ -63,4 +63,4 @@ Astrocytes	Homo sapiens	Standard	Gloria_copica_Astrocyte.txt	1	Single shot	DIA
 Neurons	Homo sapiens	Standard	Gloria_copica_Neuron.txt	1	Single shot	DIA
 iPSC motor neurons	Homo sapiens	WT	Wt_Motorneurons_Copies.txt	1	Single shot	DIA
 mid brain Dopaminergic neurons	Homo sapiens	WT	Wt-mDANeurons_Astral_01.txt	1	Single shot	DIA
-Lung organoid	Homo sapiens	DMSO Mli2	20250922_AT2-org_MLi2_IO25_LITE_Result_CopyNumber-14D-DMSO.txt	1	Single shot	DIA
+Lung organoid	Homo sapiens	DMSO MLi2	20250922_AT2-org_MLi2_IO25_LITE_Result_CopyNumber-14D-DMSO.txt	1	Single shot	DIA
