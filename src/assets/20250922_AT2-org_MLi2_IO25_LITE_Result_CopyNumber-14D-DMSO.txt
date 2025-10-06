@@ -1,4 +1,4 @@
-Gene names	Accesion IDs	Protein Copy number	Rank	Cell type	Experiment type	Fraction	Condition	label
+Gene names	Accession IDs	Copy number	Rank	Cell type	Experiment type	Fraction	Condition	label
 Tmsb4x	P20065	33213600	1	Lung organoid	Single shot	1	DMSO MLi2	Lung organoid_DMSO Mli2
 Atp5f1e	P56382	29480800	2	Lung organoid	Single shot	1	DMSO MLi2	Lung organoid_DMSO Mli2
 Mt1	P02802	26704000	3	Lung organoid	Single shot	1	DMSO MLi2	Lung organoid_DMSO Mli2
