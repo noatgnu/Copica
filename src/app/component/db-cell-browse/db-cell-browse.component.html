@@ -1,58 +1,70 @@
-<div class="container" *ngIf="fileLoadedObserver|async">
-  <div class="card">
-    <div class="card-body">
-      <ngb-alert type="primary" *ngIf="customData">
-        Currently viewing a custom dataset {{customDataName.join(",")}}
-      </ngb-alert>
-      <form [formGroup]="form">
-        <div class="form-group">
-          <div class="form-row">
-            <div class="col-6">
-              <label for="organismSelection">Select Organism</label>
-              <select class="form-control" id="organismSelection" formControlName="organisms" (change)="getData(true)">
-                <option *ngFor="let o of organism">
-                  {{o}}
-                </option>
-              </select>
+@if (fileLoadedObserver|async) {
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        @if (customData) {
+          <ngb-alert type="primary">
+            Currently viewing a custom dataset {{customDataName.join(",")}}
+          </ngb-alert>
+        }
+        <form [formGroup]="form">
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-6">
+                <label for="organismSelection">Select Organism</label>
+                <select class="form-control" id="organismSelection" formControlName="organisms" (change)="getData(true)">
+                  @for (o of organism; track o) {
+                    <option>
+                      {{o}}
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="experimentSelection">Select Experiment</label>
+                <select class="form-control" id="experimentSelection" formControlName="experiment" (change)="getData()">
+                  @for (o of experiment; track o) {
+                    <option>
+                      {{o}}
+                    </option>
+                  }
+                </select>
+              </div>
             </div>
-            <div class="col-6">
-              <label for="experimentSelection">Select Experiment</label>
-              <select class="form-control" id="experimentSelection" formControlName="experiment" (change)="getData()">
-                <option *ngFor="let o of experiment">
-                  {{o}}
-                </option>
-              </select>
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input formControlName="dda" type="checkbox" id="ddaToggle" class="form-check-input" (change)="getData()">
+              <label for="ddaToggle" class="form-check-label">Include DDA data</label>
             </div>
           </div>
-        </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input formControlName="dia" type="checkbox" id="diaToggle" class="form-check-input"  (change)="getData()">
+              <label for="diaToggle" class="form-check-label">Include DIA data</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input formControlName="userData" type="checkbox" id="userDataToggle" class="form-check-input"  (change)="getData(false, false)">
+              <label for="userDataToggle" class="form-check-label">Include User data</label>
+            </div>
+          </div>
+        </form>
         <div class="form-group">
           <div class="form-check">
-            <input formControlName="dda" type="checkbox" id="ddaToggle" class="form-check-input" (change)="getData()">
-            <label for="ddaToggle" class="form-check-label">Include DDA data</label>
+            <input type="checkbox" id="viewProteinAtlast" class="form-check-input" [(ngModel)]="viewProteinAtlast">
+            <label for="viewProteinAtlast" class="form-check-label">View Protein Atlast Data</label>
           </div>
-        </div>
-        <div class="form-group">
-          <div class="form-check">
-            <input formControlName="dia" type="checkbox" id="diaToggle" class="form-check-input"  (change)="getData()">
-            <label for="diaToggle" class="form-check-label">Include DIA data</label>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="form-check">
-            <input formControlName="userData" type="checkbox" id="userDataToggle" class="form-check-input"  (change)="getData(false, false)">
-            <label for="userDataToggle" class="form-check-label">Include User data</label>
-          </div>
-        </div>
-      </form>
-      <div class="form-group">
-        <div class="form-check">
-          <input type="checkbox" id="viewProteinAtlast" class="form-check-input" [(ngModel)]="viewProteinAtlast">
-          <label for="viewProteinAtlast" class="form-check-label">View Protein Atlast Data</label>
         </div>
       </div>
     </div>
   </div>
-</div>
+}
 
-<app-bar-chart *ngIf="fileLoadedObserver|async" [gData]="graphData" (updateSelection)="updateSelected($event)"></app-bar-chart>
-<app-protein-atlas *ngIf="viewProteinAtlast"></app-protein-atlas>
+@if (fileLoadedObserver|async) {
+  <app-bar-chart [gData]="graphData" (updateSelection)="updateSelected($event)"></app-bar-chart>
+}
+@if (viewProteinAtlast) {
+  <app-protein-atlas></app-protein-atlas>
+}
