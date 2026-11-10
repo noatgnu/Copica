@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import {WebService} from "../../service/web.service";
 import {SettingsService} from "../../service/settings.service";
 import {DataFrame, fromCSV} from "data-forge";
-import {Observable, OperatorFunction} from "rxjs";
-import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
+import {Observable, OperatorFunction, debounceTime, distinctUntilChanged, firstValueFrom, map} from "rxjs";
 
 @Component({
-  selector: 'app-basic-search',
-  templateUrl: './basic-search.component.html',
-  styleUrls: ['./basic-search.component.css']
+    selector: 'app-basic-search',
+    templateUrl: './basic-search.component.html',
+    styleUrls: ['./basic-search.component.css'],
+    standalone: false
 })
 export class BasicSearchComponent implements OnInit {
   loading: string = "loading..."
@@ -75,7 +75,7 @@ export class BasicSearchComponent implements OnInit {
   async getData(s: any) {
     for (const d in s) {
       if (s[d]) {
-        const res = await this.web.getDBtext(d).toPromise()
+        const res = await firstValueFrom(this.web.getDBtext(d))
         if (res.body) {
           const df = fromCSV(<string>res.body)
           if (this.genes.length === 0) {
@@ -105,7 +105,7 @@ export class BasicSearchComponent implements OnInit {
     let height: number = 200
     for (const d in s) {
       if (s[d]) {
-        const res = await this.web.getDBtext(d).toPromise()
+        const res = await firstValueFrom(this.web.getDBtext(d))
         if (res.body) {
           const df = fromCSV(<string>res.body)
           for (const r of df) {

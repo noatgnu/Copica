@@ -8,9 +8,10 @@ import {ProteomicRuler} from "../../class/proteomic-ruler";
 import {UserDataService} from "../../service/user-data.service";
 
 @Component({
-  selector: 'app-proteomic-ruler',
-  templateUrl: './proteomic-ruler.component.html',
-  styleUrls: ['./proteomic-ruler.component.css']
+    selector: 'app-proteomic-ruler',
+    templateUrl: './proteomic-ruler.component.html',
+    styleUrls: ['./proteomic-ruler.component.css'],
+    standalone: false
 })
 export class ProteomicRulerComponent implements OnInit {
   finishedLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

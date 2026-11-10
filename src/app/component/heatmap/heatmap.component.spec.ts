@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { AppModule } from '../../app.module';
 
 import { HeatmapComponent } from './heatmap.component';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('HeatmapComponent', () => {
   let component: HeatmapComponent;
@@ -8,8 +11,9 @@ describe('HeatmapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeatmapComponent ]
-    })
+    imports: [AppModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+})
     .compileComponents();
   });
 

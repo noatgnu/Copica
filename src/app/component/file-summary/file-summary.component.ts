@@ -6,9 +6,10 @@ import {UniprotService} from "../../service/uniprot.service";
 import {BehaviorSubject, Observable} from "rxjs";
 
 @Component({
-  selector: 'app-file-summary',
-  templateUrl: './file-summary.component.html',
-  styleUrls: ['./file-summary.component.css']
+    selector: 'app-file-summary',
+    templateUrl: './file-summary.component.html',
+    styleUrls: ['./file-summary.component.css'],
+    standalone: false
 })
 export class FileSummaryComponent implements OnInit {
   column: string[] = [];

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpResponse} from "@angular/common/http";
-import {BehaviorSubject, Observable, throwError} from "rxjs";
-import {catchError, retry} from "rxjs/operators";
+import { HttpClient, HttpResponse } from "@angular/common/http";
+import {BehaviorSubject, Observable} from "rxjs";
 import {HistoneItem} from "../class/histone-item";
 
 @Injectable({

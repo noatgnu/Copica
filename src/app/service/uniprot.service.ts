@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {UniprotResult} from "../class/uniprot-result";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {DataFrame, fromCSV, IDataFrame, Series} from "data-forge";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 

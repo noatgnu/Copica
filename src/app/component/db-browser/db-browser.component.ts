@@ -9,9 +9,10 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Location} from "@angular/common";
 
 @Component({
-  selector: 'app-db-browser',
-  templateUrl: './db-browser.component.html',
-  styleUrls: ['./db-browser.component.css']
+    selector: 'app-db-browser',
+    templateUrl: './db-browser.component.html',
+    styleUrls: ['./db-browser.component.css'],
+    standalone: false
 })
 export class DbBrowserComponent implements OnInit {
   dataframe: IDataFrame = new DataFrame();

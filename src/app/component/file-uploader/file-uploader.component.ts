@@ -3,9 +3,10 @@ import {DataFrame, fromCSV} from "data-forge";
 import {WebService} from "../../service/web.service";
 
 @Component({
-  selector: 'app-file-uploader',
-  templateUrl: './file-uploader.component.html',
-  styleUrls: ['./file-uploader.component.css']
+    selector: 'app-file-uploader',
+    templateUrl: './file-uploader.component.html',
+    styleUrls: ['./file-uploader.component.css'],
+    standalone: false
 })
 export class FileUploaderComponent implements OnInit {
   fileName: string = "";

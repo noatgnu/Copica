@@ -8,9 +8,10 @@ import {Query} from "../../class/query";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
-  selector: 'app-db-scatter',
-  templateUrl: './db-scatter.component.html',
-  styleUrls: ['./db-scatter.component.css']
+    selector: 'app-db-scatter',
+    templateUrl: './db-scatter.component.html',
+    styleUrls: ['./db-scatter.component.css'],
+    standalone: false
 })
 export class DbScatterComponent implements OnInit {
   loadScatterSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

@@ -4,9 +4,10 @@ import {DataFrame, fromCSV, IDataFrame} from "data-forge";
 import {forkJoin, Observable, Subscription} from "rxjs";
 
 @Component({
-  selector: 'app-protein-atlas',
-  templateUrl: './protein-atlas.component.html',
-  styleUrls: ['./protein-atlas.component.css']
+    selector: 'app-protein-atlas',
+    templateUrl: './protein-atlas.component.html',
+    styleUrls: ['./protein-atlas.component.css'],
+    standalone: false
 })
 export class ProteinAtlasComponent implements OnInit {
   graphData: any = []

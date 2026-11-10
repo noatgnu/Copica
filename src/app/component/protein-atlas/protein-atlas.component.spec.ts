@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { AppModule } from '../../app.module';
 
 import { ProteinAtlasComponent } from './protein-atlas.component';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ProteinAtlasComponent', () => {
   let component: ProteinAtlasComponent;
@@ -8,8 +11,9 @@ describe('ProteinAtlasComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProteinAtlasComponent ]
-    })
+    imports: [AppModule],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+})
     .compileComponents();
   });
 

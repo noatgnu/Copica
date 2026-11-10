@@ -5,9 +5,10 @@ import {SettingsService} from "../../service/settings.service";
 import {BehaviorSubject, Observable} from "rxjs";
 
 @Component({
-  selector: 'app-dataset-settings',
-  templateUrl: './dataset-settings.component.html',
-  styleUrls: ['./dataset-settings.component.css']
+    selector: 'app-dataset-settings',
+    templateUrl: './dataset-settings.component.html',
+    styleUrls: ['./dataset-settings.component.css'],
+    standalone: false
 })
 export class DatasetSettingsComponent implements OnInit {
   indexData: IDataFrame = new DataFrame()

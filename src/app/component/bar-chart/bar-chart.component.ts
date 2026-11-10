@@ -1,17 +1,15 @@
 import {Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChild} from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
-import {BaseChartDirective} from "ng2-charts";
-import {ChartOptions, ChartDataSets, ChartType, Chart} from "chart.js";
-import {BehaviorSubject, Observable, OperatorFunction} from "rxjs";
-import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
+import {BehaviorSubject, Observable, OperatorFunction, debounceTime, distinctUntilChanged, map} from "rxjs";
 import {GraphData} from "../../class/graph-data";
 import {PlotlyService} from "angular-plotly.js";
 import {WebService} from "../../service/web.service";
 
 @Component({
-  selector: 'app-bar-chart',
-  templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.css']
+    selector: 'app-bar-chart',
+    templateUrl: './bar-chart.component.html',
+    styleUrls: ['./bar-chart.component.css'],
+    standalone: false
 })
 export class BarChartComponent implements OnInit {
   graphData: any[] = []
@@ -175,7 +173,6 @@ export class BarChartComponent implements OnInit {
   colors: string[] = [];
   pointRadius: number[] = []
 
-  chartType:ChartType = "bar";
   ngOnChanges(changes: SimpleChanges) {
     for (const p in changes) {
       if (p==="data") {

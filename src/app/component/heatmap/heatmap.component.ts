@@ -3,9 +3,10 @@ import {DataFrame, IDataFrame} from "data-forge";
 import {PlotlyService} from "angular-plotly.js";
 
 @Component({
-  selector: 'app-heatmap',
-  templateUrl: './heatmap.component.html',
-  styleUrls: ['./heatmap.component.css']
+    selector: 'app-heatmap',
+    templateUrl: './heatmap.component.html',
+    styleUrls: ['./heatmap.component.css'],
+    standalone: false
 })
 export class HeatmapComponent implements OnInit {
   graphData: any[] = []

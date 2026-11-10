@@ -9,19 +9,19 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import {ChartDataSets, ChartType, ChartOptions, ChartColor} from "chart.js"
-import {BaseChartDirective, Label} from "ng2-charts";
-import {Observable, OperatorFunction} from "rxjs";
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import {ChartConfiguration, ChartDataset} from "chart.js";
+import {BaseChartDirective} from "ng2-charts";
+import {Observable, OperatorFunction, debounceTime, distinctUntilChanged, map} from "rxjs";
 import {DataFrame, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
 import {Location} from "@angular/common";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'app-scatter-plot',
-  templateUrl: './scatter-plot.component.html',
-  styleUrls: ['./scatter-plot.component.css'],
+    selector: 'app-scatter-plot',
+    templateUrl: './scatter-plot.component.html',
+    styleUrls: ['./scatter-plot.component.css'],
+    standalone: false
 })
 export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   searchType: string = "Gene names"
@@ -135,71 +135,50 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   colors: string[] = [];
   pointRadius: number[] = []
-  options: ChartOptions = {
-    legend: {
-      labels: {
-        fontStyle: "bold",
-        fontSize: 14
+  options: ChartConfiguration<"scatter">["options"] = {
+    plugins: {
+      legend: {
+        labels: {
+          font: {weight: "bold", size: 14}
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const labels = context.chart.data.labels
+            if (labels && typeof context.parsed.y === "number") {
+              return labels[context.dataIndex] + "[" + (10 ** context.parsed.y).toFixed(2) + "]"
+            }
+            return ""
+          }
+        }
       }
     },
     scales: {
-
-      yAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "log10 Copy Number",
-            fontStyle: "bold",
-            fontSize: 20
-          },
-          ticks: {
-            fontStyle: "bold",
-            fontSize: 14
-          },
+      y: {
+        title: {
+          display: true,
+          text: "log10 Copy Number",
+          font: {weight: "bold", size: 20}
+        },
+        ticks: {
+          font: {weight: "bold", size: 14}
         }
-      ],
-      xAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "Rank",
-            fontStyle: "bold",
-            fontSize: 20
-          },
-          ticks: {
-            fontStyle: "bold",
-            fontSize: 14
-          },
-        }
-      ]
-    },
-    responsive: true,
-    //maintainAspectRatio: true,
-    animation: {
-      duration: 0
-    },
-    tooltips: {
-      callbacks: {
-        label: function (context, data) {
-          let label = ""
-
-          if (data["labels"]) {
-
-            if (typeof context.index === "number") {
-              //label = data["labels"][context.index];
-              if (context.yLabel) {
-
-                if (typeof context.yLabel === "number") {
-                  label = label + data["labels"][context.index]
-                    + "[" +(10**context.yLabel).toFixed(2) + "]"
-                  ;
-                }
-              }
-            }
-          }
-          return label
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Rank",
+          font: {weight: "bold", size: 20}
+        },
+        ticks: {
+          font: {weight: "bold", size: 14}
         }
       }
+    },
+    responsive: true,
+    animation: {
+      duration: 0
     }
   }
 
@@ -397,23 +376,20 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     console.log(temp)
     console.log(selectedProteins)
     for (const c of this.cellTypes) {
-      const a: ChartDataSets = {
+      const a: ChartDataset<"scatter"> = {
         backgroundColor: this.sampleColors[c],
         data: [],
         label: c,
-        fill: false,
-        //pointBorderColor: [],
-        //pointBackgroundColor: [],
         pointRadius: [],
         borderWidth: 0,
         borderColor: "transparent"
       }
-      const color: ChartColor[] = []
+      const color: string[] = []
       const radius: number[] = []
       for (const t of this.label) {
 
         if (temp[c][t] !== undefined) {
-          a.data?.push(temp[c][t])
+          a.data.push(temp[c][t])
 
           if (Object.keys(selectedProteins).length>0) {
             if (selectedProteins[c].includes(t)) {
@@ -474,7 +450,7 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     if (heatmapDF.length > 0) {
       this.heatmapData = new DataFrame(heatmapDF)
     }
-    this.chart?.chart.update();
+    this.chart?.update();
   }
 
 
@@ -482,8 +458,8 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
   columns = [
     {prop: "Gene names"}, {name: "Accession", prop: "Accession IDs"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}, {name: "Replicate", prop: "Fraction"}, {name: "Condition", prop: "Condition"}
   ]
-  scatterChartData: ChartDataSets[] = []
-  scatterPlotType: ChartType = "scatter";
+  scatterChartData: ChartDataset<"scatter">[] = []
+  readonly scatterPlotType = "scatter" as const;
 
   width = 750
   height = 750

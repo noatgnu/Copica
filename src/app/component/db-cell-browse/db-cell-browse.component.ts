@@ -11,9 +11,10 @@ import {GraphData} from "../../class/graph-data";
 import {Location} from "@angular/common";
 
 @Component({
-  selector: 'app-db-cell-browse',
-  templateUrl: './db-cell-browse.component.html',
-  styleUrls: ['./db-cell-browse.component.css']
+    selector: 'app-db-cell-browse',
+    templateUrl: './db-cell-browse.component.html',
+    styleUrls: ['./db-cell-browse.component.css'],
+    standalone: false
 })
 export class DbCellBrowseComponent implements OnInit {
   viewProteinAtlast: boolean = false;
