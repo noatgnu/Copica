@@ -54,9 +54,7 @@ export class ProteomicRuler {
     this.getOrganism()
     this.cvalue = this.organism.genome_size * this.base_pair_weight/this.avogadro
     const weightedNormalizedFactor = this.calculateWeightedHistoneSumNormalizationFactor()
-    console.log(weightedNormalizedFactor)
     this.calNormalizedFactor(weightedNormalizedFactor)
-    console.log(this.factor)
     const copynumber: any = {}
     for (const r of this.df) {
       for (const c of this.intensityCols) {
