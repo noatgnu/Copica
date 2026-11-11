@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FileUploaderComponent } from './component/file-uploader/file-uploader.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from "@angular/common/http";
 import {WebService} from "./service/web.service";
 import { FileSummaryComponent } from './component/file-summary/file-summary.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -54,5 +54,5 @@ import { BasicSearchComponent } from './component/basic-search/basic-search.comp
         AppRoutingModule,
         FormsModule,
         NgxDatatableModule,
-        PlotlyModule.forRoot(PlotlyJS)], providers: [WebService, provideCharts(withDefaultRegisterables()), provideHttpClient(withInterceptorsFromDi())] })
+        PlotlyModule.forRoot(PlotlyJS)], providers: [WebService, provideCharts(withDefaultRegisterables()), provideHttpClient(withXhr(), withInterceptorsFromDi())] })
 export class AppModule { }

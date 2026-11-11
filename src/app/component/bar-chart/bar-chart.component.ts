@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
 import {BehaviorSubject, Observable, OperatorFunction, debounceTime, distinctUntilChanged, map} from "rxjs";
 import {GraphData} from "../../class/graph-data";
@@ -9,6 +9,7 @@ import {WebService} from "../../service/web.service";
     selector: 'app-bar-chart',
     templateUrl: './bar-chart.component.html',
     styleUrls: ['./bar-chart.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BarChartComponent implements OnInit {

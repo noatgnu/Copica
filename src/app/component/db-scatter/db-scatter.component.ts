@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {WebService} from "../../service/web.service";
@@ -11,6 +11,7 @@ import {ActivatedRoute} from "@angular/router";
     selector: 'app-db-scatter',
     templateUrl: './db-scatter.component.html',
     styleUrls: ['./db-scatter.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DbScatterComponent implements OnInit {

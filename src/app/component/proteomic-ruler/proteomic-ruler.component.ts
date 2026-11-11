@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {Query} from "../../class/query";
 import {DataFrame, IDataFrame} from "data-forge";
 import {BehaviorSubject, Observable} from "rxjs";
@@ -11,6 +11,7 @@ import {UserDataService} from "../../service/user-data.service";
     selector: 'app-proteomic-ruler',
     templateUrl: './proteomic-ruler.component.html',
     styleUrls: ['./proteomic-ruler.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ProteomicRulerComponent implements OnInit {

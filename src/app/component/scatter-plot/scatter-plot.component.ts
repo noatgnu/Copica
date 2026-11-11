@@ -7,7 +7,8 @@ import {
   ViewChild,
   SimpleChanges,
   Output,
-  EventEmitter
+  EventEmitter,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {ChartConfiguration, ChartDataset} from "chart.js";
 import {BaseChartDirective} from "ng2-charts";
@@ -21,6 +22,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
     selector: 'app-scatter-plot',
     templateUrl: './scatter-plot.component.html',
     styleUrls: ['./scatter-plot.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {

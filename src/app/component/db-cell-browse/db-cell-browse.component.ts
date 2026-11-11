@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
 import * as dataforge from "data-forge"
 import {WebService} from "../../service/web.service";
@@ -14,6 +14,7 @@ import {Location} from "@angular/common";
     selector: 'app-db-cell-browse',
     templateUrl: './db-cell-browse.component.html',
     styleUrls: ['./db-cell-browse.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DbCellBrowseComponent implements OnInit {

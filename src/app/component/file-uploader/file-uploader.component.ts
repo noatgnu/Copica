@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {DataFrame, fromCSV} from "data-forge";
 import {WebService} from "../../service/web.service";
 
@@ -6,6 +6,7 @@ import {WebService} from "../../service/web.service";
     selector: 'app-file-uploader',
     templateUrl: './file-uploader.component.html',
     styleUrls: ['./file-uploader.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FileUploaderComponent implements OnInit {

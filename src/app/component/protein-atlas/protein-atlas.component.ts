@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {WebService} from "../../service/web.service";
 import {DataFrame, fromCSV, IDataFrame} from "data-forge";
 import {forkJoin, Observable, Subscription} from "rxjs";
@@ -7,6 +7,7 @@ import {forkJoin, Observable, Subscription} from "rxjs";
     selector: 'app-protein-atlas',
     templateUrl: './protein-atlas.component.html',
     styleUrls: ['./protein-atlas.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ProteinAtlasComponent implements OnInit {

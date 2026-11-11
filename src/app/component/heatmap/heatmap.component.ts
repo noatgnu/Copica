@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
 import {PlotlyService} from "angular-plotly.js";
 
@@ -6,6 +6,7 @@ import {PlotlyService} from "angular-plotly.js";
     selector: 'app-heatmap',
     templateUrl: './heatmap.component.html',
     styleUrls: ['./heatmap.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HeatmapComponent implements OnInit {

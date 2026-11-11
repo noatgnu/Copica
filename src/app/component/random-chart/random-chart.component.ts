@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, OnDestroy} from '@angular/core';
+import {Component, Input, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, OnDestroy, ChangeDetectionStrategy} from '@angular/core';
 import {ChartConfiguration, ChartDataset} from "chart.js";
 import {interval, Subscription} from "rxjs";
 
@@ -7,6 +7,7 @@ import {interval, Subscription} from "rxjs";
     selector: 'app-random-chart',
     templateUrl: './random-chart.component.html',
     styleUrls: ['./random-chart.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RandomChartComponent implements OnInit, OnDestroy {

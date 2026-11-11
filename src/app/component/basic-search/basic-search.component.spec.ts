@@ -3,7 +3,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AppModule } from '../../app.module';
 
 import { BasicSearchComponent } from './basic-search.component';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('BasicSearchComponent', () => {
   let component: BasicSearchComponent;
@@ -12,7 +12,7 @@ describe('BasicSearchComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     imports: [AppModule],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
 })
     .compileComponents();
   });

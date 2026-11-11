@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {WebService} from "../../service/web.service";
 import * as dataforge from "data-forge"
 import {DataFrame, IDataFrame} from "data-forge";
@@ -12,6 +12,7 @@ import {Location} from "@angular/common";
     selector: 'app-db-browser',
     templateUrl: './db-browser.component.html',
     styleUrls: ['./db-browser.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DbBrowserComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {DataFrame, fromCSV, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
 import {SettingsService} from "../../service/settings.service";
@@ -8,6 +8,7 @@ import {BehaviorSubject, Observable} from "rxjs";
     selector: 'app-dataset-settings',
     templateUrl: './dataset-settings.component.html',
     styleUrls: ['./dataset-settings.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DatasetSettingsComponent implements OnInit {

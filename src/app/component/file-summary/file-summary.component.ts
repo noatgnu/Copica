@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {DataFrame, IDataFrame, Series} from "data-forge";
 import {UntypedFormBuilder, FormControl, UntypedFormGroup} from "@angular/forms";
 import {Query} from "../../class/query";
@@ -9,6 +9,7 @@ import {BehaviorSubject, Observable} from "rxjs";
     selector: 'app-file-summary',
     templateUrl: './file-summary.component.html',
     styleUrls: ['./file-summary.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FileSummaryComponent implements OnInit {

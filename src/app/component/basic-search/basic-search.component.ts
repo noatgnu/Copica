@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {WebService} from "../../service/web.service";
 import {SettingsService} from "../../service/settings.service";
 import {DataFrame, fromCSV} from "data-forge";
@@ -8,6 +8,7 @@ import {Observable, OperatorFunction, debounceTime, distinctUntilChanged, firstV
     selector: 'app-basic-search',
     templateUrl: './basic-search.component.html',
     styleUrls: ['./basic-search.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BasicSearchComponent implements OnInit {
