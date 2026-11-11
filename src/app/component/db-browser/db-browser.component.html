@@ -1,8 +1,7 @@
-@if (this.dataframe.count() >0) {
+@if (dataframe().count() > 0) {
   <div class="container mt-4">
     <div class="card">
       <div class="card-body">
-        <form></form>
         <div class="form-group">
           <form [formGroup]="form">
             <div class="form-group">
@@ -10,7 +9,7 @@
                 <div class="col-4">
                   <label for="experimentSelection">Select Experiment</label>
                   <select class="form-control" id="experimentSelection" formControlName="experimentType" (change)="updateCellType()">
-                    @for (o of experiment; track o) {
+                    @for (o of experiment(); track o) {
                       <option>
                         {{o}}
                       </option>
@@ -19,18 +18,18 @@
                 </div>
                 <div class="col-6">
                   <label for="cellSelection">Select Cell Type</label>
-                  @if (form.value['experimentType']==='Fractionated') {
+                  @if (experimentType() === 'Fractionated') {
                     <select class="form-control" id="cellSelection" formControlName="cellType" multiple>
-                      @for (o of cellType; track o) {
+                      @for (o of cellType(); track o) {
                         <option [value]="o">
                           {{o.cellType}} ({{o.organism}}) {{o.cond}}-{{o.fraction}}
                         </option>
                       }
                     </select>
                   }
-                  @if (form.value['experimentType']==='Single shot') {
+                  @if (experimentType() === 'Single shot') {
                     <select class="form-control" id="cellSelection" formControlName="cellType" multiple>
-                      @for (o of cellType; track o) {
+                      @for (o of cellType(); track o) {
                         <option [value]="o">
                           {{o.cellType}} ({{o.organism}}) {{o.cond}}
                         </option>

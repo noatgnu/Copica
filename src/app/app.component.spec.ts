@@ -1,15 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AppComponent } from './app.component';
-import { AppModule } from './app.module';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
+import { appConfig } from './app.config';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [AppModule],
-    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents();
+      imports: [AppComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
   });
 
   it('should create the app', () => {

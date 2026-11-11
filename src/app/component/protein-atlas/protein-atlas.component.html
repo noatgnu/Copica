@@ -5,7 +5,7 @@
         <div class="form-group col-auto">
           <label for="selectOption">Select Protein Atlas Datasets</label>
           <select class="form-control" id="selectOption" [(ngModel)]="selectedOption" (change)="getColumns()">
-            @for (o of columnsOption; track o) {
+            @for (o of columnsOption(); track o) {
               <option [value]="o">
                 {{o}}
               </option>
@@ -13,11 +13,11 @@
           </select>
         </div>
       </div>
-      @if (sharelinks.length > 0) {
+      @if (sharelinks().length > 0) {
         <div class="row">
           <div class="col-auto">
             More details from Protein Atlas:
-            @for (s of sharelinks; track s) {
+            @for (s of sharelinks(); track s.gene) {
               <a href="https://www.proteinatlas.org/{{s.ensembl}}-{{s.gene}}" target="_blank">
                 <span class="badge badge-info mr-1" ngbPopover="{{s.description}}" triggers="mouseenter:mouseleave" popoverTitle="{{s.gene}}">
                   {{s.gene}}
@@ -29,8 +29,8 @@
       }
       <plotly-plot
         [divId]="'proteinAtlast'"
-        [data]="graphData"
-        [layout]="graphLayout"
+        [data]="graphData()"
+        [layout]="graphLayout()"
         [updateOnDataChange]="true"
         [updateOnLayoutChange]="true"
       ></plotly-plot>

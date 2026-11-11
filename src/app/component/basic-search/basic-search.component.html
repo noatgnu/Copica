@@ -1,29 +1,29 @@
 <div class="d-flex flex-row-reverse">
 
-  @if (results.length > 0) {
+  @if (results().length > 0) {
     <div class="p-2">
-      <button class="btn btn-secondary" [disabled]="results.length === 0" (click)="download()">Download</button>
+      <button class="btn btn-secondary" [disabled]="results().length === 0" (click)="download()">Download</button>
     </div>
   }
 
-  @if (results.length > 0) {
+  @if (results().length > 0) {
     <div class="p-2">
-      <button class="btn btn-danger" [disabled]="results.length === 0" (click)="clear()">Clear</button>
+      <button class="btn btn-danger" [disabled]="results().length === 0" (click)="clear()">Clear</button>
     </div>
   }
 
   <div class="p-2">
-    <button class="btn btn-primary" [disabled]="loaded===false" (click)="searchHandler()">Search</button>
+    <button class="btn btn-primary" [disabled]="!loaded()" (click)="searchHandler()">Search</button>
   </div>
   <div class="p-2">
     <input
-      [disabled]="loaded===false" id="searchProteinOrGene" type="text"
+      [disabled]="!loaded()" id="searchProteinOrGene" type="text"
       class="form-control" [(ngModel)]="tableFilterModel"
-      placeholder="{{loading}}" [ngbTypeahead]="search">
+      placeholder="{{loading()}}" [ngbTypeahead]="search">
   </div>
 </div>
 
-@if (results.length > 0) {
+@if (results().length > 0) {
   <div class="row">
     <!--  <div class="col-6">
     <table class="table table-bordered table-striped">
@@ -53,12 +53,12 @@
       </tbody>
     </table>
   </div>-->
-  @if (graphData.length > 0) {
+  @if (graphData().length > 0) {
     <div class="card"
        style="
        width: 100%;">
       <div class="card-body">
-        <plotly-plot [data]="graphData" [layout]="graphLayout" [updateOnDataChange]="true" [updateOnLayoutChange]="true">
+        <plotly-plot [data]="graphData()" [layout]="graphLayout()" [updateOnDataChange]="true" [updateOnLayoutChange]="true">
         </plotly-plot>
       </div>
     </div>

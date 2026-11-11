@@ -1,114 +1,114 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import {WebService} from "../../service/web.service";
-import {DataFrame, fromCSV, IDataFrame} from "data-forge";
-import {forkJoin, Observable, Subscription} from "rxjs";
+import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { fromCSV } from "data-forge";
+import { forkJoin } from "rxjs";
+import { FormsModule } from '@angular/forms';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap/popover';
+import { PlotlyComponent } from 'angular-plotly.js';
+import { WebService } from "../../service/web.service";
+
+interface ShareLink {
+  ensembl: string;
+  gene: string;
+  description: string;
+}
 
 @Component({
-    selector: 'app-protein-atlas',
-    templateUrl: './protein-atlas.component.html',
-    styleUrls: ['./protein-atlas.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  selector: 'app-protein-atlas',
+  templateUrl: './protein-atlas.component.html',
+  styleUrls: ['./protein-atlas.component.css'],
+  imports: [FormsModule, NgbPopover, PlotlyComponent]
 })
-export class ProteinAtlasComponent implements OnInit {
-  graphData: any = []
-  graphLayout: any = {autosize:true, title: '<br>RNA-seq data distribution</br>', margin: {l: 100, r:100, b:100, t:100},
-    xaxis: {
-      title: "<b>Cell type</b>",
-      tickmode: "array",
-      ticktext: [],
-      tickfont: {
-        size: "12"
-      }
-    },
-    yaxis: {
-      title: "<b>NX</b>"
-    }
-  }
+export class ProteinAtlasComponent {
+  private web = inject(WebService);
+  private columnsMap: Record<string, string[]> = {};
+  private readonly columnsLoaded = signal(false);
+  readonly columnsOption = signal<string[]>([]);
+  readonly selectedOption = signal("");
+  readonly sharelinks = signal<ShareLink[]>([]);
+  readonly graphData = signal<any[]>([]);
+  readonly graphLayout = signal<any>(this.createLayout([], '<br>RNA-seq data distribution</br>'));
 
-  proteinAtlastColumnsMap: IDataFrame = new DataFrame()
-  columnsMap: any = {}
-  columnsOption: string[] = []
-  selectedOption = ""
-  observe: Observable<boolean>|undefined;
-  sharelinks: any = []
-  constructor(private http: WebService) {
-    this.http.getProteinAtlasColumnsMap().subscribe(data => {
+  constructor() {
+    this.web.getProteinAtlasColumnsMap().subscribe(data => {
       if (data) {
-        console.log(data.body)
-        this.columnsOption = []
-        this.proteinAtlastColumnsMap = fromCSV(<string>data.body)
-        for (const c of this.proteinAtlastColumnsMap) {
-          if (c["Column name"].indexOf("RNA") >= 0 &&  c["Column name"].indexOf(" - ") >= 0) {
-            const p = c["Column name"].split(" - ")
-            if (!(p[0].replace(" RNA", "") in this.columnsMap)) {
-              this.columnsMap[p[0].replace(" RNA", "")] = []
-              this.columnsOption.push(p[0].replace(" RNA", ""))
+        const options: string[] = [];
+        for (const c of fromCSV(<string>data.body)) {
+          if (c["Column name"].indexOf("RNA") >= 0 && c["Column name"].indexOf(" - ") >= 0) {
+            const tissue = c["Column name"].split(" - ")[0].replace(" RNA", "");
+            if (!(tissue in this.columnsMap)) {
+              this.columnsMap[tissue] = [];
+              options.push(tissue);
             }
-            this.columnsMap[p[0].replace(" RNA", "")].push(c["Columns parameter value"])
-            this.selectedOption = "Brain"
-
+            this.columnsMap[tissue].push(c["Columns parameter value"]);
+            this.selectedOption.set("Brain");
           }
         }
-        this.observe = this.http.updateSelected.asObservable();
-        this.observe.subscribe(d => {
-          if (d) {
-            this.getColumns()
-          }
-        })
+        this.columnsOption.set(options);
+        this.columnsLoaded.set(true);
       }
-    })
+    });
+
+    effect(() => {
+      const selected = this.web.selected();
+      if (this.columnsLoaded()) {
+        untracked(() => this.fetchColumns(selected));
+      }
+    });
   }
 
-  ngOnInit(): void {
+  private createLayout(ticktext: string[], title: string) {
+    return {
+      autosize: true,
+      title: title,
+      margin: {l: 100, r: 100, b: 100, t: 100},
+      xaxis: {
+        title: "<b>Cell type</b>",
+        tickmode: "array",
+        ticktext: ticktext,
+        tickfont: {size: "12"}
+      },
+      yaxis: {
+        title: "<b>NX</b>"
+      }
+    };
   }
 
   getColumns() {
-    const obs = []
-    const data: any = {}
-    for (const s of this.http.selected) {
-      obs.push(this.http.getProteinAtlas([s], this.columnsMap[this.selectedOption]))
-    }
+    this.fetchColumns(this.web.selected());
+  }
 
-    this.sharelinks = []
-    this.graphData = []
-    forkJoin(obs).subscribe(d => {
-      this.graphLayout.xaxis.ticktext = []
-      console.log(d)
-      for (const h of d) {
+  private fetchColumns(selected: string[]) {
+    const option = this.selectedOption();
+    const requests = selected.map(s => this.web.getProteinAtlas([s], this.columnsMap[option]));
+    this.sharelinks.set([]);
+    this.graphData.set([]);
+    forkJoin(requests).subscribe(responses => {
+      const data: Record<string, any> = {};
+      const ticktext: string[] = [];
+      const sharelinks: ShareLink[] = [];
+      for (const h of responses) {
         if (h.body) {
-          for (const r of Object.values(h.body)) {
-            console.log(r)
-            if (this.http.selected.includes(r["Gene"])) {
-              data[r["Gene"]] = {
-                x: [],
-                y: [],
-                type: 'bar',
-                name: r["Gene"]
-              }
-              this.sharelinks.push({ensembl: r["Ensembl"], gene: r["Gene"], description: r["Gene description"]})
+          for (const r of Object.values(h.body) as any[]) {
+            if (selected.includes(r["Gene"])) {
+              data[r["Gene"]] = {x: [], y: [], type: 'bar', name: r["Gene"]};
+              sharelinks.push({ensembl: r["Ensembl"], gene: r["Gene"], description: r["Gene description"]});
               for (const k in r) {
-                const d = k.replace(" [nTPM]", "").split(" - ")
-
+                const d = k.replace(" [nTPM]", "").split(" - ");
                 if (k.indexOf("[nTPM]") >= 0) {
-                  data[r["Gene"]].y.push(parseFloat(r[k]))
-                  data[r["Gene"]].x.push(d[1])
+                  data[r["Gene"]].y.push(parseFloat(r[k]));
+                  data[r["Gene"]].x.push(d[1]);
                 }
-                if (!(this.graphLayout.xaxis.ticktext.includes(d[1]))) {
-                  this.graphLayout.xaxis.ticktext.push(d[1])
+                if (!ticktext.includes(d[1])) {
+                  ticktext.push(d[1]);
                 }
               }
             }
           }
         }
       }
-      this.graphData = []
-      for (const d in data) {
-        this.graphData.push(data[d])
-      }
-      this.graphLayout.title = "<b>" + this.selectedOption + " RNA-seq data distribution</b>"
-      console.log(this.graphData)
-    })
-
+      this.sharelinks.set(sharelinks);
+      this.graphData.set(Object.values(data));
+      this.graphLayout.set(this.createLayout(ticktext, "<b>" + option + " RNA-seq data distribution</b>"));
+    });
   }
 }

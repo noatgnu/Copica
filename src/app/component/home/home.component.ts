@@ -1,30 +1,23 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import {WebService} from "../../service/web.service";
-import {DataFrame, IDataFrame, fromCSV} from "data-forge";
-import {BehaviorSubject, Observable} from "rxjs";
-import {SettingsService} from "../../service/settings.service";
+import { Component, inject, signal } from '@angular/core';
+import { fromCSV } from "data-forge";
+import { WebService } from "../../service/web.service";
+import { BasicSearchComponent } from '../basic-search/basic-search.component';
+import { RandomChartComponent } from '../random-chart/random-chart.component';
+import { DatasetSettingsComponent } from '../dataset-settings/dataset-settings.component';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css'],
+  imports: [BasicSearchComponent, RandomChartComponent, DatasetSettingsComponent]
 })
+export class HomeComponent {
+  private web = inject(WebService);
+  readonly datasetCount = signal<number | undefined>(undefined);
 
-export class HomeComponent implements OnInit {
-
-  indexData: IDataFrame = new DataFrame()
-  loadFinishedCheck: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  loadFinishedObserver: Observable<boolean> = this.loadFinishedCheck.asObservable()
-  constructor(private http: WebService) {
-    this.http.getIndexText().subscribe(data => {
-      this.indexData = fromCSV(<string>data.body)
-      this.loadFinishedCheck.next(true)
-    })
+  constructor() {
+    this.web.getIndexText().subscribe(data => {
+      this.datasetCount.set(fromCSV(<string>data.body).count());
+    });
   }
-
-  ngOnInit(): void {
-  }
-
 }

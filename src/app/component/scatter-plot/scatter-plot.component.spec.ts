@@ -1,9 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AppModule } from '../../app.module';
-
+import { appConfig } from '../../app.config';
 import { ScatterPlotComponent } from './scatter-plot.component';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('ScatterPlotComponent', () => {
   let component: ScatterPlotComponent;
@@ -11,13 +9,9 @@ describe('ScatterPlotComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [AppModule],
-    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
-})
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [ScatterPlotComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(ScatterPlotComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

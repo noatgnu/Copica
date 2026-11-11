@@ -1,143 +1,55 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  AfterViewInit,
-  OnChanges,
-  ViewChild,
-  SimpleChanges,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy
-} from '@angular/core';
-import {ChartConfiguration, ChartDataset} from "chart.js";
-import {BaseChartDirective} from "ng2-charts";
-import {Observable, OperatorFunction, debounceTime, distinctUntilChanged, map} from "rxjs";
-import {DataFrame, IDataFrame} from "data-forge";
-import {WebService} from "../../service/web.service";
-import {Location} from "@angular/common";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import { Component, effect, inject, input, output, signal, untracked, viewChild } from '@angular/core';
+import { Location } from "@angular/common";
+import { FormsModule } from '@angular/forms';
+import { ChartConfiguration, ChartDataset } from "chart.js";
+import { BaseChartDirective } from "ng2-charts";
+import { Observable, OperatorFunction, debounceTime, distinctUntilChanged, map } from "rxjs";
+import { DataFrame, IDataFrame } from "data-forge";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap/typeahead';
+import { NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownButtonItem, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap/dropdown';
+import { DatatableComponent, DatatableGroupHeaderDirective, DatatableGroupHeaderTemplateDirective, DataTableColumnDirective, DataTableColumnCellDirective } from '@swimlane/ngx-datatable';
+import { WebService } from "../../service/web.service";
 
 @Component({
-    selector: 'app-scatter-plot',
-    templateUrl: './scatter-plot.component.html',
-    styleUrls: ['./scatter-plot.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  selector: 'app-scatter-plot',
+  templateUrl: './scatter-plot.component.html',
+  styleUrls: ['./scatter-plot.component.css'],
+  imports: [NgbTypeahead, FormsModule, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownButtonItem, NgbDropdownItem, BaseChartDirective, DatatableComponent, DatatableGroupHeaderDirective, DatatableGroupHeaderTemplateDirective, DataTableColumnDirective, DataTableColumnCellDirective]
 })
-export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
-  searchType: string = "Gene names"
-  closeResult: string = ""
-  openModal(modal: any) {
-    this.modalService.open(modal, {ariaLabelledBy: "batch-selection", size: "xl"}).result.then((result) => {
-      console.log(this.closeResult)
-    })
+export class ScatterPlotComponent {
+  private modalService = inject(NgbModal);
+  private http = inject(WebService);
+  private location = inject(Location);
+  private original: IDataFrame = new DataFrame();
+  private selection: Record<string, string[]> = {};
+  private sampleColors: Record<string, string> = {};
+  private annotation: Record<string, string[]> = {};
+  private tempRows: any[] = [];
+  private changed: boolean | undefined = undefined;
 
-  }
+  readonly data = input<IDataFrame>(new DataFrame());
+  readonly heatmap = output<IDataFrame>();
+  readonly table = viewChild<DatatableComponent>('myTable');
 
-
-  batchSelection(modal?: any) {
-    if (modal) {
-      modal.close()
-    }
-
-    const data = []
-    for (const r of this.closeResult.toUpperCase().split("\n")) {
-      const a = r.trim()
-      const e = a.split(";")
-      let selected = false
-      for (let f of e) {
-        f = f.trim()
-        if (f !== "") {
-          switch (this.searchType) {
-            case "Gene names":
-              for (const b of this.label) {
-                const c = b.split(";")
-                for (const d of c) {
-                  if (f === d) {
-                    selected = true
-                    data.push(b)
-                    break
-                  }
-                }
-              }
-              break
-            default:
-              break
-          }
-          if (selected) {
-            break
-          }
-        }
-      }
-    }
-    if (this.cellTypes.length > 0) {
-      for (const c of this.cellTypes) {
-        const g = this.original.where(row => row["label"] === c).bake()
-        const l = g.getSeries("Gene names").bake().toArray()
-        for (const d of data) {
-          if (!(this.selectedProtein[c].includes(d))) {
-            if (l.includes(d)) {
-              this.selectedProtein[c].push(d)
-            }
-          }
-        }
-      }
-    } else {
-      for (const a of this.original.groupBy(row => row["label"]).bake()) {
-        const g = a.first()
-        const l = a.getSeries("Gene names").bake().toArray()
-        for (const d of data) {
-          console.log(d)
-          if (l.includes(d)) {
-            if (!(g["label"] in this.selectedProtein)) {
-              this.selectedProtein[g["label"]] = []
-            }
-            this.selectedProtein[g["label"]].push(d)
-            console.log(this.selectedProtein[g["label"]].length)
-          }
-        }
-      }
-    }
-
-    console.log(this.selectedProtein)
-    this.assignData(this.selectedProtein, "")
-  }
-  @ViewChild('myTable') table: any;
-  tableFilterModel:any = "";
-  @Output() heatmap: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
-  tempRows: any[] = []
-
-  updateFilter() {
-    const val = this.tableFilterModel.toLowerCase()
-    if (val.length !== 0) {
-      const temp = this.rows.filter(function (d) {
-        return d["Gene names"].toLowerCase().indexOf(val) !== -1 || !val;
-      })
-      this.rows = temp
-    } else {
-      this.rows = [...this.tempRows]
-    }
-    this.table.offset = 0
-
-  }
-
-  toggleExpandGroup(group: any) {
-    this.table.groupHeader.toggleExpandGroup(group);
-  }
-  model: any = "";
-  toggleClass: boolean = true;
-  selectedElement: Element[] = [];
-  toggle() {
-    this.toggleClass = !this.toggleClass
-  }
-
-  original: IDataFrame = new DataFrame();
-  selectedProtein: any = {};
-  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
-  colors: string[] = [];
-  pointRadius: number[] = []
-  options: ChartConfiguration<"scatter">["options"] = {
+  readonly searchType = signal("Gene names");
+  readonly closeResult = signal("");
+  readonly model = signal("");
+  readonly tableFilterModel = signal("");
+  readonly label = signal<string[]>([]);
+  readonly cellTypes = signal<string[]>([]);
+  readonly selectedProtein = signal<Record<string, string[]>>({});
+  readonly scatterChartData = signal<ChartDataset<"scatter">[]>([]);
+  readonly filtered = signal<IDataFrame>(new DataFrame());
+  readonly heatmapData = signal<IDataFrame>(new DataFrame());
+  readonly rows = signal<any[]>([]);
+  readonly selectedFiles = signal("");
+  readonly shareUrl = signal("");
+  readonly scatterPlotType = "scatter" as const;
+  readonly columns = [
+    {prop: "Gene names"}, {name: "Accession", prop: "Accession IDs"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}, {name: "Replicate", prop: "Fraction"}, {name: "Condition", prop: "Condition"}
+  ];
+  readonly options: ChartConfiguration<"scatter">["options"] = {
     plugins: {
       legend: {
         labels: {
@@ -182,121 +94,170 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     animation: {
       duration: 0
     }
-  }
+  };
 
-  lrrk2: string[] = []
-  ngOnChanges(changes: SimpleChanges) {
-    for (const p in changes) {
-      if (p==="data") {
-        this.data = changes["data"].currentValue;
-      }
-    }
-  }
+  search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? []
+        : this.label().filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+    )
 
-
-  constructor(private modalService: NgbModal, private http: WebService, private location: Location) {
+  constructor() {
     if (this.http.scatterData.length > 0) {
-      this.closeResult = this.http.scatterData.join("\n")
+      this.closeResult.set(this.http.scatterData.join("\n"));
     }
-
     for (const f in this.http.filters) {
-      this.sampleColors[f] = this.getRandomColor()
+      this.sampleColors[f] = this.getRandomColor();
     }
+    effect(() => {
+      const value = this.data();
+      untracked(() => this.loadData(value));
+    });
   }
-  get data(): IDataFrame {
-    return this._data;
+
+  private currentPath() {
+    return this.location.path(true).replace("/copybrowse/", "").replace("/ruler", "");
   }
-  private _data: IDataFrame = new DataFrame();
-  label: string[] = []
-  changed: boolean|undefined = undefined
-  @Input() set data(value: IDataFrame) {
-    if (value.count() >0) {
+
+  private loadData(value: IDataFrame) {
+    if (value.count() > 0) {
       this.original = value
-      this.label = this.original.getSeries("Gene names").distinct().bake().toArray()
+      this.label.set(this.original.getSeries("Gene names").distinct().bake().toArray())
       if (this.changed === undefined) {
         this.changed = true
       } else {
-        this.changed = this.selectedFiles !== this.location.path(true).replace("/copybrowse/", "").replace("/ruler", "");
-
+        this.changed = this.selectedFiles() !== this.currentPath()
       }
       if (this.changed) {
-
-
-        this.selectedFiles = this.location.path(true).replace("/copybrowse/", "").replace("/ruler", "")
-        if (this.closeResult !== "") {
+        this.selectedFiles.set(this.currentPath())
+        if (this.closeResult() !== "") {
           this.batchSelection()
         } else {
-          this.assignData();
+          this.assignData()
         }
       }
     }
-
   }
-  cellTypes: string[] = []
+
+  openModal(modal: any) {
+    this.modalService.open(modal, {ariaLabelledBy: "batch-selection", size: "xl"});
+  }
+
+  batchSelection(modal?: any) {
+    if (modal) {
+      modal.close()
+    }
+
+    const data = []
+    for (const r of this.closeResult().toUpperCase().split("\n")) {
+      const e = r.trim().split(";")
+      let selected = false
+      for (let f of e) {
+        f = f.trim()
+        if (f !== "") {
+          if (this.searchType() === "Gene names") {
+            for (const b of this.label()) {
+              for (const d of b.split(";")) {
+                if (f === d) {
+                  selected = true
+                  data.push(b)
+                  break
+                }
+              }
+            }
+          }
+          if (selected) {
+            break
+          }
+        }
+      }
+    }
+    if (this.cellTypes().length > 0) {
+      for (const c of this.cellTypes()) {
+        const l = this.original.where(row => row["label"] === c).bake().getSeries("Gene names").bake().toArray()
+        for (const d of data) {
+          if (!(this.selection[c].includes(d)) && l.includes(d)) {
+            this.selection[c].push(d)
+          }
+        }
+      }
+    } else {
+      for (const a of this.original.groupBy(row => row["label"]).bake()) {
+        const g = a.first()
+        const l = a.getSeries("Gene names").bake().toArray()
+        for (const d of data) {
+          if (l.includes(d)) {
+            if (!(g["label"] in this.selection)) {
+              this.selection[g["label"]] = []
+            }
+            this.selection[g["label"]].push(d)
+          }
+        }
+      }
+    }
+    this.assignData(this.selection, "")
+  }
+
+  updateFilter() {
+    const val = this.tableFilterModel().toLowerCase()
+    if (val.length !== 0) {
+      this.rows.update(rows => rows.filter(d => d["Gene names"].toLowerCase().indexOf(val) !== -1))
+    } else {
+      this.rows.set([...this.tempRows])
+    }
+    const table = this.table()
+    if (table) {
+      table.offset.set(0)
+    }
+  }
+
+  toggleExpandGroup(group: any) {
+    this.table()?.groupHeader?.toggleExpandGroup(group);
+  }
 
   getRandomColor() {
     const letters = '0123456789ABCDEF'.split('');
     let color = '#';
-    for (var i = 0; i < 6; i++ ) {
+    for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
   }
 
-  sampleColors: any = {}
-  annotation: any = {}
-  currentHightlight = "Lrrk2";
   highlight(pathway: string) {
     this.assignData([], pathway)
-    this.currentHightlight = pathway
   }
 
-  heatmapData: IDataFrame = new DataFrame()
   private assignData(selectedProteins: any = {}, pathway: string = "Lrrk2") {
-
-    this.closeResult = ""
-    if (Object.keys(selectedProteins).length > 0){
-      this.selectedProtein = selectedProteins
+    this.closeResult.set("")
+    if (Object.keys(selectedProteins).length > 0) {
+      this.selection = selectedProteins
     }
     const heatmapData: any = {}
-    this.pointRadius = []
-    this.lrrk2 = []
     const temp: any = {}
     const filtered: any[] = []
-    this.scatterChartData = []
-    const tempTypes: any = {}
-    const group = this.original.getSeries("label").distinct().bake().toArray()
-    console.log(this.original)
-    for (const r of group) {
-      const tempLabel = r
-      if (!(tempLabel in tempTypes)) {
-        tempTypes[tempLabel] = true
+    const scatterChartData: ChartDataset<"scatter">[] = []
+    const cellTypes: string[] = []
+    for (const t of this.original.getSeries("label").distinct().bake().toArray()) {
+      if (t !== "" && !cellTypes.includes(t)) {
+        cellTypes.push(t)
       }
     }
-    console.log(selectedProteins, pathway)
-    //const tempTypes: any[] = this.original.getSeries("label").distinct().bake().toArray()
-    this.cellTypes = []
-    for (const t in tempTypes) {
-      if (t !== "") {
-        this.cellTypes.push(t)
-      }
-    }
-    console.log(this.cellTypes)
-    for (const c of this.cellTypes) {
+    for (const c of cellTypes) {
       if (!(c in this.sampleColors)) {
         this.sampleColors[c] = this.getRandomColor()
       }
-      if (!(c in this.selectedProtein)) {
-        this.selectedProtein[c] = []
+      if (!(c in this.selection)) {
+        this.selection[c] = []
       }
     }
-    console.log(selectedProteins)
     for (const g of this.original.groupBy(row => row.label)) {
       for (const re of g.groupBy(row => row["Gene names"])) {
-
         for (const rem of re.groupBy(row => row["Accession IDs"])) {
           const r = rem.first()
-          if (r["Rank"] !== "" && r["Rank"]!==0) {
+          if (r["Rank"] !== "" && r["Rank"] !== 0) {
             let b = ["Undefined"]
             if (r["Gene names"] !== undefined) {
               b = r["Gene names"].split(";")
@@ -314,35 +275,24 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
             let x = parseFloat(r["Rank"])
             let y = parseFloat(r["Copy number"])
             if (rem.count() > 1) {
-              //console.log(rem)
               const xArray = rem.getSeries("Rank").bake().toArray()
               const yArray = rem.getSeries("Copy number").bake().toArray()
               let rank = 0
               let copyNumber = 0
-              for (let i = 0; i < xArray.length; i ++) {
-                if (typeof xArray[i] === "string") {
-                  rank = rank + parseFloat(xArray[i])
-                } else {
-                  rank = rank + xArray[i]
-                }
-                if (typeof yArray[i] === "string") {
-                  copyNumber = copyNumber + parseFloat(yArray[i])
-                } else {
-                  copyNumber = copyNumber + yArray[i]
-                }
+              for (let i = 0; i < xArray.length; i++) {
+                rank = rank + (typeof xArray[i] === "string" ? parseFloat(xArray[i]) : xArray[i])
+                copyNumber = copyNumber + (typeof yArray[i] === "string" ? parseFloat(yArray[i]) : yArray[i])
               }
-              x = rank/xArray.length
-              y = copyNumber/yArray.length
+              x = rank / xArray.length
+              y = copyNumber / yArray.length
               r["Rank"] = x
               r["Copy number"] = y
             }
             if (x !== 0 && y !== 0) {
               temp[tempLabel][r["Gene names"]].y = Math.log10(y)
               temp[tempLabel][r["Gene names"]].x = x
-              if (tempLabel in selectedProteins) {
-                if (selectedProteins[tempLabel].includes(r["Gene names"])) {
-                  filtered.push(r)
-                }
+              if (tempLabel in selectedProteins && selectedProteins[tempLabel].includes(r["Gene names"])) {
+                filtered.push(r)
               }
 
               for (const v of b) {
@@ -350,34 +300,20 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
                   if (!(f in this.annotation)) {
                     this.annotation[f] = []
                   }
-
-                  if (this.http.filters[f].includes(v)) {
-
-                    if (!(this.annotation[f].includes(r["Gene names"]))) {
-                      this.annotation[f].push(r["Gene names"])
-                    }
-
+                  if (this.http.filters[f].includes(v) && !(this.annotation[f].includes(r["Gene names"]))) {
+                    this.annotation[f].push(r["Gene names"])
                   }
                 }
               }
-              if (Object.keys(selectedProteins).length === 0) {
-                if (pathway in this.annotation) {
-                  if (this.annotation[pathway].includes(r["Gene names"])) {
-                    filtered.push(r)
-                  }
-                }
+              if (Object.keys(selectedProteins).length === 0 && pathway in this.annotation && this.annotation[pathway].includes(r["Gene names"])) {
+                filtered.push(r)
               }
             }
           }
-
-
         }
-
       }
     }
-    console.log(temp)
-    console.log(selectedProteins)
-    for (const c of this.cellTypes) {
+    for (const c of cellTypes) {
       const a: ChartDataset<"scatter"> = {
         backgroundColor: this.sampleColors[c],
         data: [],
@@ -388,14 +324,13 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
       }
       const color: string[] = []
       const radius: number[] = []
-      for (const t of this.label) {
-
+      for (const t of this.label()) {
         if (temp[c][t] !== undefined) {
           a.data.push(temp[c][t])
 
-          if (Object.keys(selectedProteins).length>0) {
+          if (Object.keys(selectedProteins).length > 0) {
             if (selectedProteins[c].includes(t)) {
-              if (!(t in this.sampleColors)){
+              if (!(t in this.sampleColors)) {
                 this.sampleColors[t] = this.getRandomColor()
               }
               color.push(this.sampleColors[t])
@@ -408,12 +343,9 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
             color.push(this.sampleColors[c])
             radius.push(1)
           } else if (this.annotation[pathway].includes(t)) {
-            if (!this.selectedProtein[c].includes(t)) {
-              if (temp[c][t] !== undefined){
-                this.selectedProtein[c].push(t)
-              }
+            if (!this.selection[c].includes(t)) {
+              this.selection[c].push(t)
             }
-
             this.sampleColors[t] = this.sampleColors[pathway]
             color.push(this.sampleColors[pathway])
             radius.push(5)
@@ -422,136 +354,67 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
             radius.push(1)
           }
         }
-
       }
       a.pointBackgroundColor = color
       a.pointBorderColor = color
       a.pointRadius = radius
-      this.scatterChartData.push(a)
+      scatterChartData.push(a)
     }
-    this._data = new DataFrame(filtered);
-    this.rows = this._data.toArray();
-    this.tempRows = this._data.toArray();
-    for (let i = 0; i < this.rows.length; i++) {
-      if (typeof this.rows[i]["Copy number"] === "number") {
-        this.rows[i]["Copy number"] = this.rows[i]["Copy number"].toFixed(2)
+    const filteredDF = new DataFrame(filtered)
+    const rows = filteredDF.toArray()
+    this.tempRows = filteredDF.toArray()
+    for (const row of rows) {
+      if (typeof row["Copy number"] === "number") {
+        row["Copy number"] = row["Copy number"].toFixed(2)
       }
-      const temp_name = this.rows[i]["Accession IDs"] + "(" +  this.rows[i]["Gene names"] + ")"
-      if (!(temp_name in heatmapData)) {
-        heatmapData[temp_name] = {"ID": temp_name}
+      const tempName = row["Accession IDs"] + "(" + row["Gene names"] + ")"
+      if (!(tempName in heatmapData)) {
+        heatmapData[tempName] = {"ID": tempName}
       }
-      const sample_name = this.rows[i]["label"] + "_" + this.rows[i]["Fraction"]
-      if (!(sample_name in heatmapData[temp_name])) {
-        heatmapData[temp_name][sample_name] = this.rows[i]["Copy number"]
+      const sampleName = row["label"] + "_" + row["Fraction"]
+      if (!(sampleName in heatmapData[tempName])) {
+        heatmapData[tempName][sampleName] = row["Copy number"]
       }
     }
-    const heatmapDF: any[] = []
-    for (const k in heatmapData) {
-      heatmapDF.push(heatmapData[k])
-    }
+    const heatmapDF = Object.values(heatmapData)
     if (heatmapDF.length > 0) {
-      this.heatmapData = new DataFrame(heatmapDF)
+      this.heatmapData.set(new DataFrame(heatmapDF))
     }
-    this.chart?.update();
+    this.filtered.set(filteredDF)
+    this.rows.set(rows)
+    this.cellTypes.set(cellTypes)
+    this.scatterChartData.set(scatterChartData)
+    this.publishSelection()
   }
 
-
-  rows: any[] = []
-  columns = [
-    {prop: "Gene names"}, {name: "Accession", prop: "Accession IDs"}, {name: "Copy #", prop: "Copy number"}, {name: "Rank", prop: "Rank"}, {name: "Type", prop: "Cell type"}, {name: "Replicate", prop: "Fraction"}, {name: "Condition", prop: "Condition"}
-  ]
-  scatterChartData: ChartDataset<"scatter">[] = []
-  readonly scatterPlotType = "scatter" as const;
-
-  width = 750
-  height = 750
-  min_x = 0
-  min_y = 0
-  selectedFiles: string = ""
-
-  ngOnInit(): void {
+  private publishSelection() {
+    this.selectedProtein.set(Object.fromEntries(Object.entries(this.selection).map(([k, v]) => [k, [...v]])))
   }
 
-  selectProtein(event: MouseEvent, protein: string, cellType: string, manual: boolean =  false) {
-
-    const target = event.target as Element;
-
-    if ((this.selectedProtein[cellType].includes(protein))) {
-
-        if (target.classList.contains("badge-success")) {
-          //target.classList.remove("badge-success")
-          //target.classList.add("badge-danger")
-          this.selectedProtein[cellType].push(protein)
-          this.selectedElement.push(target)
-        } else {
-          //target.classList.remove("badge-danger")
-          //target.classList.add("badge-success")
-
-          //this.selectedElement.splice(ind, 1)
-        }
-      const ind = this.selectedProtein[cellType].indexOf(protein)
-
-      this.selectedProtein[cellType].splice(ind, 1)
-
-    } else {
-      if (target.classList.contains("badge-success")) {
-        //target.classList.remove("badge-success")
-        //target.classList.add("badge-danger")
-        this.selectedProtein[cellType].push(protein)
-        this.selectedElement.push(target)
-      } else {
-
-        //target.classList.remove("badge-danger")
-        //target.classList.add("badge-success")
-        const t: string[] = []
-        let ind = 0
-        for (let i = 0; i < this.selectedElement.length; i++) {
-
-          if (this.selectedProtein[cellType][i] === protein) {
-            ind = i
-          }
-
-        }
-        this.selectedProtein[cellType].splice(ind, 1)
-        //this.selectedElement.splice(ind, 1)
-      }
+  removeProtein(protein: string, cellType: string) {
+    const selected = this.selection[cellType]
+    if (selected.includes(protein)) {
+      selected.splice(selected.indexOf(protein), 1)
     }
-    this.assignData(this.selectedProtein)
+    this.assignData(this.selection)
   }
 
   resetSelection() {
-    this.selectedProtein = {}
-    for (const e of this.selectedElement) {
-      e.classList.remove("badge-danger")
-      e.classList.add("badge-success")
-    }
-    this.selectedElement = []
+    this.selection = {}
     this.assignData({}, "")
   }
 
-  search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term.length < 2 ? []
-        : this.label.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0,10))
-    )
-
   searchSelectedProtein() {
-    if (this.model.length > 2) {
-      if (this.label.includes(this.model)) {
-        for (const c of this.cellTypes) {
-          if (!(this.selectedProtein[c].includes(this.model))) {
-            this.selectedProtein[c].push(this.model)
-          }
+    const query = this.model().trim().toUpperCase()
+    const gene = query.length > 2 ? this.label().find(g => g.toUpperCase() === query) : undefined
+    if (gene) {
+      for (const c of this.cellTypes()) {
+        if (!(this.selection[c].includes(gene))) {
+          this.selection[c].push(gene)
         }
-
       }
     }
-    this.assignData(this.selectedProtein, "")
-  }
-
-  ngAfterViewInit() {
+    this.assignData(this.selection, "")
   }
 
   downloadSelectedData(data: IDataFrame) {
@@ -572,16 +435,16 @@ export class ScatterPlotComponent implements OnInit, AfterViewInit, OnChanges {
     }
     window.URL.revokeObjectURL(url)
   }
-  shareUrl = ""
+
   getUrl() {
     const data: string[] = []
-    for (const s in this.selectedProtein) {
-      for (const p of this.selectedProtein[s]) {
+    for (const s in this.selection) {
+      for (const p of this.selection[s]) {
         if (!(data.includes(p))) {
           data.push(p)
         }
       }
     }
-    this.shareUrl = window.location.origin +"/#/copybrowse/" + this.http.scatterFiles.join(",") + "/" + data.join(",")
+    this.shareUrl.set(window.location.origin + "/#/copybrowse/" + this.http.scatterFiles.join(",") + "/" + data.join(","))
   }
 }

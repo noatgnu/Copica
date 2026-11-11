@@ -1,9 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AppModule } from '../../app.module';
-
+import { appConfig } from '../../app.config';
 import { BasicSearchComponent } from './basic-search.component';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('BasicSearchComponent', () => {
   let component: BasicSearchComponent;
@@ -11,13 +9,9 @@ describe('BasicSearchComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [AppModule],
-    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
-})
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [BasicSearchComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(BasicSearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

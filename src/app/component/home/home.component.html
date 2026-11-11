@@ -22,8 +22,8 @@
           The source code for the project as well as the data displayed could be obtained from the following <a href="https://github.com/noatgnu/Copica">GitHub repository</a>.
         </p>
         <p>
-          At of current, the database is indexing @if (loadFinishedObserver|async) {
-          <span><b>{{this.indexData.count()}}</b></span>
+          At of current, the database is indexing @if (datasetCount() !== undefined) {
+          <span><b>{{datasetCount()}}</b></span>
           } datasets including replicates.
         </p>
       </div>
@@ -61,8 +61,8 @@
         What are these datasets?
       </h5>
       <p class="card-text">
-        The Copica has @if (loadFinishedObserver|async) {
-        <span><b>{{this.indexData.count()}}</b></span>
+        The Copica has @if (datasetCount() !== undefined) {
+        <span><b>{{datasetCount()}}</b></span>
         } datasets which includes the experiments from our lab as well as published deep proteomic experiments. We aim to add more in house generated data of different tissues as well as cells.
       </p>
       <h5 class="card-text">

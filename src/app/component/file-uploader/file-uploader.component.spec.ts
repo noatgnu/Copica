@@ -1,9 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AppModule } from '../../app.module';
-
+import { appConfig } from '../../app.config';
 import { FileUploaderComponent } from './file-uploader.component';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('FileUploaderComponent', () => {
   let component: FileUploaderComponent;
@@ -11,13 +9,9 @@ describe('FileUploaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [AppModule],
-    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
-})
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [FileUploaderComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(FileUploaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

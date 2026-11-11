@@ -1,14 +1,14 @@
 <div class="container">
   <div class="card">
     <div class="card-body">
-      <p class="card-text">Loaded file with {{columnNum}} columns and {{rowNum}}</p>
+      <p class="card-text">Loaded file with {{columnNum()}} columns and {{rowNum()}}</p>
       <form [formGroup]="columnForm">
         <div class="form-group">
           <div class="form-row">
             <div class="col-4">
               <label for="columnSelection">Select intensity columns for calculation of copy number</label>
               <select multiple class="form-control" id="columnSelection" formControlName="IntensityCols">
-                @for (o of column; track o) {
+                @for (o of column(); track o) {
                   <option>
                     {{o}}
                   </option>
@@ -20,7 +20,7 @@
                 <div class="col-4">
                   <label for="identityColumnSelection">Select column with UniProt accession IDs</label>
                   <select class="form-control" id="identityColumnSelection" formControlName="IdentifierCol">
-                    @for (o of column; track o) {
+                    @for (o of column(); track o) {
                       <option>
                         {{o}}
                       </option>
@@ -30,7 +30,7 @@
                 <div class="col-4">
                   <label for="molecularMassColumnSelection">Select column with molecular weight</label>
                   <select class="form-control" id="molecularMassColumnSelection" formControlName="MolecularMassCol">
-                    @for (o of column; track o) {
+                    @for (o of column(); track o) {
                       <option>
                         {{o}}
                       </option>
@@ -43,7 +43,7 @@
                 <div class="col-4">
                   <label for="geneNameColumnSelection">Select gene name column</label>
                   <select class="form-control" id="geneNameColumnSelection" formControlName="GeneNameCol">
-                    @for (o of column; track o) {
+                    @for (o of column(); track o) {
                       <option>
                         {{o}}
                       </option>

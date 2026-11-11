@@ -22,7 +22,7 @@
       </div>
 
       <p class="card-text">
-        Selected proteins: @for (p of selectedProteins; track p) {
+        Selected proteins: @for (p of selectedProteins(); track p) {
         <span class="badge badge-pill badge-success mr-2" (click)="removeSelected(p)">{{p}}</span>
       }
     </p>
@@ -30,7 +30,7 @@
   </div>
   <plotly-plot
     [divId]="'barchart'"
-    [data]="graphData"
+    [data]="graphData()"
     [layout]="graphLayout"
     [updateOnDataChange]="true"
     [updateOnLayoutChange]="true"

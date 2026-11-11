@@ -1,9 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AppModule } from '../../app.module';
-
+import { appConfig } from '../../app.config';
 import { FileSummaryComponent } from './file-summary.component';
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('FileSummaryComponent', () => {
   let component: FileSummaryComponent;
@@ -11,13 +9,9 @@ describe('FileSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [AppModule],
-    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
-})
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [FileSummaryComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(FileSummaryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

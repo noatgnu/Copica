@@ -1,91 +1,85 @@
-import {Component, EventEmitter, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
-import {WebService} from "../../service/web.service";
-import * as dataforge from "data-forge"
-import {DataFrame, IDataFrame} from "data-forge";
-import {UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
-import {UserDataService} from "../../service/user-data.service";
-import {SettingsService} from "../../service/settings.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Location} from "@angular/common";
+import { Component, OnInit, inject, output, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { DataFrame, IDataFrame, fromCSV } from "data-forge";
+import { UntypedFormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Location } from "@angular/common";
+import { WebService } from "../../service/web.service";
+import { UserDataService } from "../../service/user-data.service";
+import { SettingsService } from "../../service/settings.service";
 
 @Component({
-    selector: 'app-db-browser',
-    templateUrl: './db-browser.component.html',
-    styleUrls: ['./db-browser.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  selector: 'app-db-browser',
+  templateUrl: './db-browser.component.html',
+  styleUrls: ['./db-browser.component.css'],
+  imports: [ReactiveFormsModule]
 })
 export class DbBrowserComponent implements OnInit {
-  dataframe: IDataFrame = new DataFrame();
-
-  form: UntypedFormGroup = this.fb.group({
-    cellType: [],
+  private http = inject(WebService);
+  private userData = inject(UserDataService);
+  private settings = inject(SettingsService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject(Location);
+  private datasetSettings: Record<string, boolean> = {};
+  private selectedFile: string[] = [];
+  readonly dataframe = signal<IDataFrame>(new DataFrame());
+  readonly experiment = signal<string[]>([]);
+  readonly cellType = signal<any[]>([]);
+  readonly selectedDataframe = output<IDataFrame>();
+  readonly form = inject(UntypedFormBuilder).group({
+    cellType: [[]],
     experimentType: "",
     userData: false
   });
-  filename: any[] = []
-  cellType: any[] = []
-  oDataframe: any[] = [];
-  experiment: any[] = []
-  temp: any[] = [];
-  selectedFile: any[] = [];
-  @Output() selectedDataframe: EventEmitter<IDataFrame> = new EventEmitter<IDataFrame>()
-  userDF: IDataFrame = new DataFrame();
-  datasetSettings: any = {}
-  constructor(private http: WebService, private fb: UntypedFormBuilder, private userData: UserDataService, private settings: SettingsService, private route: ActivatedRoute, private router: Router, private location: Location) {
-    this.userData.dataObserver.subscribe(data => {
-      this.userDF = data
-    })
+  readonly experimentType = toSignal(this.form.controls["experimentType"].valueChanges, {initialValue: ""});
+
+  constructor() {
     this.http.getIndexText().subscribe(data => {
-      this.dataframe = dataforge.fromCSV(<string>data.body)
-      this.datasetSettings = this.settings.getDatasetSettings()
-      const temp: any[] = []
-      for (const r of this.dataframe) {
+      this.datasetSettings = this.settings.getDatasetSettings();
+      const temp: any[] = [];
+      for (const r of fromCSV(<string>data.body)) {
         if (r.File in this.datasetSettings) {
           if (this.datasetSettings[r.File]) {
-            temp.push(r)
+            temp.push(r);
           }
         } else {
-          this.datasetSettings[r.File] = true
-          temp.push(r)
+          this.datasetSettings[r.File] = true;
+          temp.push(r);
         }
       }
-      this.dataframe = new DataFrame(temp)
-      const firstEntry = this.dataframe.first()
-      this.form.setValue({cellType: [{"cond": firstEntry["Condition"], "fraction": firstEntry["Fraction"], "cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}], experimentType: firstEntry["Experiment type"], userData: false})
-      //this.selectedFile = firstEntry["File"]
-      this.updateExperimentType()
-      this.updateCellType()
-
-    })
-
-
+      const dataframe = new DataFrame(temp);
+      const firstEntry = dataframe.first();
+      this.form.setValue({cellType: [{"cond": firstEntry["Condition"], "fraction": firstEntry["Fraction"], "cellType": firstEntry["Cell type"], "organism": firstEntry["Organisms"]}], experimentType: firstEntry["Experiment type"], userData: false});
+      this.dataframe.set(dataframe);
+      this.updateExperimentType();
+      this.updateCellType();
+    });
   }
 
   updateExperimentType() {
-    this.experiment = []
-    for (const a of this.dataframe) {
-      if (!this.experiment.includes(a["Experiment type"])) {
-        this.experiment.push(a["Experiment type"])
+    const experiment: string[] = []
+    for (const a of this.dataframe()) {
+      if (!experiment.includes(a["Experiment type"])) {
+        experiment.push(a["Experiment type"])
       }
     }
+    this.experiment.set(experiment)
     this.updateFormValue("experimentType")
   }
 
   updateCellType() {
-    this.cellType = []
+    const cellType: any[] = []
     this.selectedFile = []
-    for (const a of this.dataframe) {
+    for (const a of this.dataframe()) {
       if (a["Experiment type"] == this.form.value["experimentType"]) {
-        if (!this.cellType.includes(a["cellType"])) {
-          if (this.selectedFile.length === 0) {
-            this.selectedFile = [a["File"]]
-          }
-          this.cellType.push({"cellType": a["Cell type"], "organism": a["Organisms"], "cond": a["Condition"], "fraction": a["Fraction"]})
-
+        if (this.selectedFile.length === 0) {
+          this.selectedFile = [a["File"]]
         }
+        cellType.push({"cellType": a["Cell type"], "organism": a["Organisms"], "cond": a["Condition"], "fraction": a["Fraction"]})
       }
     }
+    this.cellType.set(cellType)
     this.updateFormValue("cellType")
 
   }
@@ -94,11 +88,11 @@ export class DbBrowserComponent implements OnInit {
     const a = {experimentType: this.form.value["experimentType"], cellType: this.form.value["cellType"], userData: this.form.value["userData"]}
     switch (target) {
       case "experimentType": {
-        a[target] = this.experiment[0]
+        a[target] = this.experiment()[0]
         break;
       }
       case "cellType": {
-        a[target] = [this.cellType[0]]
+        a[target] = [this.cellType()[0]]
         break;
       }
       default:
@@ -109,7 +103,7 @@ export class DbBrowserComponent implements OnInit {
 
   selectCellType() {
     this.selectedFile = []
-    for (const a of this.dataframe) {
+    for (const a of this.dataframe()) {
       if (a["Experiment type"] === this.form.value["experimentType"]) {
         for (const a2 of this.form.value["cellType"]) {
           if (a["Organisms"] === a2["organism"] && a["Cell type"] === a2["cellType"] && a["Condition"] === a2["cond"] && a["Fraction"] === a2["fraction"]) {
@@ -119,7 +113,6 @@ export class DbBrowserComponent implements OnInit {
         }
       }
     }
-    //this.http.getDBjson(this.form.value[""])
   }
 
   loadVisual(e: MouseEvent) {
@@ -130,34 +123,29 @@ export class DbBrowserComponent implements OnInit {
 
   private processData(updateUrl: boolean = true) {
     const dataDF: IDataFrame[] = []
-    console.log(this.selectedFile)
     if (updateUrl) {
       this.updateURL()
     }
 
     for (const s of this.selectedFile) {
-      console.log(s)
-      console.log(this.selectedFile)
       const a = this.selectedFile
       this.http.scatterFiles = this.selectedFile
       this.http.getDBtext(s).subscribe(data => {
-        console.log(a)
         let result: IDataFrame = new DataFrame()
         if (a.length > 1) {
 
-          dataDF.push(dataforge.fromCSV(<string>data.body))
+          dataDF.push(fromCSV(<string>data.body))
           if (a.length === dataDF.length) {
             result = DataFrame.concat(dataDF).bake()
 
           }
         } else {
-          result = dataforge.fromCSV(<string>data.body)
+          result = fromCSV(<string>data.body)
         }
 
-        if (this.form.value["userData"]) {
-          if (this.userDF.count() > 0) {
-            result = DataFrame.concat([result, this.userDF]).bake()
-          }
+        const userDF = this.userData.data()
+        if (this.form.value["userData"] && userDF.count() > 0) {
+          result = DataFrame.concat([result, userDF]).bake()
         }
 
         this.selectedDataframe.emit(result);
@@ -169,19 +157,12 @@ export class DbBrowserComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(res => {
-      console.log(res)
-      if (res.datasets) {
-        const d = res.datasets.split(",")
-        if (d) {
-          this.selectedFile = d
-          this.processData(false)
-        }
+      if (res["datasets"]) {
+        this.selectedFile = res["datasets"].split(",")
+        this.processData(false)
       }
-      if (res.gene) {
-        const g = res.gene.split(",")
-        if (g) {
-          this.http.scatterData = g
-        }
+      if (res["gene"]) {
+        this.http.scatterData = res["gene"].split(",")
       }
     })
   }

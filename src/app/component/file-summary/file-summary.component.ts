@@ -1,178 +1,103 @@
-import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
-import {DataFrame, IDataFrame, Series} from "data-forge";
-import {UntypedFormBuilder, FormControl, UntypedFormGroup} from "@angular/forms";
-import {Query} from "../../class/query";
-import {UniprotService} from "../../service/uniprot.service";
-import {BehaviorSubject, Observable} from "rxjs";
+import { Component, computed, effect, inject, input, linkedSignal, output, untracked } from '@angular/core';
+import { DataFrame, IDataFrame, Series } from "data-forge";
+import { UntypedFormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { Query } from "../../class/query";
+import { UniprotService } from "../../service/uniprot.service";
 
 @Component({
-    selector: 'app-file-summary',
-    templateUrl: './file-summary.component.html',
-    styleUrls: ['./file-summary.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  selector: 'app-file-summary',
+  templateUrl: './file-summary.component.html',
+  styleUrls: ['./file-summary.component.css'],
+  imports: [ReactiveFormsModule]
 })
-export class FileSummaryComponent implements OnInit {
-  column: string[] = [];
-  columnNum = 0;
-  rowNum = 0;
-  columnForm: UntypedFormGroup = new UntypedFormGroup({});
-  get dataframe(): IDataFrame {
-    return this._dataframe;
-  }
-  accList: string[] = []
-  private _dataframe: IDataFrame = new DataFrame<number, any>();
+export class FileSummaryComponent {
+  private uniprot = inject(UniprotService);
+  private accList: string[] = [];
+  private fetchPending = false;
+  readonly dataframe = input<IDataFrame>(new DataFrame<number, any>());
+  readonly selectedData = output<Query>();
+  readonly frame = linkedSignal(() => this.dataframe());
+  readonly column = computed(() => this.frame().getColumnNames());
+  readonly columnNum = computed(() => this.column().length);
+  readonly rowNum = computed(() => this.frame().count());
+  readonly columnForm = inject(UntypedFormBuilder).group({
+    IntensityCols: [[]],
+    IdentifierCol: "",
+    MolecularMassCol: "",
+    GeneNameCol: "",
+    fetchUniProt: false,
+    Ploidy: 2
+  });
 
-  @Input() set dataframe(value: IDataFrame) {
-    this._dataframe = value;
-    this.column = this._dataframe.getColumnNames();
-    this.columnNum = this.column.length;
-    this.rowNum = this._dataframe.count();
-    const columns = this._dataframe.getColumnNames()
-    let mmass = ""
-    if (columns.includes("Mol. weight [kDa]")) {
-      mmass = "Mol. weight [kDa]"
-    }
-    let proteinID = ""
-    if (columns.includes("Major protein IDs")) {
-      proteinID = "Majority protein IDs"
-    }
-    let geneNames = ""
-    if (columns.includes("Gene names")) {
-      geneNames = "Gene names"
-    }
+  constructor() {
+    effect(() => {
+      const columns = this.dataframe().getColumnNames();
+      untracked(() => this.columnForm.patchValue({
+        IdentifierCol: columns.includes("Major protein IDs") ? "Majority protein IDs" : "",
+        MolecularMassCol: columns.includes("Mol. weight [kDa]") ? "Mol. weight [kDa]" : "",
+        GeneNameCol: columns.includes("Gene names") ? "Gene names" : "",
+        Ploidy: 2
+      }));
+    });
 
-    this.columnForm.setValue({
-      IntensityCols: this.columnForm.value.IntensityCols,
-      IdentifierCol: proteinID,
-      MolecularMassCol: mmass,
-      GeneNameCol: geneNames,
-      fetchUniProt: this.columnForm.value.fetchUniProt,
-      Ploidy: 2
-    })
-    //this.uniprotFetch(this._dataframe)
+    effect(() => {
+      if (this.uniprot.parseComplete() && this.fetchPending) {
+        untracked(() => this.applyUniprotResults());
+      }
+    });
   }
 
-  emitTriggerBehavior: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  emitTriggerObserver: Observable<boolean> = this.emitTriggerBehavior.asObservable();
+  private applyUniprotResults() {
+    this.fetchPending = false;
+    const result: Record<string, any[]> = {"Gene names": [], "Mass": []};
+    for (const a of this.accList) {
+      const entry = this.uniprot.results.get(a);
+      result["Gene names"].push(entry ? entry["Gene names"] : "");
+      result["Mass"].push(entry ? parseFloat(entry["Mass"].replace(",", "")) : 1);
+    }
+    let df = this.frame();
+    for (const c of ["Gene names", "Mass"]) {
+      df = df.withSeries(c, new Series(result[c])).bake();
+    }
+    this.frame.set(df);
+    this.columnForm.patchValue({MolecularMassCol: "Mass", GeneNameCol: "Gene names"});
+    this.emitQuery();
+  }
 
-  @Output() selectedData: EventEmitter<Query> = new EventEmitter<Query>();
-
-  constructor(private fb: UntypedFormBuilder, private uniprot: UniprotService) {
-    this.uniprot.uniprotParseStatusObserver.subscribe(status => {
-      if (status) {
-        console.log(this.accList)
-        const result: any = {"Gene names": [], "Mass": []}
-        console.log(this.uniprot.results.size)
-
-        for (const a of this.accList) {
-          for (const c of ["Gene names", "Mass"]) {
-
-            if (this.uniprot.results.has(a)) {
-              if (c === "Mass") {
-                result[c].push(parseFloat(this.uniprot.results.get(a)[c].replace(",", "")))
-              } else {
-                result[c].push(this.uniprot.results.get(a)[c])
-              }
-            } else {
-              if (c === "Mass") {
-                result[c].push(1)
-              } else {
-                result[c].push("")
-              }
-            }
-          }
-        }
-        console.log(result)
-        for (const c of ["Gene names", "Mass"]) {
-          this._dataframe = this._dataframe.withSeries(c, new Series(result[c])).bake()
-        }
-        this.column = this._dataframe.getColumnNames()
-        this.columnNum = this.column.length
-        this.columnForm.setValue(
-          {
-            IntensityCols: this.columnForm.value["IntensityCols"],
-            IdentifierCol: this.columnForm.value["IdentifierCol"],
-            MolecularMassCol: "Mass",
-            GeneNameCol: "Gene names",
-            fetchUniProt: this.columnForm.value["fetchUniProt"],
-            Ploidy: this.columnForm.value["Ploidy"]
-          }
-        )
-        this.emitTriggerBehavior.next(true)
-      }
-    })
-
-    this.emitTriggerObserver.subscribe(status => {
-      if (status) {
-        const query = new Query()
-        query.df = this._dataframe
-        query.IntensityCols = this.columnForm.value["IntensityCols"]
-        query.IdentifierCol = this.columnForm.value["IdentifierCol"]
-        query.MolecularMassCol = this.columnForm.value["MolecularMassCol"]
-        query.GeneNameCol = this.columnForm.value["GeneNameCol"]
-        query.Ploidy = this.columnForm.value["Ploidy"]
-        console.log(query)
-        this.selectedData.emit(query)
-      }
-    })
-
-    this.columnForm = fb.group({
-      IntensityCols: [],
-      IdentifierCol: "",
-      MolecularMassCol: "",
-      GeneNameCol: "",
-      fetchUniProt: false,
-      Ploidy: 2
-    })
+  private emitQuery() {
+    const value = this.columnForm.value;
+    const query = new Query();
+    query.df = this.frame();
+    query.IntensityCols = value["IntensityCols"];
+    query.IdentifierCol = value["IdentifierCol"];
+    query.MolecularMassCol = value["MolecularMassCol"];
+    query.GeneNameCol = value["GeneNameCol"];
+    query.Ploidy = value["Ploidy"];
+    this.selectedData.emit(query);
   }
 
   selectData() {
-    const selected = this.columnForm.value["IntensityCols"].concat(this.columnForm.value["IdentifierCol"])
-    const notSelected = []
-    if (this.columnForm.value["IntensityCols"].length > 0 && this.columnForm.value["IdentifierCol"].length > 0) {
-
-
-      for (const c of this.column) {
-        if (!selected.includes(c)) {
-          notSelected.push(c)
-        }
-      }
-      if (this.columnForm.value.fetchUniProt) {
-        this.uniprotFetch(this.dataframe, this.columnForm.value.IdentifierCol);
+    const value = this.columnForm.value;
+    if (value["IntensityCols"].length > 0 && value["IdentifierCol"].length > 0) {
+      if (value.fetchUniProt) {
+        this.uniprotFetch(this.frame(), value.IdentifierCol);
       } else {
-        this.emitTriggerBehavior.next(true)
+        this.emitQuery();
       }
-
-
-
     } else {
-      alert("Please select at least one Intensity and one Identifier columns")
+      alert("Please select at least one Intensity and one Identifier columns");
     }
-
-
   }
 
   private uniprotFetch(df: IDataFrame, accessionCol: string) {
-    this.uniprot.uniprotParseStatus.next(false)
-    const accessions = df.getSeries(accessionCol).bake().toArray()
-
-    for (const a of accessions) {
-      const d = a.split(";")
-      const accession = this.uniprot.Re.exec(d[0])
+    this.uniprot.parseComplete.set(false);
+    this.fetchPending = true;
+    for (const a of df.getSeries(accessionCol).bake().toArray()) {
+      const accession = this.uniprot.Re.exec(a.split(";")[0]);
       if (accession !== null) {
-        this.accList.push(accession[0])
+        this.accList.push(accession[0]);
       }
     }
-    console.log(this.accList.length)
-    try {
-      this.uniprot.UniProtParseGet([...this.accList], false)
-    } catch (e) {
-      console.log(e);
-    }
+    this.uniprot.UniProtParseGet([...this.accList], false);
   }
-
-  ngOnInit(): void {
-  }
-
 }

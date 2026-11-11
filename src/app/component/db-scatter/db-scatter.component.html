@@ -1,12 +1,9 @@
 <app-db-browser (selectedDataframe)="scatterDataHandler($event)"></app-db-browser>
-@if (observeScatter|async) {
+@if (scatterData(); as data) {
   <div>
-    <app-scatter-plot [data]="scatterData" (heatmap)="handleHeatmap($event)"></app-scatter-plot>
+    <app-scatter-plot [data]="data" (heatmap)="handleHeatmap($event)"></app-scatter-plot>
     <div class="container mt-4">
-      <button class="btn btn-primary" (click)="downloadSelectedData(scatterDF)">Download Data</button>
+      <button class="btn btn-primary" (click)="downloadSelectedData(data)">Download Data</button>
     </div>
   </div>
 }
-
-
-

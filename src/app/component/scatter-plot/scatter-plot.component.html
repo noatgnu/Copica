@@ -1,4 +1,4 @@
-@if (data) {
+@if (data()) {
   <div class="container-fluid mt-2">
     <div class="card">
       <div class="card-body">
@@ -54,7 +54,7 @@
                     <button ngbDropdownItem (click)="openModal(content)">Search custom list</button>
                   </div>
                 </div>
-                <button class="btn btn-info" (click)="downloadSelectedData(data)">Download Selected</button>
+                <button class="btn btn-info" (click)="downloadSelectedData(filtered())">Download Selected</button>
               </div>
             </div>
           </div>
@@ -65,18 +65,18 @@
               <div class="card-body">
                 <div style="display:block;align-content: center">
                   <canvas baseChart
-                    [datasets]="scatterChartData"
+                    [datasets]="scatterChartData()"
                     [options]="options"
                     [type]="scatterPlotType"
-                    [labels]="label"
+                    [labels]="label()"
                   ></canvas>
                 </div>
-                @for (c of cellTypes; track c) {
+                @for (c of cellTypes(); track c) {
                   <p class="card-text">
                     Selected in {{c}} sample:
-                    @for (s of selectedProtein[c]; track s) {
+                    @for (s of selectedProtein()[c]; track s) {
                       <span class="badge bg-info ml-1"
-                      id="m-{{c + s}}" (click)="selectProtein($event, s, c, true)">{{s}}</span>
+                      id="m-{{c + s}}" (click)="removeProtein(s, c)">{{s}}</span>
                     }
                   </p>
                 }
@@ -89,20 +89,20 @@
                     </button>
                   </div>
                 </div>
-                @if (shareUrl) {
+                @if (shareUrl()) {
                   <div class="row">
-                    <span class="text-success">Share link: <a href="{{shareUrl}}">Here</a></span>
+                    <span class="text-success">Share link: <a href="{{shareUrl()}}">Here</a></span>
                   </div>
                 }
               </div>
             </div>
-            @if (heatmapData.count() > 0) {
+            @if (heatmapData().count() > 0) {
               <div class="row">
                 <!--            <app-heatmap [data]="heatmapData"></app-heatmap>-->
               </div>
             }
           </div>
-          @if (rows) {
+          @if (rows()) {
             <div class="col-5 mt-2">
               <div class="row">
                 <div class="form-group col-auto">
@@ -111,7 +111,7 @@
               </div>
               <ngx-datatable
                 class="bootstrap"
-                [rows]="rows"
+                [rows]="rows()"
                 [columns]="columns"
                 [rowHeight]="40"
                 [columnMode]="'force'"
@@ -136,7 +136,7 @@
                           </a>
                         </div>
                         <div class="col-10 text-sm-right">
-                          <a  href="#/cellbrowse/{{group.value[0]['Gene names']}}/dia,dda/{{selectedFiles.split('/')[0]}}">View distribution</a>
+                          <a  href="#/cellbrowse/{{group.value[0]['Gene names']}}/dia,dda/{{selectedFiles().split('/')[0]}}">View distribution</a>
                         </div>
                       </div>
                     </div>

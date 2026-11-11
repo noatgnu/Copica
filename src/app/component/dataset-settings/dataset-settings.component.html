@@ -1,16 +1,16 @@
-@if (loadFinishedObserver|async) {
+@if (loaded()) {
   <div class="container">
     <div ngbAccordion>
       <div ngbAccordionItem="dataset-settings">
         <h2 ngbAccordionHeader>
-          <button ngbAccordionButton class="py-2">Currently enabled datasets ({{enabled}})</button>
+          <button ngbAccordionButton class="py-2">Currently enabled datasets ({{enabled()}})</button>
         </h2>
         <div ngbAccordionCollapse>
           <div ngbAccordionBody>
             <ng-template>
               <ngx-datatable
                 class="bootstrap fullscreen"
-                [rows]="rows"
+                [rows]="rows()"
                 columnMode="force"
                 [columns]="columns"
                 [headerHeight]="50"
@@ -25,7 +25,7 @@
                   >
                   <ng-template ngx-datatable-header-template></ng-template>
                   <ng-template ngx-datatable-cell-template let-row="row">
-                    <input type="checkbox" [checked]="datasetsSettings[row.File]" (change)="toggleDatasets($event, row.File)" />
+                    <input type="checkbox" [checked]="datasetsSettings()[row.File]" (change)="toggleDatasets($event, row.File)" />
                   </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column name="Organisms" [sortable]="false">

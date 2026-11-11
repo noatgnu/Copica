@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
-import {UniprotResult} from "../class/uniprot-result";
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import {DataFrame, fromCSV, IDataFrame, Series} from "data-forge";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {fromCSV} from "data-forge";
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +14,9 @@ export class UniprotService {
 
   results: Map<string, any> = new Map<string, any>()
 
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
 
-  uniprotParseStatus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  uniprotParseStatusObserver: Observable<boolean> = this.uniprotParseStatus.asObservable()
-  uniprotData: Subject<IDataFrame> = new Subject<IDataFrame>()
-  uniprotResult: any[] = []
+  readonly parseComplete = signal(false);
   run: number = 0
   getUniprot(uniprotUrl: string) {
     return this.http.get(uniprotUrl, {responseType: 'text', observe: 'response'});
@@ -74,10 +69,8 @@ export class UniprotService {
           r["Gene names"] = r["Gene names"].replaceAll(" ", ";").toUpperCase()
           this.results.set(r["query"], r)
         }
-        console.log(currentRun)
-        console.log(this.run)
         if (currentRun === this.run) {
-          this.uniprotParseStatus.next(true)
+          this.parseComplete.set(true)
         }
       });
     }

@@ -1,29 +1,29 @@
-import {Component, Input, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, OnDestroy, ChangeDetectionStrategy} from '@angular/core';
-import {ChartConfiguration, ChartDataset} from "chart.js";
-import {interval, Subscription} from "rxjs";
-
+import { Component, computed, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChartConfiguration, ChartDataset, Point } from "chart.js";
+import { interval } from "rxjs";
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
-    selector: 'app-random-chart',
-    templateUrl: './random-chart.component.html',
-    styleUrls: ['./random-chart.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  selector: 'app-random-chart',
+  templateUrl: './random-chart.component.html',
+  styleUrls: ['./random-chart.component.css'],
+  imports: [BaseChartDirective]
 })
-export class RandomChartComponent implements OnInit, OnDestroy {
+export class RandomChartComponent {
   readonly scatterChartType = "scatter" as const;
-  chartDataSets: ChartDataset<"scatter">[] = [
+  readonly points = signal<Point[]>([]);
+  readonly chartDataSets = computed<ChartDataset<"scatter">[]>(() => [
     {
-      data: [],
+      data: this.points(),
       label: "Random",
-      pointBorderColor:
-      this.getRandomColor,
+      pointBorderColor: this.getRandomColor,
       pointBackgroundColor: this.getRandomColor,
       borderWidth: 0,
       borderColor: "transparent",
     }
-  ]
-  scatterOptions: ChartConfiguration<"scatter">["options"] = {
+  ]);
+  readonly scatterOptions: ChartConfiguration<"scatter">["options"] = {
     responsive: false,
     animation: {
       duration: 10
@@ -31,59 +31,35 @@ export class RandomChartComponent implements OnInit, OnDestroy {
     plugins: {
       legend: {display: false}
     }
+  };
+
+  constructor() {
+    interval(1000).pipe(takeUntilDestroyed()).subscribe(() => this.updateRandom());
   }
 
   getRandomColor() {
     const letters = '0123456789ABCDEF'.split('');
     let color = '#';
-    for (var i = 0; i < 6; i++ ) {
+    for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
   }
 
-  data: number[] = []
-  constructor() {
-
-  }
-
   getRandomData() {
-    return Math.round(Math.random()*100)
+    return Math.round(Math.random() * 100);
   }
-
-  ngOnInit(): void {
-
-    this.intervalSub = interval(1000).subscribe(this.updateRandom.bind(this))
-  }
-
-  intervalSub: Subscription = new Subscription();
 
   updateRandom() {
-    if (this.chartDataSets[0].data) {
-      if (this.chartDataSets[0].data.length < 10) {
-        const point = {x: this.getRandomData(), y: this.getRandomData()}
-        this.chartDataSets[0].data.push(point)
-
-      } else {
-        const min = Math.ceil(1)
-        const max = Math.floor(10)
-        const randomIndex = Math.floor(Math.random()*(max-min)+min)
-        this.chartDataSets[0].data.splice(randomIndex, 1, {x: this.getRandomData(), y: this.getRandomData()})
-        this.chartDataSets[0].data = this.chartDataSets[0].data.slice()
-      }
+    const point = {x: this.getRandomData(), y: this.getRandomData()};
+    const current = this.points();
+    if (current.length < 10) {
+      this.points.set([...current, point]);
+    } else {
+      const randomIndex = Math.floor(Math.random() * 9 + 1);
+      const next = current.slice();
+      next.splice(randomIndex, 1, point);
+      this.points.set(next);
     }
-
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    for (const p in changes) {
-      if (p==="chartDataSets") {
-        this.data = changes["chartDataSets"].currentValue;
-      }
-    }
-  }
-
-  ngOnDestroy() {
-    this.intervalSub.unsubscribe()
   }
 }

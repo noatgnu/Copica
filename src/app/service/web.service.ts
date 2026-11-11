@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from "@angular/common/http";
-import {BehaviorSubject, Observable} from "rxjs";
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 import {HistoneItem} from "../class/histone-item";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebService {
+  private http = inject(HttpClient);
   scatterData: string[] = []
   scatterFiles: string[] = []
   private _filters: any = {
@@ -28,8 +29,7 @@ export class WebService {
   filters: any = {}
   proteinAtlasURL: string = "https://www.proteinatlas.org/api/search_download.php?"
   defaultProteinAtlastColumns: string[] = ["g", "gs", "gd"]
-  selected: string[] = []
-  updateSelected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  readonly selected = signal<string[]>([]);
   toParamString(options: Map<string, string>): string {
     const pArray: string[] = [];
     options.forEach((value, key) => {
@@ -37,8 +37,6 @@ export class WebService {
     });
     return pArray.join('&');
   }
-
-  constructor(private http: HttpClient) { }
 
   getOrganisms() : Observable<HistoneItem[]> {
     return this.http.get<HistoneItem[]>("assets/organisms.json", {observe: "body"})
@@ -88,7 +86,6 @@ export class WebService {
   }
 
   getProteinAtlas(genes: string[], columns: string[]) {
-    console.log(columns)
     const d = this.defaultProteinAtlastColumns.slice()
     for (const c of columns) {
       d.push(c)
@@ -101,7 +98,6 @@ export class WebService {
       ]
     )
     const url = this.proteinAtlasURL + this.toParamString(options)
-    console.log(url)
     return this.http.get(url, {responseType: "json", observe: "response"})
   }
 }

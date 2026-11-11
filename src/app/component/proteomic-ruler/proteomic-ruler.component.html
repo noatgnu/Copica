@@ -9,17 +9,15 @@
   </div>
 </div>
 <app-file-uploader (dataframe)="dataframeHandle($event)"></app-file-uploader>
-@if (observeLoad|async) {
+@if (loaded()) {
   <div>
-    <app-file-summary [dataframe]="data" (selectedData)="selectedDataHandler($event)"></app-file-summary>
+    <app-file-summary [dataframe]="data()" (selectedData)="selectedDataHandler($event)"></app-file-summary>
   </div>
 }
-@if (observeProcess|async) {
+@if (scatterData(); as scatter) {
   <div class="container-fluid mt-2">
-    <app-scatter-plot [data]="scatterData"></app-scatter-plot>
+    <app-scatter-plot [data]="scatter"></app-scatter-plot>
   </div>
-}
-@if (observeProcess|async) {
   <div class="container mt-2">
     <button class="btn btn-info" (click)="downloadProcessedData()">Download Processed Data</button>
   </div>
