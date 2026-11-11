@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { appConfig } from '../../app.config';
 import { DatasetSettingsComponent } from './dataset-settings.component';
 
 describe('DatasetSettingsComponent', () => {
@@ -8,12 +9,9 @@ describe('DatasetSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DatasetSettingsComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [DatasetSettingsComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(DatasetSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

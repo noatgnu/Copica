@@ -1,19 +1,20 @@
-import { Component} from '@angular/core';
-import {DataFrame} from "data-forge";
-import {WebService} from "./service/web.service";
-
+import { Component, inject, signal } from '@angular/core';
+import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap/collapse';
+import { RouterLinkActive, RouterLink, RouterOutlet } from '@angular/router';
+import { WebService } from "./service/web.service";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  imports: [NgbCollapse, RouterLinkActive, RouterLink, RouterOutlet]
 })
 export class AppComponent {
-  title = 'Copica';
-  public isMenuCollapsed = true;
+  private web = inject(WebService);
+  readonly title = 'Copica';
+  readonly isMenuCollapsed = signal(true);
 
-  constructor(private http: WebService) {
-    this.http.getFilter()
-
+  constructor() {
+    this.web.getFilter();
   }
 }

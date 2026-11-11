@@ -1,34 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import {Query} from "../../class/query";
-import {DataFrame, IDataFrame} from "data-forge";
-import {BehaviorSubject, Observable} from "rxjs";
-import {WebService} from "../../service/web.service";
-import {HistoneDb} from "../../class/histone-db";
-import {ProteomicRuler} from "../../class/proteomic-ruler";
-import {UserDataService} from "../../service/user-data.service";
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { DataFrame, IDataFrame } from "data-forge";
+import { Query } from "../../class/query";
+import { WebService } from "../../service/web.service";
+import { HistoneDb } from "../../class/histone-db";
+import { ProteomicRuler } from "../../class/proteomic-ruler";
+import { UserDataService } from "../../service/user-data.service";
+import { FileUploaderComponent } from '../file-uploader/file-uploader.component';
+import { FileSummaryComponent } from '../file-summary/file-summary.component';
+import { ScatterPlotComponent } from '../scatter-plot/scatter-plot.component';
 
 @Component({
   selector: 'app-proteomic-ruler',
   templateUrl: './proteomic-ruler.component.html',
-  styleUrls: ['./proteomic-ruler.component.css']
+  styleUrls: ['./proteomic-ruler.component.css'],
+  imports: [FileUploaderComponent, FileSummaryComponent, ScatterPlotComponent]
 })
 export class ProteomicRulerComponent implements OnInit {
-  finishedLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  observeLoad: Observable<boolean> = new Observable<boolean>();
-  finishedProcessing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  observeProcess: Observable<boolean> = new Observable<boolean>();
-  data: IDataFrame = new DataFrame<number, any>();
-  histoneDB: HistoneDb = new HistoneDb(this.http)
-  ruler?: ProteomicRuler
-  scatterData: IDataFrame = new DataFrame();
-  constructor(private http: WebService, private userData: UserDataService) {
-    //this.histoneDB.getHistones()
-    this.observeLoad = this.finishedLoaded.asObservable()
-    this.observeProcess = this.finishedProcessing.asObservable()
-  }
+  private userData = inject(UserDataService);
+  private histoneDB = new HistoneDb(inject(WebService));
+  private ruler?: ProteomicRuler;
+  readonly data = signal<IDataFrame>(new DataFrame<number, any>());
+  readonly loaded = computed(() => this.data().count() > 0);
+  readonly scatterData = signal<IDataFrame | undefined>(undefined);
 
   ngOnInit(): void {
-    this.histoneDB.getHistones()
+    this.histoneDB.getHistones();
   }
 
   selectedDataHandler(e: Query) {
@@ -48,19 +44,14 @@ export class ProteomicRulerComponent implements OnInit {
         }
       }
     }
-    this.scatterData = new DataFrame(data)
-    this.userData.updateData(this.scatterData)
-
-    this.finishedProcessing.next(true)
+    const scatterData = new DataFrame(data);
+    this.userData.updateData(scatterData);
+    this.scatterData.set(scatterData);
   }
 
   dataframeHandle(e: IDataFrame) {
-    this.finishedLoaded.next(false)
-    this.finishedProcessing.next(false)
-    this.data = e;
-    if (this.data.count() > 0) {
-      this.finishedLoaded.next(true)
-    }
+    this.scatterData.set(undefined);
+    this.data.set(e);
   }
 
   downloadProcessedData() {
@@ -81,6 +72,5 @@ export class ProteomicRulerComponent implements OnInit {
       }
       window.URL.revokeObjectURL(url)
     }
-
   }
 }

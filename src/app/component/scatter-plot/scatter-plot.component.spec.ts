@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { appConfig } from '../../app.config';
 import { ScatterPlotComponent } from './scatter-plot.component';
 
 describe('ScatterPlotComponent', () => {
@@ -8,12 +9,9 @@ describe('ScatterPlotComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ScatterPlotComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [ScatterPlotComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(ScatterPlotComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

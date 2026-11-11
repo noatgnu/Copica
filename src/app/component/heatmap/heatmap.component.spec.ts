@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { appConfig } from '../../app.config';
 import { HeatmapComponent } from './heatmap.component';
 
 describe('HeatmapComponent', () => {
@@ -8,12 +9,9 @@ describe('HeatmapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeatmapComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [HeatmapComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(HeatmapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

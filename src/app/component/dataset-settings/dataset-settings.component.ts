@@ -1,82 +1,67 @@
-import { Component, OnInit } from '@angular/core';
-import {DataFrame, fromCSV, IDataFrame} from "data-forge";
-import {WebService} from "../../service/web.service";
-import {SettingsService} from "../../service/settings.service";
-import {BehaviorSubject, Observable} from "rxjs";
+import { Component, inject, signal } from '@angular/core';
+import { fromCSV } from "data-forge";
+import { NgbAccordionDirective, NgbAccordionItem, NgbAccordionHeader, NgbAccordionButton, NgbAccordionCollapse, NgbAccordionBody } from '@ng-bootstrap/ng-bootstrap/accordion';
+import { DatatableComponent, DataTableColumnDirective, DataTableColumnHeaderDirective, DataTableColumnCellDirective } from '@swimlane/ngx-datatable';
+import { WebService } from "../../service/web.service";
+import { SettingsService } from "../../service/settings.service";
 
 @Component({
   selector: 'app-dataset-settings',
   templateUrl: './dataset-settings.component.html',
-  styleUrls: ['./dataset-settings.component.css']
+  styleUrls: ['./dataset-settings.component.css'],
+  imports: [NgbAccordionDirective, NgbAccordionItem, NgbAccordionHeader, NgbAccordionButton, NgbAccordionCollapse, NgbAccordionBody, DatatableComponent, DataTableColumnDirective, DataTableColumnHeaderDirective, DataTableColumnCellDirective]
 })
-export class DatasetSettingsComponent implements OnInit {
-  indexData: IDataFrame = new DataFrame()
-  loadFinishedCheck: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  loadFinishedObserver: Observable<boolean> = this.loadFinishedCheck.asObservable()
-  datasetsSettings: any = {}
-  columns = [
-    {name: "Cell type",prop: "Cell type"}, {prop: "Experiment type"}, {prop: "Organisms"}, {prop: "Condition"}, {prop: "Fraction"}
-  ]
-  rows: any[] = []
-  enabled = 0
-  constructor(private http: WebService, private settings: SettingsService) {
-    this.http.getIndexText().subscribe(data => {
-      this.indexData = fromCSV(<string>data.body)
-      this.datasetsSettings = this.settings.getDatasetSettings()
-      for (const r of this.indexData) {
-        if (!(r["File"] in this.datasetsSettings)) {
-          this.datasetsSettings[r["File"]] = true
-          this.enabled = this.enabled + 1
-        } else {
-          if (this.datasetsSettings[r["File"]]) {
-            this.enabled = this.enabled + 1
-          }
+export class DatasetSettingsComponent {
+  private web = inject(WebService);
+  private settings = inject(SettingsService);
+  readonly loaded = signal(false);
+  readonly datasetsSettings = signal<Record<string, boolean>>({});
+  readonly rows = signal<any[]>([]);
+  readonly enabled = signal(0);
+  readonly columns = [
+    {name: "Cell type", prop: "Cell type"}, {prop: "Experiment type"}, {prop: "Organisms"}, {prop: "Condition"}, {prop: "Fraction"}
+  ];
+
+  constructor() {
+    this.web.getIndexText().subscribe(data => {
+      const indexData = fromCSV(<string>data.body);
+      const settings: Record<string, boolean> = this.settings.getDatasetSettings();
+      for (const r of indexData) {
+        if (!(r["File"] in settings)) {
+          settings[r["File"]] = true;
         }
       }
-
-      this.settings.setDatasetSettings(this.datasetsSettings)
-      this.rows = this.indexData.toArray()
-      this.loadFinishedCheck.next(true)
-    })
+      this.datasetsSettings.set(settings);
+      this.settings.setDatasetSettings(settings);
+      this.enabled.set(this.countEnabled(settings));
+      this.rows.set(indexData.toArray());
+      this.loaded.set(true);
+    });
   }
 
-  ngOnInit(): void {
+  private countEnabled(settings: Record<string, boolean>) {
+    return Object.values(settings).filter(v => v).length;
   }
 
-  toggleDatasets(e: Event, file: any) {
-    e.stopPropagation()
-    this.datasetsSettings[file] = !this.datasetsSettings[file]
+  toggleDatasets(e: Event, file: string) {
+    e.stopPropagation();
+    this.datasetsSettings.update(s => ({...s, [file]: !s[file]}));
   }
 
   saveSettings(e: Event) {
-    e.stopPropagation()
-    this.settings.setDatasetSettings(this.datasetsSettings)
-    this.enabled = 0
-    for (const i in this.datasetsSettings) {
-      if (this.datasetsSettings[i]) {
-        this.enabled = this.enabled + 1
-      }
-    }
+    e.stopPropagation();
+    this.settings.setDatasetSettings(this.datasetsSettings());
+    this.enabled.set(this.countEnabled(this.datasetsSettings()));
   }
 
   clearSettings(e: Event) {
-    e.stopPropagation()
-    for (const i in this.datasetsSettings) {
-      this.datasetsSettings[i] = true
-    }
-    this.settings.setDatasetSettings(this.datasetsSettings)
-    this.enabled = 0
-    for (const i in this.datasetsSettings) {
-      if (this.datasetsSettings[i]) {
-        this.enabled = this.enabled + 1
-      }
-    }
+    e.stopPropagation();
+    this.selectAll(e);
+    this.saveSettings(e);
   }
 
   selectAll(e: Event) {
-    e.stopPropagation()
-    for (const i in this.datasetsSettings) {
-      this.datasetsSettings[i] = true
-    }
+    e.stopPropagation();
+    this.datasetsSettings.update(s => Object.fromEntries(Object.keys(s).map(k => [k, true])));
   }
 }

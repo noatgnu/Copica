@@ -1,7 +1,7 @@
 <!--<app-random-chart class="background">
-  <div class="content">
-    <p>testreasdsadsadsad</p>
-  </div>
+<div class="content">
+  <p>testreasdsadsadsad</p>
+</div>
 </app-random-chart>-->
 <div class="container mb-4">
   <app-basic-search></app-basic-search>
@@ -22,7 +22,9 @@
           The source code for the project as well as the data displayed could be obtained from the following <a href="https://github.com/noatgnu/Copica">GitHub repository</a>.
         </p>
         <p>
-          At of current, the database is indexing <span *ngIf="loadFinishedObserver|async"><b>{{this.indexData.count()}}</b></span> datasets including replicates.
+          At of current, the database is indexing @if (datasetCount() !== undefined) {
+          <span><b>{{datasetCount()}}</b></span>
+          } datasets including replicates.
         </p>
       </div>
     </div>
@@ -59,7 +61,9 @@
         What are these datasets?
       </h5>
       <p class="card-text">
-        The Copica has <span *ngIf="loadFinishedObserver|async"><b>{{this.indexData.count()}}</b></span> datasets which includes the experiments from our lab as well as published deep proteomic experiments. We aim to add more in house generated data of different tissues as well as cells.
+        The Copica has @if (datasetCount() !== undefined) {
+        <span><b>{{datasetCount()}}</b></span>
+        } datasets which includes the experiments from our lab as well as published deep proteomic experiments. We aim to add more in house generated data of different tissues as well as cells.
       </p>
       <h5 class="card-text">
         I have a deep proteomic data can I use Copica to estimate copy numbers?

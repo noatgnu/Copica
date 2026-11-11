@@ -1,32 +1,24 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {DataFrame, IDataFrame} from "data-forge";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {WebService} from "../../service/web.service";
-import {HistoneDb} from "../../class/histone-db";
-import {BehaviorSubject, Observable} from "rxjs";
-import {Query} from "../../class/query";
-import {ActivatedRoute} from "@angular/router";
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { DataFrame, IDataFrame } from "data-forge";
+import { ActivatedRoute } from "@angular/router";
+import { WebService } from "../../service/web.service";
+import { DbBrowserComponent } from '../db-browser/db-browser.component';
+import { ScatterPlotComponent } from '../scatter-plot/scatter-plot.component';
 
 @Component({
   selector: 'app-db-scatter',
   templateUrl: './db-scatter.component.html',
-  styleUrls: ['./db-scatter.component.css']
+  styleUrls: ['./db-scatter.component.css'],
+  imports: [DbBrowserComponent, ScatterPlotComponent]
 })
 export class DbScatterComponent implements OnInit {
-  loadScatterSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  observeScatter: Observable<boolean> = new Observable<boolean>()
-  scatterDF: IDataFrame = new DataFrame();
-  scatterData: IDataFrame = new DataFrame();
-  heatmapData: IDataFrame = new DataFrame();
-  constructor(private http: WebService, private route: ActivatedRoute) {
-    this.observeScatter = this.loadScatterSubject.asObservable()
-  }
+  private web = inject(WebService);
+  private route = inject(ActivatedRoute);
+  readonly scatterData = signal<IDataFrame | undefined>(undefined);
+  readonly heatmapData = signal<IDataFrame>(new DataFrame());
 
   scatterDataHandler(e: IDataFrame) {
-    this.scatterData = e;
-    this.scatterDF = e;
-    console.log(e)
-    this.loadScatterSubject.next(true);
+    this.scatterData.set(e);
   }
 
   downloadSelectedData(data: IDataFrame) {
@@ -49,24 +41,17 @@ export class DbScatterComponent implements OnInit {
   }
 
   handleHeatmap(data: IDataFrame) {
-    this.heatmapData = data
+    this.heatmapData.set(data);
   }
 
   ngOnInit() {
     this.route.params.subscribe(res => {
-      console.log(res)
-      if (res.gene) {
-        const g = res.gene.split(",")
-        if (g) {
-          this.http.scatterData = g
-        }
+      if (res["gene"]) {
+        this.web.scatterData = res["gene"].split(",");
       }
-      if (res.datasets) {
-        const g = res.datasets.split(",")
-        if (g) {
-          this.http.scatterFiles = g
-        }
+      if (res["datasets"]) {
+        this.web.scatterFiles = res["datasets"].split(",");
       }
-    })
+    });
   }
 }

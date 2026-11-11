@@ -1,21 +1,30 @@
-import {Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChild} from '@angular/core';
-import {DataFrame, IDataFrame} from "data-forge";
-import {BaseChartDirective} from "ng2-charts";
-import {ChartOptions, ChartDataSets, ChartType, Chart} from "chart.js";
-import {BehaviorSubject, Observable, OperatorFunction} from "rxjs";
-import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
-import {GraphData} from "../../class/graph-data";
-import {PlotlyService} from "angular-plotly.js";
-import {WebService} from "../../service/web.service";
+import { Component, effect, inject, input, output, signal, untracked } from '@angular/core';
+import { DataFrame, IDataFrame } from "data-forge";
+import { Observable, OperatorFunction, debounceTime, distinctUntilChanged, map } from "rxjs";
+import { FormsModule } from '@angular/forms';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap/typeahead';
+import { NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownButtonItem, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap/dropdown';
+import { PlotlyService, PlotlyComponent } from "angular-plotly.js";
+import { GraphData } from "../../class/graph-data";
+import { WebService } from "../../service/web.service";
 
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.css']
+  styleUrls: ['./bar-chart.component.css'],
+  imports: [NgbTypeahead, FormsModule, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownButtonItem, NgbDropdownItem, PlotlyComponent]
 })
-export class BarChartComponent implements OnInit {
-  graphData: any[] = []
-  graphLayout = {autosize:true, title: '<br>Copy number distribution</br>', margin: {l: 100, r:100, b:100, t:100},
+export class BarChartComponent {
+  private plotly = inject(PlotlyService);
+  private http = inject(WebService);
+  private origin: IDataFrame = new DataFrame();
+  private geneList: string[] = [];
+  readonly gData = input<GraphData>(new GraphData());
+  readonly updateSelection = output<string[]>();
+  readonly model = signal("");
+  readonly selectedProteins = signal<string[]>([]);
+  readonly graphData = signal<any[]>([]);
+  readonly graphLayout = {autosize:true, title: '<br>Copy number distribution</br>', margin: {l: 100, r:100, b:100, t:100},
     xaxis: {
       title: "<b>Cell type</b>",
       type: "category",
@@ -26,10 +35,8 @@ export class BarChartComponent implements OnInit {
     yaxis: {
       title: "<b>Copy number</b>"
     }
-  }
-
-  drawTriggerSubject = new BehaviorSubject<boolean>(false)
-  @Output() updateSelection = new EventEmitter<string[]>()
+  };
+  currentDf: IDataFrame = new DataFrame();
 
   search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
     text$.pipe(
@@ -38,62 +45,34 @@ export class BarChartComponent implements OnInit {
       map(term => term.length < 2 ? []
         : this.geneList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0,10))
     )
-  model: any = "";
-  origin: IDataFrame = new DataFrame()
-  geneList: string[] = []
-  _selectedProteins: string[] = []
-  set selectedProteins(values: string[]) {
-    this._selectedProteins = values
+
+  constructor() {
+    effect(() => {
+      const value = this.gData();
+      untracked(() => {
+        this.selectedProteins.set(value.selectedProteins);
+        this.updateData(value.data);
+      });
+    });
   }
 
-  get selectedProteins(): string[] {
-    return this._selectedProteins
-  }
-  get data(): IDataFrame {
-    return this._data;
-  }
-
-  private _data: IDataFrame = new DataFrame()
-  labels: string[] = []
-
-  arraysCompare(a: any[], b: any[]):boolean {
+  private arraysCompare(a: any[], b: any[]): boolean {
     if (a.length != b.length) {
       return false
-    } else {
-      a.sort()
-      b.sort()
-      if (JSON.stringify(a) !== JSON.stringify(b)) {
-        return false
-      }
     }
-    return true
+    a.sort()
+    b.sort()
+    return JSON.stringify(a) === JSON.stringify(b)
   }
 
-  initialLoad = true
-  updateTrigger = 0
-
-  _gData:GraphData = new GraphData()
-
-  get gData(): GraphData {
-    return this._gData
-  }
-
-  @Input() set gData(value: GraphData) {
-    this._gData = value;
-    this.selectedProteins = value.selectedProteins
-    this.data = value.data
-  }
-
-
-  set data(value: IDataFrame) {
-    console.log("update bar-chart")
+  private updateData(value: IDataFrame) {
     if (this.origin.count() !== value.count()) {
       this.origin = value
       const gl = this.origin.getSeries("Gene names").distinct().bake().toArray()
       if (!this.arraysCompare(gl, this.geneList)) {
         this.geneList = gl
-        this.graphData = []
-        this._data = this.assignData(this.selectedProteins);
+        this.graphData.set([])
+        this.assignData(this.selectedProteins())
       }
     }
   }
@@ -102,20 +81,15 @@ export class BarChartComponent implements OnInit {
     const graph = this.plotly.getInstanceByDivId('barchart');
     const p = await this.plotly.getPlotly();
     await p.downloadImage(graph, {format: format, filename: "image"})
-
   }
-  currentDf: IDataFrame = new DataFrame()
 
   private assignData(selected: string[] = ["LRRK2"]) {
-    this.http.updateSelected.next(true)
-    this.http.selected = selected
-    this.graphData = []
-    this.selectedProteins = selected
+    this.http.selected.set(selected)
+    this.selectedProteins.set(selected)
     const filtered: any[] = []
     const result: any = {}
     for (const g of this.origin.groupBy(row => row.label)) {
       const gFirst = g.first()
-      console.log(gFirst)
       const currentCellType = gFirst["Cell type"].toString()
       const currentCondition = gFirst["Condition"]
       for (const gn of g.groupBy(rowg => rowg["Gene names"])) {
@@ -163,54 +137,30 @@ export class BarChartComponent implements OnInit {
         }
       }
     }
-    for (const r in result) {
-      this.graphData.push(result[r])
-    }
+    this.graphData.set(Object.values(result))
 
     this.currentDf = new DataFrame(filtered)
 
     return this.currentDf;
   }
 
-  colors: string[] = [];
-  pointRadius: number[] = []
-
-  chartType:ChartType = "bar";
-  ngOnChanges(changes: SimpleChanges) {
-    for (const p in changes) {
-      if (p==="data") {
-        this.data = changes["data"].currentValue;
-      }
-    }
-  }
-  constructor(private plotly: PlotlyService, private http: WebService) {
-
-  }
-
-  ngOnInit(): void {
-
-  }
-
-  searchSelectedProtein(){
-    if (this.model.length > 2) {
-      if (this.geneList.includes(this.model)) {
-        if (!(this.selectedProteins.includes(this.model))) {
-          this.selectedProteins.push(this.model)
-        }
-        this.assignData(this.selectedProteins)
-        this.updateSelection.next(this.selectedProteins)
-      }
+  searchSelectedProtein() {
+    const query = this.model().trim().toUpperCase()
+    const gene = query.length > 2 ? this.geneList.find(g => g.toUpperCase() === query) : undefined
+    if (gene) {
+      const selected = this.selectedProteins()
+      const next = selected.includes(gene) ? selected : [...selected, gene]
+      this.assignData(next)
+      this.updateSelection.emit(next)
     }
   }
 
-  removeSelected(p:string) {
-    for (let i = 0; i < this.selectedProteins.length; i ++) {
-      if (this.selectedProteins[i] === p) {
-        this.selectedProteins.splice(i, 1)
-        this.assignData(this.selectedProteins)
-        this.updateSelection.next(this.selectedProteins)
-        break
-      }
+  removeSelected(p: string) {
+    const selected = this.selectedProteins()
+    if (selected.includes(p)) {
+      const next = selected.filter(s => s !== p)
+      this.assignData(next)
+      this.updateSelection.emit(next)
     }
   }
 

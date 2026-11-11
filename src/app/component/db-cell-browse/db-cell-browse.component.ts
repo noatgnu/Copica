@@ -1,91 +1,90 @@
-import { Component, OnInit } from '@angular/core';
-import {DataFrame, IDataFrame} from "data-forge";
-import * as dataforge from "data-forge"
-import {WebService} from "../../service/web.service";
-import {BehaviorSubject, combineLatest, Observable} from "rxjs";
-import {UntypedFormBuilder} from "@angular/forms";
-import {UserDataService} from "../../service/user-data.service";
-import {SettingsService} from "../../service/settings.service";
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {GraphData} from "../../class/graph-data";
-import {Location} from "@angular/common";
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { DataFrame, IDataFrame, fromCSV } from "data-forge";
+import { UntypedFormBuilder, ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Location } from "@angular/common";
+import { NgbAlert } from '@ng-bootstrap/ng-bootstrap/alert';
+import { WebService } from "../../service/web.service";
+import { UserDataService } from "../../service/user-data.service";
+import { SettingsService } from "../../service/settings.service";
+import { GraphData } from "../../class/graph-data";
+import { BarChartComponent } from '../bar-chart/bar-chart.component';
+import { ProteinAtlasComponent } from '../protein-atlas/protein-atlas.component';
 
 @Component({
   selector: 'app-db-cell-browse',
   templateUrl: './db-cell-browse.component.html',
-  styleUrls: ['./db-cell-browse.component.css']
+  styleUrls: ['./db-cell-browse.component.css'],
+  imports: [NgbAlert, ReactiveFormsModule, FormsModule, BarChartComponent, ProteinAtlasComponent]
 })
 export class DbCellBrowseComponent implements OnInit {
-  viewProteinAtlast: boolean = false;
-  customDataName: any[] = []
-  graphData: GraphData = new GraphData()
-  selectedGenes: string[] = []
-  dda: boolean = false;
-  dia: boolean = false;
-  indDataframe: IDataFrame = new DataFrame();
-  dataArray: IDataFrame[] = []
-  geneList: string[] = []
-  organism: string[] = []
-  experiment: string[] = []
-  dataMap: any = {}
-  dfMap: any = {}
-  fileLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  fileLoadedObserver: Observable<boolean> = this.fileLoaded.asObservable()
-  selectedData: IDataFrame = new DataFrame();
-  form = this.fb.group({
+  private router = inject(Router);
+  private location = inject(Location);
+  private route = inject(ActivatedRoute);
+  private http = inject(WebService);
+  private userData = inject(UserDataService);
+  private settings = inject(SettingsService);
+  private selectedGenes: string[] = [];
+  private dda = false;
+  private dia = false;
+  private indDataframe: IDataFrame = new DataFrame();
+  private dataMap: any = {};
+  private dfMap: any = {};
+  private datasetSettings: Record<string, boolean> = {};
+  private selectedFiles: string[] = [];
+  readonly viewProteinAtlast = signal(false);
+  readonly customData = signal(false);
+  readonly customDataName = signal<string[]>([]);
+  readonly graphData = signal<GraphData>(new GraphData());
+  readonly organism = signal<string[]>([]);
+  readonly experiment = signal<string[]>([]);
+  readonly fileLoaded = signal(false);
+  readonly form = inject(UntypedFormBuilder).group({
     organisms: "",
     experiment: "",
-    dda: this.dda,
-    dia: this.dia,
+    dda: false,
+    dia: false,
     userData: false
   });
 
-  userDF: IDataFrame = new DataFrame()
-  datasetSettings: any = {}
-
-  constructor(private router: Router, private location: Location, private route: ActivatedRoute, private http: WebService, private fb: UntypedFormBuilder, private userData: UserDataService, private settings: SettingsService) {
-    this.userData.dataObserver.subscribe(data => {
-      this.userDF = data
-    })
+  constructor() {
     this.http.getIndexText().subscribe(data => {
-      this.datasetSettings = this.settings.getDatasetSettings()
-      this.indDataframe = dataforge.fromCSV(<string>data.body)
-      const temp: any[] = []
-      this.customDataName = []
+      this.datasetSettings = this.settings.getDatasetSettings();
+      const temp: any[] = [];
+      const customDataName: string[] = [];
+      const index = fromCSV(<string>data.body);
       if (this.selectedFiles.length > 0) {
-        for (const r of this.indDataframe) {
+        for (const r of index) {
           if (this.selectedFiles.includes(r.File)) {
-            temp.push(r)
-            this.customDataName.push(r["Cell type"] + "(" + r["Condition"] + ")")
+            temp.push(r);
+            customDataName.push(r["Cell type"] + "(" + r["Condition"] + ")");
           }
         }
       } else {
-        for (const r of this.indDataframe) {
+        for (const r of index) {
           if (r.File in this.datasetSettings) {
             if (this.datasetSettings[r.File]) {
-              temp.push(r)
+              temp.push(r);
             }
           } else {
-            this.datasetSettings[r.File] = true
-            temp.push(r)
+            this.datasetSettings[r.File] = true;
+            temp.push(r);
           }
         }
       }
-
-      this.indDataframe = new DataFrame(temp)
+      this.customDataName.set(customDataName);
+      this.indDataframe = new DataFrame(temp);
       const first = this.indDataframe.first();
-
       this.form.setValue({
         organisms: first["Organisms"],
         experiment: first["Experiment type"],
         dia: this.dia,
         dda: this.dda,
-        userData: false},
-        )
-      this.organism = this.indDataframe.getSeries("Organisms").distinct().bake().toArray()
-      //this.experiment = this.indDataframe.getSeries("Experiment Type").distinct().bake().toArray()
+        userData: false
+      });
+      this.organism.set(this.indDataframe.getSeries("Organisms").distinct().bake().toArray());
       this.getData();
-    })
+    });
   }
 
   getData(experiment:boolean = false, remap: boolean = false) {
@@ -93,11 +92,7 @@ export class DbCellBrowseComponent implements OnInit {
     const rfile = []
     this.dataMap = {}
     this.dfMap = {}
-    if (experiment) {
-      this.experiment = []
-    }
-
-    const expo = this.experiment
+    const expo = experiment ? [] : this.experiment().slice()
     for (const r of this.indDataframe) {
       let get = false;
       if (r["Acquisition Method"] == "DDA") {
@@ -126,7 +121,7 @@ export class DbCellBrowseComponent implements OnInit {
     for (const r of rfile) {
       this.http.getDBtext(r["File"]).subscribe(data => {
         co++
-        const a = dataforge.fromCSV(<string>data.body)
+        const a = fromCSV(<string>data.body)
         this.dataMap[r["Organisms"]][r["Experiment type"]].push(a)
         if (co === rfile.length) {
           for (const o in this.dataMap) {
@@ -155,67 +150,47 @@ export class DbCellBrowseComponent implements OnInit {
             dia: this.form.value["dia"],
             userData: this.form.value["userData"]
           })
-          this.experiment = expo
+          this.experiment.set(expo)
           this.selectData()
-          //this.geneList = this.entireData.getSeries("Gene names").distinct().bake().toArray()
-          this.fileLoaded.next(true);
+          this.fileLoaded.set(true)
         }
       })
     }
   }
 
-  selectedFiles: string[] = []
-
   ngOnInit(): void {
     this.route.params.subscribe(res => {
-      console.log(res)
-      if (res.gene) {
-        const d = res.gene.toUpperCase().split(",")
-        if (d) {
-          this.selectedGenes = d
+      this.selectedGenes = res["gene"] ? res["gene"].toUpperCase().split(",") : []
+      if (res["methods"]) {
+        const d = res["methods"].toLowerCase().split(",")
+        if (d.includes("dda")) {
+          this.dda = true
         }
-      } else {
-        this.selectedGenes = []
-      }
-      if (res.methods) {
-        const d = res.methods.toLowerCase().split(",")
-        if (d) {
-          if (d.includes("dda")) {
-            this.dda = true
-          }
-          if (d.includes("dia")) {
-            this.dia = true
-          }
+        if (d.includes("dia")) {
+          this.dia = true
         }
       }
-      if (res.datasets) {
-        const d = res.datasets.split(",")
-        if (d) {
-          this.customData = true
-          this.selectedFiles = d
-        }
+      if (res["datasets"]) {
+        this.customData.set(true)
+        this.selectedFiles = res["datasets"].split(",")
       }
     })
   }
-
-  customData: boolean = false
 
   updateCellType() {
     this.selectData()
   }
 
   selectData() {
-    console.log(this.form.value)
-
-    this.selectedData = this.dfMap[this.form.value["organisms"]][this.form.value["experiment"]]
-    if (this.form.value["userData"]) {
-      if (this.userDF.count() > 0) {
-        this.selectedData = DataFrame.concat([this.selectedData, this.userDF])
-      }
+    let selectedData: IDataFrame = this.dfMap[this.form.value["organisms"]][this.form.value["experiment"]]
+    const userDF = this.userData.data()
+    if (this.form.value["userData"] && userDF.count() > 0) {
+      selectedData = DataFrame.concat([selectedData, userDF])
     }
-    this.graphData = new GraphData()
-    this.graphData.data = this.selectedData
-    this.graphData.selectedProteins = this.selectedGenes
+    const graphData = new GraphData()
+    graphData.data = selectedData
+    graphData.selectedProteins = this.selectedGenes
+    this.graphData.set(graphData)
     this.updateURL(this.selectedGenes)
   }
 
@@ -237,6 +212,5 @@ export class DbCellBrowseComponent implements OnInit {
     if (this.location.path() !== url.toString()) {
       this.location.go(url.toString())
     }
-    console.log(url.toString())
   }
 }

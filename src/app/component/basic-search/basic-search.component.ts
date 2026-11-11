@@ -1,23 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import {WebService} from "../../service/web.service";
-import {SettingsService} from "../../service/settings.service";
-import {DataFrame, fromCSV} from "data-forge";
-import {Observable, OperatorFunction} from "rxjs";
-import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
+import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { DataFrame, fromCSV } from "data-forge";
+import { Observable, OperatorFunction, debounceTime, distinctUntilChanged, firstValueFrom, map } from "rxjs";
+import { FormsModule } from '@angular/forms';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap/typeahead';
+import { PlotlyComponent } from 'angular-plotly.js';
+import { WebService } from "../../service/web.service";
+import { SettingsService } from "../../service/settings.service";
 
 @Component({
   selector: 'app-basic-search',
   templateUrl: './basic-search.component.html',
-  styleUrls: ['./basic-search.component.css']
+  styleUrls: ['./basic-search.component.css'],
+  imports: [NgbTypeahead, FormsModule, PlotlyComponent]
 })
-export class BasicSearchComponent implements OnInit {
-  loading: string = "loading..."
-  loaded: boolean = false
-  tableFilterModel: string = ""
-  genes: string[] = []
-  results: any[] = []
-  graphData: any[] = []
-  graphLayout: any = {
+export class BasicSearchComponent {
+  private web = inject(WebService);
+  private settings = inject(SettingsService);
+  private genes: string[] = [];
+  private uniqueY: string[] = [];
+  readonly loading = signal("loading...");
+  readonly loaded = signal(false);
+  readonly tableFilterModel = signal("");
+  readonly results = signal<any[]>([]);
+  readonly graphData = signal<any[]>([]);
+  readonly graphLayout = signal<any>({
     title: {
       font: {
         family: "Arial Black",
@@ -35,28 +41,31 @@ export class BasicSearchComponent implements OnInit {
       "title" : "<b>Samples</b>",
       "type" : "category",
       "tickmode": "array",
-      //"tickvals": [],
       "tickfont": {
         "size": 17,
         "color": 'black'
       },
       "side": "left"
     }
-  }
-  uniqueY: string[] = []
-  constructor(private web: WebService, private settings: SettingsService) {
-    this.settings.databaseEnableSettings.asObservable().subscribe(data => {
-      if (data) {
-        this.loaded = false
-        this.loading = "loading..."
-        const s = settings.getDatasetSettings()
-        this.getData(s).then(r => {
-          this.loaded = true
-          this.loading = "Gene name search"
-        })
+  });
+
+  constructor() {
+    effect(() => {
+      if (this.settings.datasetSettingsVersion() > 0) {
+        untracked(() => this.reloadGenes());
       }
-    })
+    });
   }
+
+  private reloadGenes() {
+    this.loaded.set(false);
+    this.loading.set("loading...");
+    this.getData(this.settings.getDatasetSettings()).then(() => {
+      this.loaded.set(true);
+      this.loading.set("Gene name search");
+    });
+  }
+
   searchFilter(term: string) {
     return this.genes.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0,10)
   }
@@ -69,13 +78,10 @@ export class BasicSearchComponent implements OnInit {
         : this.searchFilter(term))
     )
 
-  ngOnInit(): void {
-  }
-
   async getData(s: any) {
     for (const d in s) {
       if (s[d]) {
-        const res = await this.web.getDBtext(d).toPromise()
+        const res = await firstValueFrom(this.web.getDBtext(d))
         if (res.body) {
           const df = fromCSV(<string>res.body)
           if (this.genes.length === 0) {
@@ -97,33 +103,32 @@ export class BasicSearchComponent implements OnInit {
   }
 
   async searchGene() {
-    const chosen = this.tableFilterModel.split(";")
+    const query = this.tableFilterModel()
+    const chosen = query.split(";")
+    const results: any[] = []
     const s = this.settings.getDatasetSettings()
     const temp: any = {}
-    const texts: string[] = []
-    const vals: string[] = []
-    let height: number = 200
     for (const d in s) {
       if (s[d]) {
-        const res = await this.web.getDBtext(d).toPromise()
+        const res = await firstValueFrom(this.web.getDBtext(d))
         if (res.body) {
           const df = fromCSV(<string>res.body)
           for (const r of df) {
             const intersect = r["Gene names"].split(";").filter((value: string) => chosen.includes(value))
             if (intersect.length > 0) {
-              if (!temp[this.tableFilterModel]) {
-                temp[this.tableFilterModel] = {
+              if (!temp[query]) {
+                temp[query] = {
                   type: "bar",
                   x: [],
                   y: [],
                   orientation: 'h',
                   showlegend: true,
-                  name: this.tableFilterModel
+                  name: query
                 }
               }
-              this.results.push(r)
-              temp[this.tableFilterModel].x.push(parseFloat(r["Copy number"]))
-              temp[this.tableFilterModel].y.push(r["label"]+"_"+r["Fraction"])
+              results.push(r)
+              temp[query].x.push(parseFloat(r["Copy number"]))
+              temp[query].y.push(r["label"]+"_"+r["Fraction"])
               if (!this.uniqueY.includes(r["label"]+"_"+r["Fraction"])) {
                 this.uniqueY.push(r["label"]+"_"+r["Fraction"])
               }
@@ -133,24 +138,19 @@ export class BasicSearchComponent implements OnInit {
         }
       }
     }
-    const graph: any[] = this.graphData.slice()
-    for (const t in temp) {
-      graph.push(temp[t])
-    }
-    this.graphData = graph
-    //this.graphLayout.title = "<b>Copy number data for </b>"
-    this.graphLayout.height = height + 50*this.uniqueY.length
-    console.log(this.results)
+    this.results.update(r => [...r, ...results])
+    this.graphData.update(g => [...g, ...Object.values(temp)])
+    this.graphLayout.update(l => ({...l, height: 200 + 50 * this.uniqueY.length}))
   }
 
   clear() {
-    this.results = []
-    this.uniqueY =[]
-    this.graphData = []
+    this.results.set([])
+    this.uniqueY = []
+    this.graphData.set([])
   }
 
   download() {
-    const blob = new Blob([new DataFrame(this.results).toCSV()], {type: 'text/csv'})
+    const blob = new Blob([new DataFrame(this.results()).toCSV()], {type: 'text/csv'})
     const url = window.URL.createObjectURL(blob);
 
     // @ts-ignore

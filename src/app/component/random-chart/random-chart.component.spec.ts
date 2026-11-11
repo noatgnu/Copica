@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { appConfig } from '../../app.config';
 import { RandomChartComponent } from './random-chart.component';
 
 describe('RandomChartComponent', () => {
@@ -8,12 +9,9 @@ describe('RandomChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RandomChartComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [RandomChartComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(RandomChartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

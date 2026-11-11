@@ -1,50 +1,60 @@
-<div class="container mt-4" *ngIf="this.dataframe.count() >0">
-  <div class="card">
-    <div class="card-body">
-      <form></form>
-      <div class="form-group">
-        <form [formGroup]="form">
-          <div class="form-group">
-            <div class="row">
-              <div class="col-4">
-                <label for="experimentSelection">Select Experiment</label>
-                <select class="form-control" id="experimentSelection" formControlName="experimentType" (change)="updateCellType()">
-                  <option *ngFor="let o of experiment">
-                    {{o}}
-                  </option>
-                </select>
-              </div>
-              <div class="col-6">
-                <label for="cellSelection">Select Cell Type</label>
-                <select class="form-control" id="cellSelection" formControlName="cellType" multiple *ngIf="form.value['experimentType']==='Fractionated'">
-                  <option *ngFor="let o of cellType" [value]="o">
-                    {{o.cellType}} ({{o.organism}}) {{o.cond}}-{{o.fraction}}
-                  </option>
-                </select>
-                <select class="form-control" id="cellSelection" formControlName="cellType" multiple *ngIf="form.value['experimentType']==='Single shot'">
-                  <option *ngFor="let o of cellType" [value]="o">
-                    {{o.cellType}} ({{o.organism}}) {{o.cond}}
-                  </option>
-                </select>
-              </div>
-              <div class="col-auto">
-                <div class="form-group">
-                  <div class="form-check">
-                    <input formControlName="userData" type="checkbox" id="userDataToggle" class="form-check-input" >
-                    <label for="userDataToggle" class="form-check-label">Include User data</label>
+@if (dataframe().count() > 0) {
+  <div class="container mt-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="form-group">
+          <form [formGroup]="form">
+            <div class="form-group">
+              <div class="row">
+                <div class="col-4">
+                  <label for="experimentSelection">Select Experiment</label>
+                  <select class="form-control" id="experimentSelection" formControlName="experimentType" (change)="updateCellType()">
+                    @for (o of experiment(); track o) {
+                      <option>
+                        {{o}}
+                      </option>
+                    }
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label for="cellSelection">Select Cell Type</label>
+                  @if (experimentType() === 'Fractionated') {
+                    <select class="form-control" id="cellSelection" formControlName="cellType" multiple>
+                      @for (o of cellType(); track o) {
+                        <option [value]="o">
+                          {{o.cellType}} ({{o.organism}}) {{o.cond}}-{{o.fraction}}
+                        </option>
+                      }
+                    </select>
+                  }
+                  @if (experimentType() === 'Single shot') {
+                    <select class="form-control" id="cellSelection" formControlName="cellType" multiple>
+                      @for (o of cellType(); track o) {
+                        <option [value]="o">
+                          {{o.cellType}} ({{o.organism}}) {{o.cond}}
+                        </option>
+                      }
+                    </select>
+                  }
+                </div>
+                <div class="col-auto">
+                  <div class="form-group">
+                    <div class="form-check">
+                      <input formControlName="userData" type="checkbox" id="userDataToggle" class="form-check-input" >
+                      <label for="userDataToggle" class="form-check-label">Include User data</label>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="form-row mt-2">
-              <div class="text-right">
-                <button class="btn btn-primary" (click)="loadVisual($event)" >Load data</button>
+              <div class="form-row mt-2">
+                <div class="text-right">
+                  <button class="btn btn-primary" (click)="loadVisual($event)" >Load data</button>
+                </div>
               </div>
-
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+}

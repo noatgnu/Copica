@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { appConfig } from '../../app.config';
 import { ProteomicRulerComponent } from './proteomic-ruler.component';
 
 describe('ProteomicRulerComponent', () => {
@@ -8,12 +9,9 @@ describe('ProteomicRulerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProteomicRulerComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [ProteomicRulerComponent],
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    }).compileComponents();
     fixture = TestBed.createComponent(ProteomicRulerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
